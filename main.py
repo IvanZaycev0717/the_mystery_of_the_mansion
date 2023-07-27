@@ -14,12 +14,11 @@ class Main:
         # Stages
         self.stage = 1
 
-
-
         # Font
         self.font = pygame.font.Font(FONT_PATH_2, 50)
 
     def author_stage(self, current_time):
+
         sys_font = pygame.font.SysFont('arial', 32)
         if current_time >= AUTHOR_TIME:
             self.stage = 2
@@ -35,7 +34,7 @@ class Main:
             font_rect_4 = font_surf_4.get_rect(center=(WINDOW_WIDTH // 2, 600))
 
             if current_time < 3000:
-                font_surf_1.set_alpha(int(current_time / 1000 * 0.8))
+                font_surf_1.set_alpha(int(current_time / 1000 * 1))
                 font_surf_2.set_alpha(int(current_time / 1000 * 0.4))
                 font_surf_3.set_alpha(int(current_time / 1000 * 0.4))
                 font_surf_4.set_alpha(int(current_time / 1000 * 0.4))
@@ -45,12 +44,11 @@ class Main:
             self.display_surface.blit(font_surf_3, font_rect_3)
             self.display_surface.blit(font_surf_4, font_rect_4)
 
-            
-
     def lang_chosen_stage(self):
-        self.display_surface.fill('gray')
+        print('stage 2')
 
     def run(self):
+        self.display_surface.fill(BLACK_GRAY)
         while True:
             dt = self.clock.tick() / 1000
             for event in pygame.event.get():
@@ -60,13 +58,12 @@ class Main:
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_2:
                     self.stage = 2
             
-
             current_time = pygame.time.get_ticks()
-
             if self.stage == 1:
                 self.author_stage(current_time)
             elif self.stage == 2:
                 self.lang_chosen_stage()
+
 
             pygame.display.update()
 

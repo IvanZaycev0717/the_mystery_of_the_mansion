@@ -18,3 +18,6 @@ FONT_PATH_3 = 'data/font/font3.ttf'
 # Режим редактора(конструктора) уровней
 TILE_SIZE = 64
 ANIMATION_SPEED = 8
+
+# Цвета
+BLACK_GRAY = '#11151C'
