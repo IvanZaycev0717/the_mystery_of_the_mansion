@@ -1,4 +1,5 @@
 # Главное окно игры
+TILE_SIZE = 64
 TITLE = 'The Mystery of the Mansion'
 ICON_PATH = 'images/icons/logo.png'
 WINDOW_WIDTH = 1280
@@ -8,7 +9,7 @@ WINDOW_HEIGHT = 720
 GIT_HUB = 'github.com/IvanZaycev0717'
 E_MAIL = 'ivzaycev0717@yandex.ru'
 TELEGRAM = 'Telegram ID: 5984823073'
-AUTHOR_TIME = 10000
+AUTHOR_TIME = 10_000
 
 # Шрифты
 FONT_PATH_1 = 'font/font1.ttf'
@@ -16,8 +17,10 @@ FONT_PATH_2 = 'font/font2.ttf'
 FONT_PATH_3 = 'font/font3.ttf'
 
 # Режим редактора(конструктора) уровней
-TILE_SIZE = 64
+
 ANIMATION_SPEED = 8
 
 # Цвета
 BLACK_GRAY = '#11151C'
+LINE_COLOR = '#f8ff2e'
+ORIGIN_COLOR = 'yellow'

@@ -1,49 +1,43 @@
 import pygame, sys
+from pygame.image import load
 
 
 from settings import *
 from author import Author
+from editor import Editor
 
 
 class Main:
+    """Главное окно игры, где происходит игровой процесс."""
     def __init__(self):
-        # Game window setup
+        # Настройки главного окна игры
         pygame.init()
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-        self.clock = pygame.time.Clock()
         self.title = pygame.display.set_caption(TITLE)
-        self.icon = pygame.display.set_icon(pygame.image.load(ICON_PATH).convert_alpha())
+        self.icon = pygame.display.set_icon(pygame.image.load(ICON_PATH))
+        self.clock = pygame.time.Clock()
 
-        # Class objects
-        self.author_screen = Author()
+        # Экземпляры классов соответсвующих уровней
+        self.editor = Editor()
+        self.author = Author()
 
-        # Stages
-        self.stage = 1
+        # Выбор стадии игры
+        self.stage = 0
+
+        # Замена курсора в игре
+        surf = load('images/cursors/cursor.png').convert_alpha()
+        cursor = pygame.cursors.Cursor((0, 0), surf)
+        pygame.mouse.set_cursor(cursor)
 
 
     def run(self):
         while True:
             dt = self.clock.tick() / 1000
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
-                    self.stage = 1
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_2:
-                    self.stage = 2
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_3:
-                    self.stage = 3
-            
             # Switching stages
-            if self.stage == 1:
-                self.stage = self.author_screen.run()
-            elif self.stage == 2:
-                self.display_surface.fill('pink')
-            elif self.stage == 3:
-                self.display_surface.fill('brown')
-            print(self.stage)
-            
+            if self.stage == 0:
+                self.editor.run(dt)
+            elif self.stage == 1:
+                self.stage = self.author.run()
 
             pygame.display.update()
 
