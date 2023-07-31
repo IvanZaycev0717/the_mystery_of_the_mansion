@@ -1,5 +1,4 @@
 # Главное окно игры
-TILE_SIZE = 64
 TITLE = 'The Mystery of the Mansion'
 ICON_PATH = 'images/icons/logo.png'
 WINDOW_WIDTH = 1280
@@ -17,10 +16,23 @@ FONT_PATH_2 = 'font/font2.ttf'
 FONT_PATH_3 = 'font/font3.ttf'
 
 # Режим редактора(конструктора) уровней
-
+TILE_SIZE = 64
 ANIMATION_SPEED = 8
+
+ # Меню выбора языка
+LANG_WIDTH = 800
+LANG_HEIGHT = 600
+LANG_X = 240
+LANG_Y = 60
+BG_COLOR = '#966A4A'
+
 
 # Цвета
 BLACK_GRAY = '#11151C'
 LINE_COLOR = '#f8ff2e'
 ORIGIN_COLOR = 'yellow'
+
+# Словарь ассетов к игре
+EDITOR_DATA = {
+
+}

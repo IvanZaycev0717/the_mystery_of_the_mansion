@@ -12,6 +12,7 @@ class Author:
 
         # main setup
         self.display_surface = pygame.display.get_surface()
+        self.display_surface.fill(BLACK_GRAY)
         self.font = pygame.font.Font(FONT_PATH_2, 50)
         self.ticks = pygame.time.Clock()
         self.scene_during = 0
@@ -27,8 +28,10 @@ class Author:
         sys_font = pygame.font.SysFont('arial', 32)
         if self.scene_during >= AUTHOR_TIME:
             self.scene_during = 0
-            return 0
+            pygame.mouse.set_visible(True)
+            return 2
         else:
+            pygame.mouse.set_visible(False)
             font_surf_1 = self.font.render(TITLE, True, 'white')
             font_surf_2 = sys_font.render(GIT_HUB, True, 'white')
             font_surf_3 = sys_font.render(E_MAIL, True, 'white')

@@ -5,6 +5,7 @@ from pygame.image import load
 from settings import *
 from author import Author
 from editor import Editor
+from lang_choice import LangChoice
 
 
 class Main:
@@ -20,9 +21,10 @@ class Main:
         # Экземпляры классов соответсвующих уровней
         self.editor = Editor()
         self.author = Author()
+        self.lang_choice = LangChoice()
 
         # Выбор стадии игры
-        self.stage = 0
+        self.stage = 1
 
         # Замена курсора в игре
         surf = load('images/cursors/cursor.png').convert_alpha()
@@ -34,10 +36,10 @@ class Main:
         while True:
             dt = self.clock.tick() / 1000
             # Switching stages
-            if self.stage == 0:
-                self.editor.run(dt)
-            elif self.stage == 1:
-                self.stage = self.author.run()
+            match self.stage:
+                case 0: self.editor.run(dt)
+                case 1: self.stage = self.author.run()
+                case 2: self.lang_choice.run(dt)
 
             pygame.display.update()
 
