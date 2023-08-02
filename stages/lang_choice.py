@@ -1,5 +1,6 @@
 import pygame, sys
 from settings import *
+import os
 
 class LangChoice:
     def __init__(self):
@@ -25,10 +26,12 @@ class LangChoice:
         # English choice
         self.eng_surf = pygame.Surface((600, 100))
         self.eng_surf.fill(BLACK_GRAY)
+        self.eng_rect = self.eng_surf.get_rect(x=340, y=350)
 
         # Russian choice
         self.rus_surf = pygame.Surface((600, 100))
         self.rus_surf.fill(BLACK_GRAY)
+        self.rus_rect = self.rus_surf.get_rect(x=340, y=475)
 
         # Flags objects
         self.uk_flag_surf = pygame.image.load('images/flags/UK.png').convert_alpha()
@@ -37,8 +40,20 @@ class LangChoice:
         self.usa_flag_rect = self.usa_flag_surf.get_rect(centerx = 550, centery=400)
         self.rus_flag_surf = pygame.image.load('images/flags/russia.png').convert_alpha()
         self.rus_flag_rect = self.rus_flag_surf.get_rect(centerx=420, centery=525)
+
+        # Mouse
+        self.mouse_pos = pygame.mouse.get_pos()
+
+        # folders
+        self.path = os.path.dirname(os.path.abspath(__file__))
+        self.lang_file = 'lang.txt'
+        self.file_path = os.path.join(self.path, self.lang_file)
+        print(self.file_path)
         
-        
+
+    def create_lang_file(self, lang):
+        with open(self.file_path, 'w') as file:
+            file.write(lang)
 
     
     def event_loop(self):
@@ -46,6 +61,15 @@ class LangChoice:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.MOUSEMOTION:
+                self.eng_surf.fill('green') if self.eng_rect.collidepoint(event.pos) else self.eng_surf.fill(BLACK_GRAY)
+            if event.type == pygame.MOUSEMOTION:
+                self.rus_surf.fill('green') if self.rus_rect.collidepoint(event.pos) else self.rus_surf.fill(BLACK_GRAY)
+            if event.type == pygame.MOUSEBUTTONDOWN and self.eng_rect.collidepoint(event.pos):
+                self.create_lang_file('eng')
+            if event.type == pygame.MOUSEBUTTONDOWN and self.rus_rect.collidepoint(event.pos):
+                self.create_lang_file('rus')
+
 
     def run(self, dt):
         self.display_surface.fill(BLACK_GRAY)
@@ -54,8 +78,8 @@ class LangChoice:
         self.display_surface.blit(self.rus_text, self.rus_text_rect)
         pygame.draw.line(self.bg_surface, BLACK_GRAY, (100, 100), (700, 100), 4)
         self.display_surface.blit(self.eng_text, self.eng_text_rect)
-        self.display_surface.blit(self.eng_surf, (340, 350))
-        self.display_surface.blit(self.rus_surf, (340, 475))
+        self.display_surface.blit(self.eng_surf, self.eng_rect)
+        self.display_surface.blit(self.rus_surf, self.rus_rect)
         self.display_surface.blit(self.uk_flag_surf, self.uk_flag_rect)
         self.display_surface.blit(self.usa_flag_surf, self.usa_flag_rect)
         self.display_surface.blit(self.rus_flag_surf, self.rus_flag_rect)
