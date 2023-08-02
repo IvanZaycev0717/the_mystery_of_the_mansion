@@ -1,11 +1,13 @@
 import pygame, sys
 from pygame.image import load
+import os
 
 
 from settings import *
 from author import Author
 from editor import Editor
 from lang_choice import LangChoice
+from main_menu import MainMenu
 
 
 class Main:
@@ -22,9 +24,15 @@ class Main:
         self.editor = Editor()
         self.author = Author()
         self.lang_choice = LangChoice()
+        self.main_menu = MainMenu()
 
         # Выбор стадии игры
-        self.stage = 1
+        self.stage = 3
+
+        # folders
+        self.path = os.path.dirname(os.path.abspath(__file__))
+        self.lang_file = 'lang.txt'
+        self.file_path = os.path.join(self.path, self.lang_file)
 
         # Замена курсора в игре
         surf = load('images/cursors/cursor.png').convert_alpha()
@@ -39,7 +47,12 @@ class Main:
             match self.stage:
                 case 0: self.editor.run(dt)
                 case 1: self.stage = self.author.run()
-                case 2: self.lang_choice.run(dt)
+                case 2:
+                    if not os.path.isfile(self.file_path):
+                        self.lang_choice.run(dt)
+                    else:
+                        self.stage = 3
+                case 3: self.main_menu.run(dt)
 
             pygame.display.update()
 

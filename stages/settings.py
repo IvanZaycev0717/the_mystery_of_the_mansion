@@ -6,7 +6,6 @@ WINDOW_HEIGHT = 720
 
 # Данные автора
 GIT_HUB = 'github.com/IvanZaycev0717'
-E_MAIL = 'ivzaycev0717@yandex.ru'
 TELEGRAM = 'Telegram ID: 5984823073'
 AUTHOR_TIME = 10_000
 
