@@ -48,7 +48,6 @@ class LangChoice:
         self.path = os.path.dirname(os.path.abspath(__file__))
         self.lang_file = 'lang.txt'
         self.file_path = os.path.join(self.path, self.lang_file)
-        print(self.file_path)
         
 
     def create_lang_file(self, lang):
@@ -62,9 +61,8 @@ class LangChoice:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEMOTION:
-                self.eng_surf.fill('green') if self.eng_rect.collidepoint(event.pos) else self.eng_surf.fill(BLACK_GRAY)
-            if event.type == pygame.MOUSEMOTION:
-                self.rus_surf.fill('green') if self.rus_rect.collidepoint(event.pos) else self.rus_surf.fill(BLACK_GRAY)
+                self.eng_surf.fill(MM_BUT_COLOR) if self.eng_rect.collidepoint(event.pos) else self.eng_surf.fill(BLACK_GRAY)
+                self.rus_surf.fill(MM_BUT_COLOR) if self.rus_rect.collidepoint(event.pos) else self.rus_surf.fill(BLACK_GRAY)
             if event.type == pygame.MOUSEBUTTONDOWN and self.eng_rect.collidepoint(event.pos):
                 self.create_lang_file('eng')
             if event.type == pygame.MOUSEBUTTONDOWN and self.rus_rect.collidepoint(event.pos):

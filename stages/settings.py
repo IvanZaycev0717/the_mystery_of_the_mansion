@@ -25,6 +25,11 @@ LANG_X = 240
 LANG_Y = 60
 BG_COLOR = '#966A4A'
 
+# Главное меню
+MM_BUTTON_W = 200
+MM_BUTTON_H = 40
+MM_BUT_COLOR = (0, 104, 55)
+
 
 # Цвета
 BLACK_GRAY = '#11151C'

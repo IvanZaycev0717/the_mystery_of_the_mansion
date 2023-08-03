@@ -25,6 +25,7 @@ class Main:
         self.author = Author()
         self.lang_choice = LangChoice()
         self.main_menu = MainMenu()
+        
 
         # Выбор стадии игры
         self.stage = 3
@@ -52,7 +53,8 @@ class Main:
                         self.lang_choice.run(dt)
                     else:
                         self.stage = 3
-                case 3: self.main_menu.run(dt)
+                case 3:
+                    self.main_menu.run(dt)
 
             pygame.display.update()
 
