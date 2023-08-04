@@ -67,125 +67,12 @@ class MainMenu:
         self.control_panel_surf_rect = self.control_panel_surf.get_rect(x=50, y=450)
         self.control_panel_is_active = False
 
+    # Language choice section
     def lang_choise(self):
         with open(file_path, 'r') as file:
             return file.readline()
 
-    def button_creation(self):
-        # Choices menu
-        lang = self.lang_choise()
-        self.continue_button = self.font.render(eng.CONTINUE_BUTTON if lang == 'eng' else rus.CONTINUE_BUTTON, True, 'gray')
-        self.continue_button_rect = self.continue_button.get_rect(x=875, y=450)
-        self.new_game_button = self.font.render(eng.NEW_GAME_BUTTON if lang == 'eng' else rus.NEW_GAME_BUTTON, True, 'yellow')
-        self.new_game_button_rect = self.new_game_button.get_rect(x=875, y=500)
-        self.controls_button = self.font.render(eng.CONTROLS_BUTTON if lang == 'eng' else rus.CONTROLS_BUTTON, True, 'yellow')
-        self.controls_rect = self.controls_button.get_rect(x=875, y=550)
-        self.settings_button = self.font.render(eng.SETTINGS_BUTTON if lang == 'eng' else rus.SETTINGS_BUTTON, True, 'yellow')
-        self.settings_rect = self.settings_button.get_rect(x=875, y=600)
-        self.quit_button = self.font.render(eng.QUIT_BUTTON if lang == 'eng' else rus.QUIT_BUTTON, True, 'yellow')
-        self.quit_rect = self.quit_button.get_rect(x=875, y=650)
-
-    def create_elemets_cp(self):
-        lang = self.lang_choise()
-        # Column 1
-        self.esc_img = pygame.image.load('images/main_menu/esc.png').convert_alpha()
-        self.esc_img_rect = self.esc_img.get_rect(x=10, y=10)
-        self.control_panel_surf.blit(self.esc_img, self.esc_img_rect)
-
-        self.right_button = pygame.image.load('images/main_menu/right.png').convert_alpha()
-        self.right_button_rect = self.right_button.get_rect(x=10, y=50)
-        self.control_panel_surf.blit(self.right_button, self.right_button_rect)
-
-        self.left_button = pygame.image.load('images/main_menu/left.png').convert_alpha()
-        self.left_button_rect = self.left_button.get_rect(x=10, y=90)
-        self.control_panel_surf.blit(self.left_button, self.left_button_rect)
-
-        self.save_button = pygame.image.load('images/main_menu/f5.png').convert_alpha()
-        self.save_button_rect = self.save_button.get_rect(x=10, y=130)
-        self.control_panel_surf.blit(self.save_button, self.save_button_rect)
-
-        self.load_button = pygame.image.load('images/main_menu/f9.png').convert_alpha()
-        self.load_button_rect = self.load_button.get_rect(x=10, y=170)
-        self.control_panel_surf.blit(self.load_button, self.load_button_rect)
-
-        self.esc_text = self.font_small.render(eng.MM_ESC if lang == 'eng' else rus.MM_ESC, False, 'yellow')
-        self.esc_text_rect = self.esc_text.get_rect(x=60, y=15)
-        self.control_panel_surf.blit(self.esc_text, self.esc_text_rect)
-
-        self.right_text = self.font_small.render(eng.MM_RIGHT if lang == 'eng' else rus.MM_RIGHT, False, 'yellow')
-        self.right_text_rect = self.right_text.get_rect(x=60, y=55)
-        self.control_panel_surf.blit(self.right_text, self.right_text_rect)
-
-        self.left_text = self.font_small.render(eng.MM_LEFT if lang == 'eng' else rus.MM_LEFT, False, 'yellow')
-        self.left_text_rect = self.left_text.get_rect(x=60, y=95)
-        self.control_panel_surf.blit(self.left_text, self.left_text_rect)
-
-        self.f5_text = self.font_small.render(eng.MM_F5 if lang == 'eng' else rus.MM_F5, False, 'yellow')
-        self.f5_text_rect = self.f5_text.get_rect(x=60, y=135)
-        self.control_panel_surf.blit(self.f5_text, self.f5_text_rect)
-
-        self.f9_text = self.font_small.render(eng.MM_F9 if lang == 'eng' else rus.MM_F9, False, 'yellow')
-        self.f9_text_rect = self.f9_text.get_rect(x=60, y=175)
-        self.control_panel_surf.blit(self.f9_text, self.f9_text_rect)
-
-        # Column 2
-        self.tab_img = pygame.image.load('images/main_menu/tab.png').convert_alpha()
-        self.tab_img_rect = self.esc_img.get_rect(x=300, y=10)
-        self.control_panel_surf.blit(self.tab_img, self.tab_img_rect)
-
-        self.x_img = pygame.image.load('images/main_menu/x.png').convert_alpha()
-        self.x_img_rect = self.x_img.get_rect(x=300, y=50)
-        self.control_panel_surf.blit(self.x_img, self.x_img_rect)
-
-        self.up_img = pygame.image.load('images/main_menu/up.png').convert_alpha()
-        self.up_img_rect = self.up_img.get_rect(x=350, y=50)
-        self.control_panel_surf.blit(self.up_img, self.up_img_rect)
-
-        self.down_img = pygame.image.load('images/main_menu/down.png').convert_alpha()
-        self.down_img_rect = self.down_img.get_rect(x=300, y=90)
-        self.control_panel_surf.blit(self.down_img, self.down_img_rect)
-
-        self.space_img = pygame.image.load('images/main_menu/space.png').convert_alpha()
-        self.space_img_rect = self.space_img.get_rect(x=300, y=130)
-        self.control_panel_surf.blit(self.space_img, self.space_img_rect)
-
-
-        self.tab_text = self.font_small.render(eng.MM_TAB if lang == 'eng' else rus.MM_TAB, False, 'yellow')
-        self.tab_text_rect = self.tab_text.get_rect(x=360, y=15)
-        self.control_panel_surf.blit(self.tab_text, self.tab_text_rect)
-
-        self.x_text = self.font_small.render(eng.MM_X if lang == 'eng' else rus.MM_X, False, 'yellow')
-        self.x_text_rect = self.x_text.get_rect(x=400, y=55)
-        self.control_panel_surf.blit(self.x_text, self.x_text_rect)
-
-        self.down_text = self.font_small.render(eng.MM_DOWN if lang == 'eng' else rus.MM_DOWN, False, 'yellow')
-        self.down_text_rect = self.down_text.get_rect(x=360, y=95)
-        self.control_panel_surf.blit(self.down_text, self.down_text_rect)
-
-        self.space_text = self.font_small.render(eng.MM_SPACE if lang == 'eng' else rus.MM_SPACE, False, 'yellow')
-        self.space_text_rect = self.space_text.get_rect(x=530, y=135)
-        self.control_panel_surf.blit(self.space_text, self.space_text_rect)
-
-    def event_loop(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.MOUSEMOTION:
-                self.continie_surf.fill(MM_BUT_COLOR) if self.continie_surf_rect.collidepoint(event.pos) else self.continie_surf.fill(BLACK_GRAY)
-                self.new_game_surf.fill(MM_BUT_COLOR) if self.new_game_surf_rect.collidepoint(event.pos) else self.new_game_surf.fill(BLACK_GRAY)
-                self.controls_surf.fill(MM_BUT_COLOR) if self.controls_surf_rect.collidepoint(event.pos) else self.controls_surf.fill(BLACK_GRAY)
-                self.settings_surf.fill(MM_BUT_COLOR) if self.settings_surf_rect.collidepoint(event.pos) else self.settings_surf.fill(BLACK_GRAY)
-                self.exit_surf.fill(MM_BUT_COLOR) if self.exit_surf_rect.collidepoint(event.pos) else self.exit_surf.fill(BLACK_GRAY)
-            if event.type == pygame.MOUSEBUTTONDOWN and self.exit_surf_rect.collidepoint(event.pos):
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN and self.controls_surf_rect.collidepoint(event.pos):
-                self.control_panel_is_active = True if not self.control_panel_is_active else False
-    
-    def show_control_panel(self):
-        self.display_surface.blit(self.control_panel_surf, self.control_panel_surf_rect)
-
+    # Start screen section
     def moving_moon(self, dt):
         self.moon_offset += dt * 400
         self.rotated_moon = pygame.transform.rotate(self.moon_surf, self.angle)
@@ -210,10 +97,102 @@ class MainMenu:
         else:
             self.display_surface.blit(self.star_surf, self.star_rect)
 
-    def run(self, dt):
-        self.display_surface.fill(BLACK_GRAY)
-        self.moving_stars(dt)
-        self.moving_moon(dt)
+    # Creation section
+    def button_creation(self):
+        # Choices menu
+        lang = self.lang_choise()
+        self.continue_button = self.font.render(eng.CONTINUE_BUTTON if lang == 'eng' else rus.CONTINUE_BUTTON, True, 'gray')
+        self.continue_button_rect = self.continue_button.get_rect(x=875, y=450)
+        self.new_game_button = self.font.render(eng.NEW_GAME_BUTTON if lang == 'eng' else rus.NEW_GAME_BUTTON, True, 'yellow')
+        self.new_game_button_rect = self.new_game_button.get_rect(x=875, y=500)
+        self.controls_button = self.font.render(eng.CONTROLS_BUTTON if lang == 'eng' else rus.CONTROLS_BUTTON, True, 'yellow')
+        self.controls_rect = self.controls_button.get_rect(x=875, y=550)
+        self.settings_button = self.font.render(eng.SETTINGS_BUTTON if lang == 'eng' else rus.SETTINGS_BUTTON, True, 'yellow')
+        self.settings_rect = self.settings_button.get_rect(x=875, y=600)
+        self.quit_button = self.font.render(eng.QUIT_BUTTON if lang == 'eng' else rus.QUIT_BUTTON, True, 'yellow')
+        self.quit_rect = self.quit_button.get_rect(x=875, y=650)
+
+    def create_elemets_cp(self):
+        lang = self.lang_choise()
+        # Column 1
+        self.esc_img = pygame.image.load('images/main_menu/esc.png').convert_alpha()
+        self.esc_img_rect = self.esc_img.get_rect(x=10, y=10)
+        
+
+        self.right_button = pygame.image.load('images/main_menu/right.png').convert_alpha()
+        self.right_button_rect = self.right_button.get_rect(x=10, y=50)
+
+        self.left_button = pygame.image.load('images/main_menu/left.png').convert_alpha()
+        self.left_button_rect = self.left_button.get_rect(x=10, y=90)
+
+
+        self.save_button = pygame.image.load('images/main_menu/f5.png').convert_alpha()
+        self.save_button_rect = self.save_button.get_rect(x=10, y=130)
+
+
+        self.load_button = pygame.image.load('images/main_menu/f9.png').convert_alpha()
+        self.load_button_rect = self.load_button.get_rect(x=10, y=170)
+        
+
+        self.esc_text = self.font_small.render(eng.MM_ESC if lang == 'eng' else rus.MM_ESC, False, 'yellow')
+        self.esc_text_rect = self.esc_text.get_rect(x=60, y=15)
+        
+
+        self.right_text = self.font_small.render(eng.MM_RIGHT if lang == 'eng' else rus.MM_RIGHT, False, 'yellow')
+        self.right_text_rect = self.right_text.get_rect(x=60, y=55)
+        
+
+        self.left_text = self.font_small.render(eng.MM_LEFT if lang == 'eng' else rus.MM_LEFT, False, 'yellow')
+        self.left_text_rect = self.left_text.get_rect(x=60, y=95)
+        
+
+        self.f5_text = self.font_small.render(eng.MM_F5 if lang == 'eng' else rus.MM_F5, False, 'yellow')
+        self.f5_text_rect = self.f5_text.get_rect(x=60, y=135)
+        
+
+        self.f9_text = self.font_small.render(eng.MM_F9 if lang == 'eng' else rus.MM_F9, False, 'yellow')
+        self.f9_text_rect = self.f9_text.get_rect(x=60, y=175)
+        
+
+        # Column 2
+        self.tab_img = pygame.image.load('images/main_menu/tab.png').convert_alpha()
+        self.tab_img_rect = self.esc_img.get_rect(x=300, y=10)
+        
+
+        self.x_img = pygame.image.load('images/main_menu/x.png').convert_alpha()
+        self.x_img_rect = self.x_img.get_rect(x=300, y=50)
+        
+
+        self.up_img = pygame.image.load('images/main_menu/up.png').convert_alpha()
+        self.up_img_rect = self.up_img.get_rect(x=350, y=50)
+
+        self.down_img = pygame.image.load('images/main_menu/down.png').convert_alpha()
+        self.down_img_rect = self.down_img.get_rect(x=300, y=90)
+        
+
+        self.space_img = pygame.image.load('images/main_menu/space.png').convert_alpha()
+        self.space_img_rect = self.space_img.get_rect(x=300, y=130)
+        
+
+
+        self.tab_text = self.font_small.render(eng.MM_TAB if lang == 'eng' else rus.MM_TAB, False, 'yellow')
+        self.tab_text_rect = self.tab_text.get_rect(x=360, y=15)
+        
+
+        self.x_text = self.font_small.render(eng.MM_X if lang == 'eng' else rus.MM_X, False, 'yellow')
+        self.x_text_rect = self.x_text.get_rect(x=400, y=55)
+        
+
+        self.down_text = self.font_small.render(eng.MM_DOWN if lang == 'eng' else rus.MM_DOWN, False, 'yellow')
+        self.down_text_rect = self.down_text.get_rect(x=360, y=95)
+        
+
+        self.space_text = self.font_small.render(eng.MM_SPACE if lang == 'eng' else rus.MM_SPACE, False, 'yellow')
+        self.space_text_rect = self.space_text.get_rect(x=530, y=135)
+           
+
+    # Show section
+    def show_buttons(self):
         self.display_surface.blit(self.continie_surf, self.continie_surf_rect)
         self.display_surface.blit(self.new_game_surf, self.new_game_surf_rect)
         self.display_surface.blit(self.controls_surf, self.controls_surf_rect)
@@ -226,7 +205,56 @@ class MainMenu:
         self.display_surface.blit(self.controls_button, self.controls_rect)
         self.display_surface.blit(self.settings_button, self.settings_rect)
         self.display_surface.blit(self.quit_button, self.quit_rect)
+
+    def show_controls(self):
         if self.control_panel_is_active:
-            self.show_control_panel()
             self.create_elemets_cp()
+            self.control_panel_surf.fill(BLACK_GRAY)
+            self.control_panel_surf.blit(self.esc_img, self.esc_img_rect)
+            self.control_panel_surf.blit(self.right_button, self.right_button_rect)
+            self.control_panel_surf.blit(self.left_button, self.left_button_rect)
+            self.control_panel_surf.blit(self.save_button, self.save_button_rect)
+            self.control_panel_surf.blit(self.load_button, self.load_button_rect)
+            self.control_panel_surf.blit(self.esc_text, self.esc_text_rect)
+            self.control_panel_surf.blit(self.right_text, self.right_text_rect)
+            self.control_panel_surf.blit(self.left_text, self.left_text_rect)
+            self.control_panel_surf.blit(self.f5_text, self.f5_text_rect)
+            self.control_panel_surf.blit(self.f9_text, self.f9_text_rect)
+            self.control_panel_surf.blit(self.tab_img, self.tab_img_rect)
+            self.control_panel_surf.blit(self.x_img, self.x_img_rect)
+            self.control_panel_surf.blit(self.up_img, self.up_img_rect)
+            self.control_panel_surf.blit(self.down_img, self.down_img_rect)
+            self.control_panel_surf.blit(self.space_img, self.space_img_rect)
+            self.control_panel_surf.blit(self.tab_text, self.tab_text_rect)
+            self.control_panel_surf.blit(self.x_text, self.x_text_rect)
+            self.control_panel_surf.blit(self.down_text, self.down_text_rect)
+            self.control_panel_surf.blit(self.space_text, self.space_text_rect) 
+            self.display_surface.blit(self.control_panel_surf, self.control_panel_surf_rect)
+    
+    # Event section
+    def event_loop(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEMOTION:
+                self.continie_surf.fill(MM_BUT_COLOR) if self.continie_surf_rect.collidepoint(event.pos) else self.continie_surf.fill(BLACK_GRAY)
+                self.new_game_surf.fill(MM_BUT_COLOR) if self.new_game_surf_rect.collidepoint(event.pos) else self.new_game_surf.fill(BLACK_GRAY)
+                self.controls_surf.fill(MM_BUT_COLOR) if self.controls_surf_rect.collidepoint(event.pos) else self.controls_surf.fill(BLACK_GRAY)
+                self.settings_surf.fill(MM_BUT_COLOR) if self.settings_surf_rect.collidepoint(event.pos) else self.settings_surf.fill(BLACK_GRAY)
+                self.exit_surf.fill(MM_BUT_COLOR) if self.exit_surf_rect.collidepoint(event.pos) else self.exit_surf.fill(BLACK_GRAY)
+            if event.type == pygame.MOUSEBUTTONDOWN and self.exit_surf_rect.collidepoint(event.pos):
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN and self.controls_surf_rect.collidepoint(event.pos):
+                self.control_panel_is_active = True if not self.control_panel_is_active else False
+    
+    # Main cycle
+    def run(self, dt):
+        self.display_surface.fill(BLACK_GRAY)
+        self.moving_stars(dt)
+        self.moving_moon(dt)
+        self.show_buttons()
+        self.show_controls()
+
         self.event_loop()
