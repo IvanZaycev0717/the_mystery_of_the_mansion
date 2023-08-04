@@ -38,6 +38,7 @@ class MainMenu:
 
         # Font
         self.font = pygame.font.SysFont('arial', 32)
+        self.font_small = pygame.font.SysFont('arial', 20)
 
         # Main Menu Button Surfaces
         self.continie_surf = pygame.Surface((MM_BUTTON_W, MM_BUTTON_H))
@@ -85,9 +86,85 @@ class MainMenu:
         self.quit_rect = self.quit_button.get_rect(x=875, y=650)
 
     def create_elemets_cp(self):
+        lang = self.lang_choise()
+        # Column 1
         self.esc_img = pygame.image.load('images/main_menu/esc.png').convert_alpha()
         self.esc_img_rect = self.esc_img.get_rect(x=10, y=10)
         self.control_panel_surf.blit(self.esc_img, self.esc_img_rect)
+
+        self.right_button = pygame.image.load('images/main_menu/right.png').convert_alpha()
+        self.right_button_rect = self.right_button.get_rect(x=10, y=50)
+        self.control_panel_surf.blit(self.right_button, self.right_button_rect)
+
+        self.left_button = pygame.image.load('images/main_menu/left.png').convert_alpha()
+        self.left_button_rect = self.left_button.get_rect(x=10, y=90)
+        self.control_panel_surf.blit(self.left_button, self.left_button_rect)
+
+        self.save_button = pygame.image.load('images/main_menu/f5.png').convert_alpha()
+        self.save_button_rect = self.save_button.get_rect(x=10, y=130)
+        self.control_panel_surf.blit(self.save_button, self.save_button_rect)
+
+        self.load_button = pygame.image.load('images/main_menu/f9.png').convert_alpha()
+        self.load_button_rect = self.load_button.get_rect(x=10, y=170)
+        self.control_panel_surf.blit(self.load_button, self.load_button_rect)
+
+        self.esc_text = self.font_small.render(eng.MM_ESC if lang == 'eng' else rus.MM_ESC, False, 'yellow')
+        self.esc_text_rect = self.esc_text.get_rect(x=60, y=15)
+        self.control_panel_surf.blit(self.esc_text, self.esc_text_rect)
+
+        self.right_text = self.font_small.render(eng.MM_RIGHT if lang == 'eng' else rus.MM_RIGHT, False, 'yellow')
+        self.right_text_rect = self.right_text.get_rect(x=60, y=55)
+        self.control_panel_surf.blit(self.right_text, self.right_text_rect)
+
+        self.left_text = self.font_small.render(eng.MM_LEFT if lang == 'eng' else rus.MM_LEFT, False, 'yellow')
+        self.left_text_rect = self.left_text.get_rect(x=60, y=95)
+        self.control_panel_surf.blit(self.left_text, self.left_text_rect)
+
+        self.f5_text = self.font_small.render(eng.MM_F5 if lang == 'eng' else rus.MM_F5, False, 'yellow')
+        self.f5_text_rect = self.f5_text.get_rect(x=60, y=135)
+        self.control_panel_surf.blit(self.f5_text, self.f5_text_rect)
+
+        self.f9_text = self.font_small.render(eng.MM_F9 if lang == 'eng' else rus.MM_F9, False, 'yellow')
+        self.f9_text_rect = self.f9_text.get_rect(x=60, y=175)
+        self.control_panel_surf.blit(self.f9_text, self.f9_text_rect)
+
+        # Column 2
+        self.tab_img = pygame.image.load('images/main_menu/tab.png').convert_alpha()
+        self.tab_img_rect = self.esc_img.get_rect(x=300, y=10)
+        self.control_panel_surf.blit(self.tab_img, self.tab_img_rect)
+
+        self.x_img = pygame.image.load('images/main_menu/x.png').convert_alpha()
+        self.x_img_rect = self.x_img.get_rect(x=300, y=50)
+        self.control_panel_surf.blit(self.x_img, self.x_img_rect)
+
+        self.up_img = pygame.image.load('images/main_menu/up.png').convert_alpha()
+        self.up_img_rect = self.up_img.get_rect(x=350, y=50)
+        self.control_panel_surf.blit(self.up_img, self.up_img_rect)
+
+        self.down_img = pygame.image.load('images/main_menu/down.png').convert_alpha()
+        self.down_img_rect = self.down_img.get_rect(x=300, y=90)
+        self.control_panel_surf.blit(self.down_img, self.down_img_rect)
+
+        self.space_img = pygame.image.load('images/main_menu/space.png').convert_alpha()
+        self.space_img_rect = self.space_img.get_rect(x=300, y=130)
+        self.control_panel_surf.blit(self.space_img, self.space_img_rect)
+
+
+        self.tab_text = self.font_small.render(eng.MM_TAB if lang == 'eng' else rus.MM_TAB, False, 'yellow')
+        self.tab_text_rect = self.tab_text.get_rect(x=360, y=15)
+        self.control_panel_surf.blit(self.tab_text, self.tab_text_rect)
+
+        self.x_text = self.font_small.render(eng.MM_X if lang == 'eng' else rus.MM_X, False, 'yellow')
+        self.x_text_rect = self.x_text.get_rect(x=400, y=55)
+        self.control_panel_surf.blit(self.x_text, self.x_text_rect)
+
+        self.down_text = self.font_small.render(eng.MM_DOWN if lang == 'eng' else rus.MM_DOWN, False, 'yellow')
+        self.down_text_rect = self.down_text.get_rect(x=360, y=95)
+        self.control_panel_surf.blit(self.down_text, self.down_text_rect)
+
+        self.space_text = self.font_small.render(eng.MM_SPACE if lang == 'eng' else rus.MM_SPACE, False, 'yellow')
+        self.space_text_rect = self.space_text.get_rect(x=530, y=135)
+        self.control_panel_surf.blit(self.space_text, self.space_text_rect)
 
     def event_loop(self):
         for event in pygame.event.get():
