@@ -18,15 +18,12 @@ FONT_PATH_3 = 'font/font3.ttf'
 TILE_SIZE = 64
 ANIMATION_SPEED = 8
 
- # Меню выбора языка
+# Меню выбора языка
 LANG_WIDTH = 800
 LANG_HEIGHT = 600
 LANG_X = 240
 LANG_Y = 60
 BG_COLOR = '#966A4A'
-
-
-
 
 # Главное меню
 MM_BUTTON_W = 200
