@@ -27,7 +27,7 @@ class Main:
         self.main_menu = MainMenu()
 
         # Выбор стадии игры
-        self.stage = 1
+        self.stage = 3
 
         # folders
         self.path = os.path.dirname(os.path.abspath(__file__))
@@ -38,7 +38,6 @@ class Main:
         surf = load('images/cursors/cursor.png').convert_alpha()
         cursor = pygame.cursors.Cursor((0, 0), surf)
         pygame.mouse.set_cursor(cursor)
-
 
     def run(self):
         while True:
@@ -53,7 +52,9 @@ class Main:
                     else:
                         self.stage = 3
                 case 3:
-                    self.main_menu.run(dt)
+                    self.stage = self.main_menu.run(dt)
+                case 4:
+                    self.editor.run(dt)
 
             pygame.display.update()
 
