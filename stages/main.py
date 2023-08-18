@@ -27,7 +27,7 @@ class Main:
         self.main_menu = MainMenu()
 
         # Выбор стадии игры
-        self.stage = 3
+        self.stage = 1
 
         # folders
         self.path = os.path.dirname(os.path.abspath(__file__))
