@@ -27,7 +27,7 @@ class Main:
         self.main_menu = MainMenu()
 
         # Выбор стадии игры
-        self.stage = 1
+        self.stage = 0
 
         # folders
         self.path = os.path.dirname(os.path.abspath(__file__))
@@ -53,8 +53,6 @@ class Main:
                         self.stage = 3
                 case 3:
                     self.stage = self.main_menu.run(dt)
-                case 4:
-                    self.editor.run(dt)
 
             pygame.display.update()
 

@@ -73,54 +73,54 @@ EDITOR_DATA = {
     },
 
     3: {
-        'style': 'cementry',
+        'style': 'common',
         'type': 'tile',
-        'menu': 'cementry',
+        'menu': 'common',
         'menu_surf': 'images/menu/cem_tile.png',
         'preview': 'images/preview/cem_tile.png',
         'graphics': None
     },
 
     4: {
-        'style': 'heaven',
+        'style': 'common',
         'type': 'tile',
-        'menu': 'heaven',
+        'menu': 'common',
         'menu_surf': 'images/menu/heav_tile.png',
         'preview': 'images/preview/heav_tile.png',
         'graphics': None
     },
 
     5: {
-        'style': 'desert',
+        'style': 'common',
         'type': 'tile',
-        'menu': 'desert',
+        'menu': 'common',
         'menu_surf': 'images/menu/des_tile.png',
         'preview': 'images/preview/des_tile.png',
         'graphics': None
     },
 
     6: {
-        'style': 'garden',
+        'style': 'common',
         'type': 'tile',
-        'menu': 'garden',
+        'menu': 'common',
         'menu_surf': 'images/menu/gar_tile.png',
         'preview': 'images/preview/gar_tile.png',
         'graphics': None
     },
 
     7: {
-        'style': 'poison',
+        'style': 'common',
         'type': 'tile',
-        'menu': 'poison',
+        'menu': 'common',
         'menu_surf': 'images/menu/poison_tile.png',
         'preview': 'images/preview/poison_tile.png',
         'graphics': None
     },
 
     8: {
-        'style': 'floor',
+        'style': 'common',
         'type': 'tile',
-        'menu': 'floor',
+        'menu': 'common',
         'menu_surf': 'images/menu/floor_tile.png',
         'preview': 'images/preview/floor_tile.png',
         'graphics': None
@@ -404,7 +404,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/first_floor/chest'
     },
 
-    40: {
+    39: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -413,7 +413,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/common/hedge'
     },
 
-    41: {
+    40: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -422,7 +422,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/common/plant1'
     },
 
-    42: {
+    41: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -431,7 +431,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/common/plant2'
     },
 
-    43: {
+    42: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -440,7 +440,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/common/plant3'
     },
 
-    44: {
+    43: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -449,7 +449,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/common/lightpost'
     },
 
-    45: {
+    44: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -458,7 +458,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/common/woodfence'
     },
 
-    46: {
+    45: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -467,7 +467,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/first_floor/couch'
     },
 
-    47: {
+    46: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -476,7 +476,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/cupboard/devil'
     },
 
-    48: {
+    47: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -485,7 +485,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/floor/door'
     },
 
-    49: {
+    48: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -494,7 +494,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/desert/dune1'
     },
 
-    50: {
+    49: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -503,7 +503,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/desert/dune2'
     },
 
-    51: {
+    50: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -512,7 +512,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/desert/dune3'
     },
 
-    52: {
+    51: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -521,7 +521,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/garden/wood_fence'
     },
 
-    53: {
+    52: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -530,7 +530,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/garden/tree1'
     },
 
-    54: {
+    53: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -539,7 +539,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/garden/tree2'
     },
 
-    55: {
+    54: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -548,7 +548,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/cementry/gravestone1'
     },
 
-    56: {
+    55: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -557,7 +557,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/cementry/gravestone2'
     },
 
-    57: {
+    56: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -566,7 +566,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/cementry/gravestone3'
     },
 
-    58: {
+    57: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -575,7 +575,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/cementry/gravestone4'
     },
 
-    59: {
+    58: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -584,7 +584,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/heaven/fortress'
     },
 
-    60: {
+    59: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -593,7 +593,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/heaven/gate1'
     },
 
-    61: {
+    60: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -602,7 +602,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/heaven/gate2'
     },
 
-    62: {
+    61: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -611,7 +611,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/heaven/stair1'
     },
 
-    63: {
+    62: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -620,7 +620,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/heaven/stair2'
     },
 
-    64: {
+    63: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -629,7 +629,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/heaven/stair3'
     },
 
-    65: {
+    64: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -638,7 +638,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/floor/lamp'
     },
 
-    66: {
+    65: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -647,7 +647,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/common/mansion'
     },
 
-    67: {
+    66: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -656,7 +656,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/cementry/monument'
     },
 
-    68: {
+    67: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -665,7 +665,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/poison/mush1'
     },
 
-    69: {
+    68: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -674,7 +674,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/poison/mush2'
     },
 
-    70: {
+    69: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -683,7 +683,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/desert/palm'
     },
 
-    71: {
+    70: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -692,7 +692,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/first_floor/pic1'
     },
 
-    72: {
+    71: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -701,7 +701,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/first_floor/pic2'
     },
 
-    73: {
+    72: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -710,7 +710,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/first_floor/pic3'
     },
 
-    74: {
+    73: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -719,7 +719,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/floor/picture1'
     },
 
-    75: {
+    74: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -728,7 +728,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/floor/picture2'
     },
 
-    76: {
+    75: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -737,7 +737,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/floor/picture3'
     },
 
-    77: {
+    76: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -746,7 +746,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/floor/picture4'
     },
 
-    78: {
+    77: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -755,7 +755,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/floor/picture5'
     },
 
-    79: {
+    78: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -764,7 +764,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/garden/plant1'
     },
 
-    80: {
+    79: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -773,7 +773,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/garden/plant2'
     },
 
-    81: {
+    80: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -782,7 +782,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/common/rockfence1'
     },
 
-    82: {
+    81: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -791,7 +791,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/common/rockfence2'
     },
 
-    83: {
+    82: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -800,7 +800,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/floor/window'
     },
 
-    84: {
+    83: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -809,7 +809,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/cupboard/shelf'
     },
 
-    85: {
+    84: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -818,7 +818,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/floor/stair'
     },
 
-    86: {
+    85: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -827,7 +827,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/first_floor/stand'
     },
 
-    87: {
+    86: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -836,7 +836,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/common/statue'
     },
 
-    88: {
+    87: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -845,7 +845,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/first_floor/table'
     },
 
-    89: {
+    88: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -854,7 +854,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/first_floor/wall'
     },
 
-    90: {
+    89: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -863,7 +863,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/common/wardrobe'
     },
 
-    91: {
+    90: {
         'style': 'static',
         'type': 'object',
         'menu': 'static',
@@ -874,7 +874,7 @@ EDITOR_DATA = {
 
     # ACTIVATOR SECTION
 
-    92: {
+    91: {
         'style': 'activator',
         'type': 'object',
         'menu': 'activator',
@@ -883,7 +883,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/activators/wall'
     },
 
-    93: {
+    92: {
         'style': 'activator',
         'type': 'object',
         'menu': 'activator',
@@ -892,7 +892,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/activators/blue_door_in'
     },
 
-    94: {
+    93: {
         'style': 'activator',
         'type': 'object',
         'menu': 'activator',
@@ -901,7 +901,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/activators/blue_door_out'
     },
 
-    95: {
+    94: {
         'style': 'activator',
         'type': 'object',
         'menu': 'activator',
@@ -910,7 +910,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/activators/cementry_gates'
     },
 
-    96: {
+    95: {
         'style': 'activator',
         'type': 'object',
         'menu': 'activator',
@@ -919,7 +919,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/activators/cupboard_bed'
     },
 
-    97: {
+    96: {
         'style': 'activator',
         'type': 'object',
         'menu': 'activator',
@@ -928,7 +928,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/activators/cupboard_door_in'
     },
 
-    98: {
+    97: {
         'style': 'activator',
         'type': 'object',
         'menu': 'activator',
@@ -937,7 +937,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/activators/cupboard_door_out'
     },
 
-    99: {
+    98: {
         'style': 'activator',
         'type': 'object',
         'menu': 'activator',
@@ -946,7 +946,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/activators/ff_bed_in'
     },
 
-    100: {
+    99: {
         'style': 'activator',
         'type': 'object',
         'menu': 'activator',
@@ -955,7 +955,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/activators/green_door_in'
     },
 
-    101: {
+    100: {
         'style': 'activator',
         'type': 'object',
         'menu': 'activator',
@@ -964,7 +964,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/activators/green_door_out'
     },
 
-    102: {
+    101: {
         'style': 'activator',
         'type': 'object',
         'menu': 'activator',
@@ -973,7 +973,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/activators/machine'
     },
 
-    103: {
+    102: {
         'style': 'activator',
         'type': 'object',
         'menu': 'activator',
@@ -982,7 +982,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/activators/pink_door_in'
     },
 
-    104: {
+    103: {
         'style': 'activator',
         'type': 'object',
         'menu': 'activator',
@@ -991,7 +991,7 @@ EDITOR_DATA = {
         'graphics': 'images/objects/activators/pink_door_out'
     },
 
-    105: {
+    104: {
         'style': 'activator',
         'type': 'object',
         'menu': 'activator',
@@ -999,4 +999,13 @@ EDITOR_DATA = {
         'preview': 'images/preview/sf_bed.png',
         'graphics': 'images/objects/activators/sf_bed'
     },
+
+    105: {
+        'style': 'saving',
+        'type': 'tile',
+        'menu': 'saving',
+        'menu_surf': 'images/menu/save.png',
+        'preview': None,
+        'graphics': None
+    }
 }
