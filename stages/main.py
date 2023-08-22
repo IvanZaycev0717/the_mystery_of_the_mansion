@@ -8,6 +8,7 @@ from author import Author
 from editor import Editor
 from lang_choice import LangChoice
 from main_menu import MainMenu
+from img_imports import import_folder_dict
 
 
 class Main:
@@ -17,11 +18,12 @@ class Main:
         pygame.init()
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.title = pygame.display.set_caption(TITLE)
-        self.icon = pygame.display.set_icon(pygame.image.load(ICON_PATH))
+        # self.icon = pygame.display.set_icon(pygame.image.load(ICON_PATH))
         self.clock = pygame.time.Clock()
+        self.imports()
 
         # Экземпляры классов соответсвующих уровней
-        self.editor = Editor()
+        self.editor = Editor(self.land_tiles)
         self.author = Author()
         self.lang_choice = LangChoice()
         self.main_menu = MainMenu()
@@ -38,6 +40,11 @@ class Main:
         surf = load('images/cursors/cursor.png').convert_alpha()
         cursor = pygame.cursors.Cursor((0, 0), surf)
         pygame.mouse.set_cursor(cursor)
+
+
+    def imports(self):
+        self.land_tiles = import_folder_dict('images/tile/common')
+
 
     def run(self):
         while True:

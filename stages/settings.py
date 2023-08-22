@@ -130,7 +130,7 @@ EDITOR_DATA = {
 
     9: {
         'style': 'enemy',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'enemy',
         'menu_surf': 'images/menu/angel.png',
         'preview': 'images/preview/angel.png',
@@ -139,7 +139,7 @@ EDITOR_DATA = {
 
     10: {
         'style': 'enemy',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'enemy',
         'menu_surf': 'images/menu/bat.png',
         'preview': 'images/preview/bat.png',
@@ -148,7 +148,7 @@ EDITOR_DATA = {
 
     11: {
         'style': 'enemy',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'enemy',
         'menu_surf': 'images/menu/bird.png',
         'preview': 'images/preview/bird.png',
@@ -157,7 +157,7 @@ EDITOR_DATA = {
 
     12: {
         'style': 'enemy',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'enemy',
         'menu_surf': 'images/menu/bug.png',
         'preview': 'images/preview/bug.png',
@@ -166,7 +166,7 @@ EDITOR_DATA = {
 
     13: {
         'style': 'enemy',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'enemy',
         'menu_surf': 'images/menu/camel.png',
         'preview': 'images/preview/camel.png',
@@ -175,7 +175,7 @@ EDITOR_DATA = {
 
     14: {
         'style': 'enemy',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'enemy',
         'menu_surf': 'images/menu/cem_spike.png',
         'preview': 'images/preview/cem_spike.png',
@@ -184,16 +184,16 @@ EDITOR_DATA = {
 
     15: {
         'style': 'enemy',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'enemy',
         'menu_surf': 'images/menu/dispultes.png',
         'preview': 'images/preview/dispultes.png',
-        'graphics': 'images/enemies/poison/dispultes'
+        'graphics': 'images/enemies/poison/disputes'
     },
 
     16: {
         'style': 'enemy',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'enemy',
         'menu_surf': 'images/menu/fire.png',
         'preview': 'images/preview/fire.png',
@@ -202,7 +202,7 @@ EDITOR_DATA = {
 
     17: {
         'style': 'enemy',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'enemy',
         'menu_surf': 'images/menu/gar_spike.png',
         'preview': 'images/preview/gar_spike.png',
@@ -211,7 +211,7 @@ EDITOR_DATA = {
 
     18: {
         'style': 'enemy',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'enemy',
         'menu_surf': 'images/menu/goat.png',
         'preview': 'images/preview/goat.png',
@@ -220,7 +220,7 @@ EDITOR_DATA = {
 
     19: {
         'style': 'enemy',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'enemy',
         'menu_surf': 'images/menu/harp.png',
         'preview': 'images/preview/harp.png',
@@ -229,7 +229,7 @@ EDITOR_DATA = {
 
     20: {
         'style': 'enemy',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'enemy',
         'menu_surf': 'images/menu/heav_spike.png',
         'preview': 'images/preview/heav_spike.png',
@@ -238,16 +238,16 @@ EDITOR_DATA = {
 
     21: {
         'style': 'enemy',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'enemy',
         'menu_surf': 'images/menu/hedgenhog.png',
         'preview': 'images/preview/hedgenhog.png',
-        'graphics': 'images/enemies/garden/hedgenhog'
+        'graphics': 'images/enemies/garden/hedgehog'
     },
 
     22: {
         'style': 'enemy',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'enemy',
         'menu_surf': 'images/menu/scroll.png',
         'preview': 'images/preview/scroll.png',
@@ -256,7 +256,7 @@ EDITOR_DATA = {
 
     23: {
         'style': 'enemy',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'enemy',
         'menu_surf': 'images/menu/slime.png',
         'preview': 'images/preview/slime.png',
@@ -265,7 +265,7 @@ EDITOR_DATA = {
 
     24: {
         'style': 'enemy',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'enemy',
         'menu_surf': 'images/menu/wasp.png',
         'preview': 'images/preview/wasp.png',
@@ -276,7 +276,7 @@ EDITOR_DATA = {
 
     25: {
         'style': 'key',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'key',
         'menu_surf': 'images/menu/green_key.png',
         'preview': 'images/preview/green_key.png',
@@ -285,7 +285,7 @@ EDITOR_DATA = {
 
     26: {
         'style': 'key',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'key',
         'menu_surf': 'images/menu/hammer.png',
         'preview': 'images/preview/hammer.png',
@@ -294,7 +294,7 @@ EDITOR_DATA = {
 
     27: {
         'style': 'key',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'key',
         'menu_surf': 'images/menu/pink_key.png',
         'preview': 'images/preview/pink_key.png',
@@ -303,7 +303,7 @@ EDITOR_DATA = {
 
     28: {
         'style': 'key',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'key',
         'menu_surf': 'images/menu/yellow_key.png',
         'preview': 'images/preview/yellow_key.png',
@@ -314,7 +314,7 @@ EDITOR_DATA = {
 
     29: {
         'style': 'gear',
-        'type': 'object',
+        'type': 'tile',
         'menu': 'gear',
         'menu_surf': 'images/menu/gear.png',
         'preview': 'images/preview/gear.png',
@@ -689,7 +689,7 @@ EDITOR_DATA = {
         'menu': 'static',
         'menu_surf': 'images/menu/pic1.png',
         'preview': 'images/preview/pic1.png',
-        'graphics': 'images/objects/first_floor/pic1'
+        'graphics': 'images/objects/first_floor/picture1'
     },
 
     71: {
@@ -698,7 +698,7 @@ EDITOR_DATA = {
         'menu': 'static',
         'menu_surf': 'images/menu/pic2.png',
         'preview': 'images/preview/pic2.png',
-        'graphics': 'images/objects/first_floor/pic2'
+        'graphics': 'images/objects/first_floor/picture2'
     },
 
     72: {
@@ -707,7 +707,7 @@ EDITOR_DATA = {
         'menu': 'static',
         'menu_surf': 'images/menu/pic3.png',
         'preview': 'images/preview/pic3.png',
-        'graphics': 'images/objects/first_floor/pic3'
+        'graphics': 'images/objects/first_floor/picture3'
     },
 
     73: {
@@ -860,7 +860,7 @@ EDITOR_DATA = {
         'menu': 'static',
         'menu_surf': 'images/menu/wardrobe.png',
         'preview': 'images/preview/wardrobe.png',
-        'graphics': 'images/objects/common/wardrobe'
+        'graphics': 'images/objects/floor/wardrobe'
     },
 
     90: {
@@ -1001,8 +1001,17 @@ EDITOR_DATA = {
     },
 
     105: {
+        'style': 'loading',
+        'type': None,
+        'menu': 'loading',
+        'menu_surf': 'images/menu/load.png',
+        'preview': None,
+        'graphics': None
+    },
+
+    106: {
         'style': 'saving',
-        'type': 'tile',
+        'type': None,
         'menu': 'saving',
         'menu_surf': 'images/menu/save.png',
         'preview': None,

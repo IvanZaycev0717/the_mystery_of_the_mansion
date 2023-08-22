@@ -21,7 +21,7 @@ class Menu:
     def create_buttons(self):
         size = 180
         margin = 6
-        self.rect = pygame.Rect((10, 10), (1250, size))
+        self.rect = pygame.Rect((10, 10), (1270, size))
 
         # button areas
         generic_button_rect = pygame.Rect(self.rect.topleft, (90, 90))
@@ -32,7 +32,8 @@ class Menu:
         self.gears_button_rect = generic_button_rect.move(270,0).inflate(-button_margin, -button_margin)
         self.statics_button_rect = generic_button_rect.move(360,0).inflate(-button_margin, -button_margin)
         self.activators_button_rect = generic_button_rect.move(450, 0).inflate(-button_margin, -button_margin)
-        self.save_button_rect = generic_button_rect.move(540, 0).inflate(-button_margin, -button_margin)
+        self.load_button_rect = generic_button_rect.move(1080, 0).inflate(-button_margin, -button_margin)
+        self.save_button_rect = generic_button_rect.move(1170, 0).inflate(-button_margin, -button_margin)
 
 
         # create buttons
@@ -43,6 +44,7 @@ class Menu:
         Button(self.gears_button_rect, self.buttons, self.menu_surfs['gear'])
         Button(self.statics_button_rect, self.buttons, self.menu_surfs['static'])
         Button(self.activators_button_rect, self.buttons, self.menu_surfs['activator'])
+        Button(self.load_button_rect, self.buttons, self.menu_surfs['loading'])
         Button(self.save_button_rect, self.buttons, self.menu_surfs['saving'])
         
     def click(self, mouse_pos, mouse_button):
@@ -70,6 +72,8 @@ class Menu:
                 pygame.draw.rect(self.display_surface, 'pink', self.statics_button_rect.inflate(4,4), 5, 4)
             if EDITOR_DATA[index]['menu'] == 'activator':
                 pygame.draw.rect(self.display_surface, 'pink', self.activators_button_rect.inflate(4,4), 5, 4)
+            if EDITOR_DATA[index]['menu'] == 'loading':
+                pygame.draw.rect(self.display_surface, 'pink', self.load_button_rect.inflate(4,4), 5, 4)
             if EDITOR_DATA[index]['menu'] == 'saving':
                 pygame.draw.rect(self.display_surface, 'pink', self.save_button_rect.inflate(4,4), 5, 4)
             
