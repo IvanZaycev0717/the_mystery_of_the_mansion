@@ -3,24 +3,35 @@ from settings import *
 
 from pygame.image import load
 
+from img_imports import import_folder_dict
+
 class Menu:
     def __init__(self):
         self.display_surface = pygame.display.get_surface()
         self.create_data()
         self.create_buttons()
+
     
     def create_data(self):
         self.menu_surfs = {}
         for key, value in EDITOR_DATA.items():
             if value['menu']:
-                if not value['menu'] in self.menu_surfs:
-                    self.menu_surfs[value['menu']] = [(key, load(value['menu_surf']))]
+                if not isinstance(value['menu_surf'], tuple):
+                    if not value['menu'] in self.menu_surfs:
+                        self.menu_surfs[value['menu']] = [(key, load(value['menu_surf']))]
+                    else:
+                        self.menu_surfs[value['menu']].append((key, load(value['menu_surf'])))
                 else:
-                    self.menu_surfs[value['menu']].append((key, load(value['menu_surf'])))
+                    terrain_choices = []
+                    for image in value['menu_surf']:
+                        terrain_choices.append(load(image))
+                    if not value['menu'] in self.menu_surfs:
+                        self.menu_surfs[value['menu']] = [(key, terrain_choices)]
+                    else:
+                        self.menu_surfs[value['menu']].append((key, terrain_choices))
         
     def create_buttons(self):
         size = 180
-        margin = 6
         self.rect = pygame.Rect((10, 10), (1270, size))
 
         # button areas
@@ -56,6 +67,12 @@ class Menu:
                         sprite.main_active = not sprite.main_active
                 if mouse_button[2]: #right click
                     sprite.switch()
+                if mouse_button[0] and self.terrain_button_rect.collidepoint(mouse_pos):
+                    if sprite.land_index < len(sprite.items['main'][sprite.get_id() - 2][1]) - 1:
+                        sprite.land_index += 1
+                    else:
+                        sprite.land_index = 0
+
 
                 return sprite.get_id()
         
@@ -89,6 +106,9 @@ class Button(pygame.sprite.Sprite):
         self.image = pygame.Surface(rect.size)
         self.rect = rect
 
+        # terrain_current_choices
+        self.land_index = 0
+
         #items
         self.items = {'main': items, 'alt': items_alt}
         self.index = 0
@@ -98,6 +118,7 @@ class Button(pygame.sprite.Sprite):
         return self.items['main' if self.main_active else 'alt'][self.index][0]
     
     def switch(self):
+        self.land_index = 0
         self.index += 1
         self.index = 0 if self.index >= len(self.items['main' if self.main_active else 'alt']) else self.index
 
@@ -105,6 +126,9 @@ class Button(pygame.sprite.Sprite):
 
     def update(self):
         self.image.fill(MM_BUT_COLOR)
-        surf = self.items['main' if self.main_active else 'alt'][self.index][1]
+        if type(self.items['main' if self.main_active else 'alt'][self.index][1]) != list: 
+            surf = self.items['main' if self.main_active else 'alt'][self.index][1]
+        else:
+            surf = self.items['main' if self.main_active else 'alt'][self.index][1][self.land_index]
         rect = surf.get_rect(center = (self.rect.width / 2, self.rect.height / 2))
         self.image.blit(surf, rect)

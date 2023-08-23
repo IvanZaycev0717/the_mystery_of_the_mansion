@@ -36,6 +36,8 @@ BLACK_GRAY = '#11151C'
 LINE_COLOR = '#f8ff2e'
 ORIGIN_COLOR = 'yellow'
 
+
+
 # Словарь ассетов к игре
 EDITOR_DATA = {
 
@@ -67,7 +69,18 @@ EDITOR_DATA = {
         'style': 'common',
         'type': 'tile',
         'menu': 'common',
-        'menu_surf': 'images/menu/com_tile.png',
+        'menu_surf': (
+            'images/tile/common/1.png',
+            'images/tile/common/2.png',
+            'images/tile/common/3.png',
+            'images/tile/common/4.png',
+            'images/tile/common/5.png',
+            'images/tile/common/6.png',
+            'images/tile/common/7.png',
+            'images/tile/common/8.png',
+            'images/tile/common/9.png',
+            'images/tile/common/10.png',
+            ),
         'preview': 'images/preview/com_tile.png',
         'graphics': None
     },
@@ -76,7 +89,15 @@ EDITOR_DATA = {
         'style': 'common',
         'type': 'tile',
         'menu': 'common',
-        'menu_surf': 'images/menu/cem_tile.png',
+        'menu_surf': (
+            'images/tile/cementry/1.png',
+            'images/tile/cementry/2.png',
+            'images/tile/cementry/3.png',
+            'images/tile/cementry/4.png',
+            'images/tile/cementry/5.png',
+            'images/tile/cementry/6.png',
+            'images/tile/cementry/7.png',
+            ),
         'preview': 'images/preview/cem_tile.png',
         'graphics': None
     },
@@ -85,7 +106,15 @@ EDITOR_DATA = {
         'style': 'common',
         'type': 'tile',
         'menu': 'common',
-        'menu_surf': 'images/menu/heav_tile.png',
+        'menu_surf': (
+            'images/tile/heaven/1.png',
+            'images/tile/heaven/2.png',
+            'images/tile/heaven/3.png',
+            'images/tile/heaven/4.png',
+            'images/tile/heaven/5.png',
+            'images/tile/heaven/6.png',
+            'images/tile/heaven/7.png',
+            ),
         'preview': 'images/preview/heav_tile.png',
         'graphics': None
     },
@@ -94,7 +123,15 @@ EDITOR_DATA = {
         'style': 'common',
         'type': 'tile',
         'menu': 'common',
-        'menu_surf': 'images/menu/des_tile.png',
+        'menu_surf': (
+            'images/tile/desert/1.png',
+            'images/tile/desert/2.png',
+            'images/tile/desert/3.png',
+            'images/tile/desert/4.png',
+            'images/tile/desert/5.png',
+            'images/tile/desert/6.png',
+            'images/tile/desert/7.png',
+            ),
         'preview': 'images/preview/des_tile.png',
         'graphics': None
     },
@@ -103,7 +140,15 @@ EDITOR_DATA = {
         'style': 'common',
         'type': 'tile',
         'menu': 'common',
-        'menu_surf': 'images/menu/gar_tile.png',
+        'menu_surf': (
+            'images/tile/garden/1.png',
+            'images/tile/garden/2.png',
+            'images/tile/garden/3.png',
+            'images/tile/garden/4.png',
+            'images/tile/garden/5.png',
+            'images/tile/garden/6.png',
+            'images/tile/garden/7.png',
+            ),
         'preview': 'images/preview/gar_tile.png',
         'graphics': None
     },
@@ -112,7 +157,15 @@ EDITOR_DATA = {
         'style': 'common',
         'type': 'tile',
         'menu': 'common',
-        'menu_surf': 'images/menu/poison_tile.png',
+        'menu_surf': (
+            'images/tile/poison/1.png',
+            'images/tile/poison/2.png',
+            'images/tile/poison/3.png',
+            'images/tile/poison/4.png',
+            'images/tile/poison/5.png',
+            'images/tile/poison/6.png',
+            'images/tile/poison/7.png',
+            ),
         'preview': 'images/preview/poison_tile.png',
         'graphics': None
     },
@@ -121,7 +174,11 @@ EDITOR_DATA = {
         'style': 'common',
         'type': 'tile',
         'menu': 'common',
-        'menu_surf': 'images/menu/floor_tile.png',
+        'menu_surf': (
+            'images/tile/floor/1.png',
+            'images/tile/floor/2.png',
+            'images/tile/floor/3.png',
+            ),
         'preview': 'images/preview/floor_tile.png',
         'graphics': None
     },

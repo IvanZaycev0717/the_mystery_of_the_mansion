@@ -43,7 +43,13 @@ class Main:
 
 
     def imports(self):
-        self.land_tiles = import_folder_dict('images/tile/common')
+        self.land_tiles = {}
+        for key, value in EDITOR_DATA.items():
+            if 2 <= key <= 8:
+                data = []
+                for image in value['menu_surf']:
+                    data.append(load(image))
+                self.land_tiles[key] = data
 
 
     def run(self):
