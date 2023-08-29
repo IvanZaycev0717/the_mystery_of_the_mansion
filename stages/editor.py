@@ -1,3 +1,4 @@
+from random import choice, randint
 import pygame, sys
 from pygame.math import Vector2 as vector
 from pygame.mouse import get_pressed as mouse_buttons
@@ -6,16 +7,25 @@ from settings import *
 from menu import Menu
 from pygame.image import load
 from img_imports import import_folder
+import timer
 
 class Editor:
     """Игра в режиме редактора, для создания данных для уровней."""
-    def __init__(self, land_tiles):
+    def __init__(self, land_tiles, switch):
         self.display_surface = pygame.display.get_surface()
         self.canvas_data = {}
+        self.switch = switch
 
         # imports
         self.land_tiles = land_tiles
         self.imports()
+
+         # clouds
+        self.current_clouds = []
+        self.cloud_surf = import_folder('images/clouds')
+        self.cloud_timer = pygame.USEREVENT + 1
+        pygame.time.set_timer(self.cloud_timer, 2000)
+        self.startup_clouds()
 
         # Навигация
         self.origin = vector()
@@ -27,6 +37,7 @@ class Editor:
         self.support_line_surf.set_colorkey('yellow')
         self.support_line_surf.set_alpha(5)
 
+    
         # Индекс выбора
         self.selection_index = 2
         self.current_land_tile = 2
@@ -36,12 +47,18 @@ class Editor:
         self.has_saved = False
         self.has_loaded = False
 
+        # Timer obj
+        
+
         # menu instance
         self.menu = Menu()
 
         # objects
         self.canvas_objects = pygame.sprite.Group()
+        self.background = pygame.sprite.Group()
+        self.foreground = pygame.sprite.Group()
         self.object_drag_active = False
+        self.object_timer = timer.Timer(1000)
 
         self.common_tile_id = 1
 
@@ -51,7 +68,7 @@ class Editor:
             frames=self.animations[0]['frames'],
             tile_id=0,
             origin=self.origin,
-            group=self.canvas_objects)
+            group = [self.canvas_objects, self.foreground])
         
         # Sky
         self.sky_handle = CanvasObjects(
@@ -59,8 +76,7 @@ class Editor:
             frames=[self.sky_handle_surf],
             tile_id=1,
             origin=self.origin,
-            group=self.canvas_objects
-        )
+            group = [self.canvas_objects, self.background])
 
     def imports(self):
         self.sky_handle_surf = load('images/main_menu/up.png').convert_alpha()
@@ -76,8 +92,8 @@ class Editor:
 				}
 
 
-    def get_current_cell(self):
-        distance_to_origin = vector(mouse_pos()) - self.origin
+    def get_current_cell(self, obj=None):
+        distance_to_origin = vector(mouse_pos()) - self.origin if not obj else vector(obj.distance_to_origin) - self.origin
 
         if distance_to_origin.x > 0:
             col = int(distance_to_origin.x / TILE_SIZE)
@@ -103,12 +119,19 @@ class Editor:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                self.switch(self.create_grid())
+
             self.pan_input(event)
             self.selection_hotkeys(event)
             self.menu_click(event)
+
             self.object_drag(event)
+
             self.canvas_add()
             self.canvas_remove()
+
+            self.create_clouds(event)
 
 
     def pan_input(self, event):
@@ -133,7 +156,15 @@ class Editor:
         # Обновление ввода
         if self.pan_active:
             self.origin = vector(mouse_pos()) - self.pan_offset
+            
+            for sprite in self.canvas_objects:
+                sprite.pan_pos(self.origin)
     
+    def mouse_on_object(self):
+        for sprite in self.canvas_objects:
+            if sprite.rect.collidepoint(mouse_pos()):
+                return sprite
+
     # selection hotkeys
     def selection_hotkeys(self, event):
         if event.type == pygame.KEYDOWN:
@@ -181,15 +212,25 @@ class Editor:
                 
                     self.last_selected_cell = current_cell
             else:
-                CanvasObjects(
-                    pos=mouse_pos(),
-                    frames=self.animations[self.selection_index]['frames'],
-                    tile_id = self.selection_index,
-                    origin=self.origin,
-                    group=self.canvas_objects)
+                if not self.object_timer.active:
+                    if EDITOR_DATA[self.selection_index]['style'] == 'activator' or EDITOR_DATA[self.selection_index]['style'] == 'static':
+                        groups = [self.canvas_objects, self.background]
+                        CanvasObjects(
+                            pos=mouse_pos(),
+                            frames=self.animations[self.selection_index]['frames'],
+                            tile_id = self.selection_index,
+                            origin=self.origin,
+                            group=groups)
+                        self.object_timer.activate()
 
     def canvas_remove(self):
         if mouse_buttons()[2] and not self.menu.rect.collidepoint(mouse_pos()):
+
+            selected_object = self.mouse_on_object()
+            if selected_object:
+                if EDITOR_DATA[selected_object.tile_id]['style'] not in ('player', 'sky'):
+                    selected_object.kill()
+
             if self.canvas_data:
                 current_cell = self.get_current_cell()
                 if current_cell in self.canvas_data:
@@ -234,6 +275,7 @@ class Editor:
             self.display_surface.blit(self.support_line_surf, (0, 0))
     
     def draw_level(self):
+        self.background.draw(self.display_surface)
         for cell_pos, tile in self.canvas_data.items():
             pos = self.origin + vector(cell_pos) * TILE_SIZE
 
@@ -265,21 +307,145 @@ class Editor:
                 rect = surf.get_rect(midbottom = (pos[0] + TILE_SIZE // 2, pos[1] + TILE_SIZE))
                 self.display_surface.blit(surf, rect)
         
-        self.canvas_objects.draw(self.display_surface)
+        self.foreground.draw(self.display_surface)
+
+    def preview(self):
+        selected_object = self.mouse_on_object()
+        if not self.menu.rect.collidepoint(mouse_pos()):
+            if selected_object:
+                rect = selected_object.rect.inflate(10,10)
+                color = 'black'
+                width = 3
+                size = 15
+
+				# topleft
+                pygame.draw.lines(self.display_surface, color, False, ((rect.left,rect.top + size), rect.topleft, (rect.left + size,rect.top)), width)
+				#topright
+                pygame.draw.lines(self.display_surface, color, False, ((rect.right - size,rect.top), rect.topright, (rect.right,rect.top + size)), width)
+				# bottomright
+                pygame.draw.lines(self.display_surface, color, False, ((rect.right - size, rect.bottom), rect.bottomright, (rect.right,rect.bottom - size)), width)
+				# bottomleft
+                pygame.draw.lines(self.display_surface, color, False, ((rect.left,rect.bottom - size), rect.bottomleft, (rect.left + size,rect.bottom)), width)
+
+    
+    def display_sky(self, dt):
+        self.display_surface.fill(SKY_COLOR)
+        y = self.sky_handle.rect.centery
+
+		# horizon lines
+        if y > 0:	
+            horizon_rect1 = pygame.Rect(0,y - 10,WINDOW_WIDTH,10)
+            horizon_rect2 = pygame.Rect(0,y - 16,WINDOW_WIDTH,4)
+            horizon_rect3 = pygame.Rect(0,y - 20,WINDOW_WIDTH,2)
+            pygame.draw.rect(self.display_surface, HORIZON_TOP_COLOR, horizon_rect1)
+            pygame.draw.rect(self.display_surface, HORIZON_TOP_COLOR, horizon_rect2)
+            pygame.draw.rect(self.display_surface, HORIZON_TOP_COLOR, horizon_rect3)
+
+            self.display_clouds(dt, y)
+		# sea 
+        if 0 < y < WINDOW_HEIGHT:
+            sea_rect = pygame.Rect(0,y,WINDOW_WIDTH,WINDOW_HEIGHT)
+            pygame.draw.rect(self.display_surface, SEA_COLOR, sea_rect)
+            pygame.draw.line(self.display_surface, HORIZON_COLOR, (0,y), (WINDOW_WIDTH,y),3)
+        if y < 0:
+            self.display_surface.fill(SEA_COLOR)
+
+    def display_clouds(self, dt, horizon_y):
+        for cloud in self.current_clouds:
+            cloud['pos'][0] -= cloud['speed'] * dt
+            x = cloud['pos'][0]
+            y = horizon_y - cloud['pos'][1]
+            self.display_surface.blit(cloud['surf'], (x,y))
+
+    def create_clouds(self, event):
+        if event.type == self.cloud_timer:
+            surf = choice(self.cloud_surf)
+            surf = pygame.transform.scale2x(surf) if randint(0,4) < 2 else surf
+            pos = [WINDOW_WIDTH + randint(50,100),randint(0,WINDOW_HEIGHT)]
+            self.current_clouds.append({'surf': surf, 'pos': pos, 'speed': randint(20,50)})
+            self.current_clouds = [cloud for cloud in self.current_clouds if cloud['pos'][0] > -400]
+
+    def startup_clouds(self):
+        for i in range(10):
+            surf = pygame.transform.scale2x(choice(self.cloud_surf)) if randint(0,4) < 2 else choice(self.cloud_surf)
+            pos = [randint(0, WINDOW_WIDTH),randint(0, WINDOW_HEIGHT)]
+            self.current_clouds.append({'surf': surf, 'pos': pos, 'speed': randint(20,50)})
+
+    def create_grid(self):
+        for tile in self.canvas_data.values():
+            tile.objects = []
+        
+        for obj in self.canvas_objects:
+            current_cell = self.get_current_cell(obj)
+            offset = vector(obj.distance_to_origin) - (vector(current_cell) * TILE_SIZE)
+
+            if current_cell in self.canvas_data:
+                self.canvas_data[current_cell].add_id(obj.tile_id, offset)
+            else: 
+                self.canvas_data[current_cell] = CanvasTile(obj.tile_id, offset)
+        
+        layers = {
+            'common': {},
+            'enemy': {},
+            'key': {},
+            'gear': {},
+            'static': {},
+            'activators': {},
+            'fg objects': {},
+        }
+
+        left = sorted(self.canvas_data.keys(), key = lambda tile: tile[0])[0][0]
+        top = sorted(self.canvas_data.keys(), key = lambda tile: tile[1])[0][1]
+
+
+        # fill the grid
+        for tile_pos, tile in self.canvas_data.items():
+            row_adjusted = tile_pos[1] - top
+            col_adjusted = tile_pos[0] - left
+            x = col_adjusted * TILE_SIZE
+            y = row_adjusted * TILE_SIZE
+
+            if tile.has_terrain:
+                layers['common'][x, y] = tile.has_terrain, tile.terrain_id
+            
+            if tile.enemy:
+                layers['enemy'][x, y] = tile.enemy
+            
+            if tile.key:
+                layers['key'][x, y] = tile.key
+            
+            if tile.gear:
+                layers['gear'][x, y] = tile.gear
+            
+            if tile.objects:
+                for obj, offset in tile.objects:
+                    if obj in [key for key, value in EDITOR_DATA.items() if value['style'] == 'activator']:
+                        layers['activators'][(int(x + offset.x), int(y + offset.y))] = obj
+                    elif obj in [key for key, value in EDITOR_DATA.items() if value['style'] == 'static']:
+                        layers['static'][(int(x + offset.x), int(y + offset.y))] = obj
+                    else:
+                        layers['fg objects'][int(x + offset.x), int(y + offset.y)] = obj
+        return layers
+                    
+
 
     def run(self, dt):
+        self.event_loop()
+
         self.animation_update(dt)
         self.canvas_objects.update(dt)
+        self.object_timer.update()
 
-        self.event_loop()
+       
         self.display_surface.fill('gray')
+        self.display_sky(dt)
         self.draw_level()
         self.draw_tile_lines()
         pygame.draw.circle(self.display_surface, ORIGIN_COLOR, self.origin, 8)
         self.menu.display(self.selection_index)
 
 class CanvasTile:
-    def __init__(self, tile_id, terrain_id=0):
+    def __init__(self, tile_id, terrain_id=0, offset=vector()):
 
         # terrain
         self.has_terrain = None
@@ -300,17 +466,20 @@ class CanvasTile:
         # objects
         self.objects = []
 
-        self.add_id(tile_id)
+        self.add_id(tile_id, offset = offset)
 
         self.is_empty = False
     
-    def add_id(self, tile_id):
+    def add_id(self, tile_id, offset=vector()):
         options = {key: value['style'] for key, value in EDITOR_DATA.items()}
         match options[tile_id]:
             case 'common': self.has_terrain = tile_id
             case 'enemy': self.enemy = tile_id
             case 'key': self.key = tile_id
             case 'gear': self.gear = tile_id
+            case _:
+                if (tile_id, offset) not in self.objects:
+                    self.objects.append((tile_id, offset))
         
 
     def remove_id(self, tile_id):

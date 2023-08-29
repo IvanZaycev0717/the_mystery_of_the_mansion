@@ -1,11 +1,13 @@
 import pygame, sys
 from pygame.image import load
 import os
+from pygame.math import Vector2 as vector
 
 
 from settings import *
 from author import Author
 from editor import Editor
+from level import Level
 from lang_choice import LangChoice
 from main_menu import MainMenu
 from img_imports import import_folder_dict
@@ -20,13 +22,16 @@ class Main:
         self.title = pygame.display.set_caption(TITLE)
         # self.icon = pygame.display.set_icon(pygame.image.load(ICON_PATH))
         self.clock = pygame.time.Clock()
-        self.imports()
+        self.land_tiles = self.imports()
+
 
         # Экземпляры классов соответсвующих уровней
-        self.editor = Editor(self.land_tiles)
         self.author = Author()
         self.lang_choice = LangChoice()
         self.main_menu = MainMenu()
+        self.editor_active = True
+        self.transition = Transition(self.toggle)
+        self.editor = Editor(self.land_tiles, self.switch)
 
         # Выбор стадии игры
         self.stage = 0
@@ -43,31 +48,70 @@ class Main:
 
 
     def imports(self):
-        self.land_tiles = {}
+        land_tiles = {}
         for key, value in EDITOR_DATA.items():
             if 2 <= key <= 8:
                 data = []
                 for image in value['menu_surf']:
                     data.append(load(image))
-                self.land_tiles[key] = data
+                land_tiles[key] = data
+        return land_tiles
 
+    def toggle(self):
+        self.editor_active = not self.editor_active
+
+    def switch(self, grid = None): 
+        self.transition.active = True
+        if grid:
+            self.level = Level(grid, self.switch, {'land': self.land_tiles})
 
     def run(self):
         while True:
             dt = self.clock.tick() / 1000
             # Switching stages
-            match self.stage:
-                case 0: self.editor.run(dt)
-                case 1: self.stage = self.author.run()
-                case 2:
-                    if not os.path.isfile(self.file_path):
-                        self.lang_choice.run(dt)
-                    else:
-                        self.stage = 3
-                case 3:
-                    self.stage = self.main_menu.run(dt)
+            if self.editor_active:
+                self.editor.run(dt)
+            else:
+                 self.level.run(dt)
+            self.transition.display(dt)
+            # match self.stage:
+            #     case 0: self.editor.run(dt)
+            #     case 1: self.stage = self.author.run()
+            #     case 2:
+            #         if not os.path.isfile(self.file_path):
+            #             self.lang_choice.run(dt)
+            #         else:
+            #             self.stage = 3
+            #     case 3:
+            #         self.stage = self.main_menu.run(dt)
 
             pygame.display.update()
+
+
+class Transition:
+	def __init__(self, toggle):
+		self.display_surface = pygame.display.get_surface()
+		self.toggle = toggle
+		self.active = False
+
+		self.border_width = 0
+		self.direction = 1
+		self.center = (WINDOW_WIDTH /2, WINDOW_HEIGHT / 2)
+		self.radius = vector(self.center).magnitude()
+		self.threshold = self.radius + 100
+
+	def display(self, dt):
+		if self.active:
+			self.border_width += 1000 * dt * self.direction
+			if self.border_width >= self.threshold:
+				self.direction = -1
+				self.toggle()
+			
+			if self.border_width < 0:
+				self.active = False
+				self.border_width = 0
+				self.direction = 1
+			pygame.draw.circle(self.display_surface, 'black',self.center, self.radius, int(self.border_width))
 
 if __name__ == '__main__':
     main = Main()

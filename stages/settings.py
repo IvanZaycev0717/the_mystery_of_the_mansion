@@ -36,7 +36,11 @@ BLACK_GRAY = '#11151C'
 LINE_COLOR = '#f8ff2e'
 ORIGIN_COLOR = 'yellow'
 
-
+#ENVOIREMENT BACKGROUNG
+SKY_COLOR = '#abdbe3'
+HORIZON_TOP_COLOR = '#eeeee4'
+SEA_COLOR = '#76b5c5'
+HORIZON_COLOR = '#FFFAFA'
 
 # Словарь ассетов к игре
 EDITOR_DATA = {
