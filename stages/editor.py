@@ -415,7 +415,7 @@ class Editor:
                 layers['key'][x, y] = tile.key
             
             if tile.gear:
-                layers['gear'][x, y] = tile.gear
+                layers['gear'][(x + TILE_SIZE // 2, y + TILE_SIZE // 2)] = tile.gear
             
             if tile.objects:
                 for obj, offset in tile.objects:
