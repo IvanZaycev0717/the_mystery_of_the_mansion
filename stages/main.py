@@ -101,7 +101,7 @@ class Main:
 
         # heaven enemies
         self.angel = {folder: import_folder(f'images/enemies/heaven/angel/{folder}') for folder in (list(os.walk('images/enemies/heaven/angel/')))[0][1]}
-        self.harp = {folder: import_folder(f'images/enemies/heaven/harp/{folder}') for folder in (list(os.walk('images/enemies/heaven/harp/')))[0][1]}
+        self.harp = import_folder('images/enemies/heaven/harp/')
         self.scrolls = import_folder('images/enemies/heaven/scrolls/')
         self.heav_spikes = load('images/enemies/heaven/spikes/1.png').convert_alpha()
 

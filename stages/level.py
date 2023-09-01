@@ -1,11 +1,10 @@
-from pprint import pprint
 import pygame, sys 
 from pygame.math import Vector2 as vector
 
 from settings import *
 from img_imports import *
 
-from sprites import Activator, Animated, Generic, Player, Key, Gear, Taken
+from sprites import *
 
 class Level:
 	def __init__(self, grid, switch, asset_dict):
@@ -16,6 +15,7 @@ class Level:
 		self.all_sprites = pygame.sprite.Group()
 		self.keys_sprites = pygame.sprite.Group()
 		self.gear_sprites = pygame.sprite.Group()
+		self.enemies_sprites = pygame.sprite.Group()
 		self.activator_sprites = pygame.sprite.Group()
 
 		self.build_level(grid, asset_dict)
@@ -27,9 +27,24 @@ class Level:
 			for pos, data in layer.items():
 				if layer_name == 'common':
 					Generic(pos, asset_dict['land'][data[0]][data[1]], self.all_sprites)
-				pprint(asset_dict)
 				match data:
 					case 0: self.player = Player(pos, self.all_sprites)
+					case 9: Angel(asset_dict['angel'], pos, [self.all_sprites, self.enemies_sprites])
+					case 10: FlyingEnemy(asset_dict['bat'], pos, [self.all_sprites, self.enemies_sprites])
+					case 11: Bird(asset_dict['bird'], pos, [self.all_sprites, self.enemies_sprites])
+					case 12: FlyingEnemy(asset_dict['bug'], pos, [self.all_sprites, self.enemies_sprites])
+					case 13: Camel(pos, asset_dict['camel'], self.all_sprites )
+					case 14: Spikes(asset_dict['cem_spikes'], pos, [self.all_sprites, self.enemies_sprites])
+					case 15: FlyingEnemy(asset_dict['disputes'], pos, [self.all_sprites, self.enemies_sprites])
+					case 16: Fire(asset_dict['fire'], pos, [self.all_sprites, self.enemies_sprites])
+					case 17: Spikes(asset_dict['gar_spikes'], pos, [self.all_sprites, self.enemies_sprites])
+					case 18: Goat(asset_dict['goat'], pos, [self.all_sprites, self.enemies_sprites])
+					case 19: Harp(asset_dict['harp'], pos, self.all_sprites)
+					case 20: Spikes(asset_dict['heav_spikes'], pos, [self.all_sprites, self.enemies_sprites])
+					case 21: WalkingEnemies(asset_dict['hedgehog'], pos, self.all_sprites)
+					case 22: FlyingEnemy(asset_dict['scrolls'], pos, [self.all_sprites, self.enemies_sprites])
+					case 23: Slime(asset_dict['slime'], pos, [self.all_sprites, self.enemies_sprites])
+					case 24: Wasp(pos, asset_dict['wasp'], [self.all_sprites, self.enemies_sprites])
 					case 25: Key('green', asset_dict['green_key'], pos, [self.all_sprites, self.keys_sprites])
 					case 26: Key('hammer', asset_dict['hammer'], pos, [self.all_sprites, self.keys_sprites])
 					case 27: Key('pink', asset_dict['pink_key'], pos, [self.all_sprites, self.keys_sprites])
