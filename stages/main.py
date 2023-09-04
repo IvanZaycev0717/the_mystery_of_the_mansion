@@ -24,6 +24,11 @@ class Main:
         self.clock = pygame.time.Clock()
         self.imports()
 
+        # folders
+        self.path = os.path.dirname(os.path.abspath(__file__))
+        self.lang_file = 'lang.txt'
+        self.file_path = os.path.join(self.path, self.lang_file)
+
 
         # Экземпляры классов соответсвующих уровней
         self.author = Author()
@@ -31,15 +36,12 @@ class Main:
         self.main_menu = MainMenu()
         self.editor_active = True
         self.transition = Transition(self.toggle)
-        self.editor = Editor(self.land_tiles, self.switch)
+        self.editor = Editor(self.land_tiles, self.switch, self.file_path)
 
         # Выбор стадии игры
         self.stage = 0
 
-        # folders
-        self.path = os.path.dirname(os.path.abspath(__file__))
-        self.lang_file = 'lang.txt'
-        self.file_path = os.path.join(self.path, self.lang_file)
+        
 
         # Замена курсора в игре
         surf = load('images/cursors/cursor.png').convert_alpha()
@@ -109,6 +111,9 @@ class Main:
         self.disputes = import_folder('images/enemies/poison/disputes/')
         self.slime = import_folder('images/enemies/poison/slime/')
 
+        # player
+        self.player_graphics = {folder: import_folder(f'images/player/{folder}') for folder in (list(os.walk('images/player/')))[0][1]}
+
 
     def toggle(self):
         self.editor_active = not self.editor_active
@@ -150,6 +155,7 @@ class Main:
                  'heav_spikes': self.heav_spikes,
                  'disputes': self.disputes,
                  'slime': self.slime,
+                 'player': self.player_graphics,
                  })
 
     def run(self):
@@ -171,7 +177,6 @@ class Main:
             #             self.stage = 3
             #     case 3:
             #         self.stage = self.main_menu.run(dt)
-
             pygame.display.update()
 
 

@@ -1,4 +1,9 @@
 from random import choice, randint
+import tkinter as tk
+from tkinter import filedialog
+import pickle
+import os
+
 import pygame, sys
 from pygame.math import Vector2 as vector
 from pygame.mouse import get_pressed as mouse_buttons
@@ -11,10 +16,15 @@ import timer
 
 class Editor:
     """Игра в режиме редактора, для создания данных для уровней."""
-    def __init__(self, land_tiles, switch):
+    def __init__(self, land_tiles, switch, file_path):
         self.display_surface = pygame.display.get_surface()
         self.canvas_data = {}
         self.switch = switch
+
+        #tkinter window
+        self.dialog = tk.Tk()
+        self.dialog.withdraw()
+        self.game_directory = os.path.dirname(file_path)
 
         # imports
         self.land_tiles = land_tiles
@@ -26,6 +36,7 @@ class Editor:
         self.cloud_timer = pygame.USEREVENT + 1
         pygame.time.set_timer(self.cloud_timer, 2000)
         self.startup_clouds()
+
 
         # Навигация
         self.origin = vector()
@@ -44,8 +55,6 @@ class Editor:
         self.last_selected_cell = None
         self.selection_terrain = 0
 
-        self.has_saved = False
-        self.has_loaded = False
 
         # Timer obj
         
@@ -172,19 +181,32 @@ class Editor:
                 self.selection_index += 1
             if event.key == pygame.K_LEFT:
                 self.selection_index -= 1
-        self.selection_index = max(2, min(self.selection_index, 106))
+        self.selection_index = max(2, min(self.selection_index, 107))
         if self.selection_index == 105:
             self.loading_data()
         if self.selection_index == 106:
             self.saving_data()
     
     def loading_data(self):
-        print('LOADING')
-        return
+        self.selection_index = 107
+        self.file_path = filedialog.askopenfilename(filetypes=(
+                        ("Bin-файл", "*.bin"),
+                        ("All files", "*.*"),
+                    ), initialdir=self.game_directory)
+        if self.file_path:
+            with open(self.file_path, 'rb') as file:
+                load_data = pickle.load(file)
+            self.canvas_data = load_data
     
     def saving_data(self):
-        print('SAVING')
-        return
+        self.selection_index = 107
+        self.file_path = filedialog.asksaveasfilename(filetypes=(
+                        ("Bin-файл", "*.bin"),
+                        ("All files", "*.*"),
+                    ), initialfile='area1.bin', initialdir=self.game_directory)
+        if self.file_path:
+            with open(self.file_path, 'wb') as file:
+                pickle.dump(self.canvas_data, file)
 
     def menu_click(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and self.menu.rect.collidepoint(mouse_pos()):
@@ -459,9 +481,6 @@ class CanvasTile:
         self.gear = None
         self.static = None
         self.activator = None
-
-        self.load = None
-        self.save = None
 
         # objects
         self.objects = []

@@ -17,6 +17,7 @@ class Level:
 		self.gear_sprites = pygame.sprite.Group()
 		self.enemies_sprites = pygame.sprite.Group()
 		self.activator_sprites = pygame.sprite.Group()
+		self.collision_sprites = pygame.sprite.Group()
 
 		self.build_level(grid, asset_dict)
 
@@ -26,9 +27,9 @@ class Level:
 		for layer_name, layer in grid.items():
 			for pos, data in layer.items():
 				if layer_name == 'common':
-					Generic(pos, asset_dict['land'][data[0]][data[1]], self.all_sprites)
+					Generic(pos, asset_dict['land'][data[0]][data[1]], [self.all_sprites, self.collision_sprites])
 				match data:
-					case 0: self.player = Player(pos, self.all_sprites)
+					case 0: self.player = Player(pos, asset_dict['player'], self.all_sprites, self.collision_sprites)
 					case 9: Angel(asset_dict['angel'], pos, [self.all_sprites, self.enemies_sprites])
 					case 10: FlyingEnemy(asset_dict['bat'], pos, [self.all_sprites, self.enemies_sprites])
 					case 11: Bird(asset_dict['bird'], pos, [self.all_sprites, self.enemies_sprites])
@@ -165,5 +166,4 @@ class Level:
 		self.get_keys()
 		self.get_gears()
 		self.display_surface.fill(SKY_COLOR)
-		self.all_sprites.update(dt)
 		self.all_sprites.draw(self.display_surface)

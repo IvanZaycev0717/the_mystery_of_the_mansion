@@ -3,6 +3,7 @@ TITLE = 'The Mystery of the Mansion'
 ICON_PATH = 'images/icons/logo.png'
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
+FPS = 120
 
 # Данные автора
 GIT_HUB = 'github.com/IvanZaycev0717'
@@ -1077,5 +1078,15 @@ EDITOR_DATA = {
         'menu_surf': 'images/menu/save.png',
         'preview': None,
         'graphics': None
-    }
+    },
+
+    107: {
+        'style': 'nothing',
+        'type': None,
+        'menu': 'nothing',
+        'menu_surf': 'images/menu/save.png',
+        'preview': None,
+        'graphics': None
+    },
+
 }
