@@ -43,6 +43,13 @@ HORIZON_TOP_COLOR = '#eeeee4'
 SEA_COLOR = '#76b5c5'
 HORIZON_COLOR = '#FFFAFA'
 
+LEVEL_LAYERS = {
+	'clouds': 1,
+	'ocean': 2,
+	'bg': 3,
+	'main': 4
+}
+
 # Словарь ассетов к игре
 EDITOR_DATA = {
 
@@ -1081,12 +1088,22 @@ EDITOR_DATA = {
     },
 
     107: {
-        'style': 'nothing',
+        'style': 'level_save',
         'type': None,
-        'menu': 'nothing',
-        'menu_surf': 'images/menu/save.png',
+        'menu': 'level_save',
+        'menu_surf': 'images/menu/levelsave.png',
         'preview': None,
         'graphics': None
     },
+
+    108: {
+        'style': 'none',
+        'type': None,
+        'menu': 'none',
+        'menu_surf': 'images/menu/none.png',
+        'preview': None,
+        'graphics': None
+    },
+
 
 }

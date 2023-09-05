@@ -95,6 +95,7 @@ class Main:
         self.fire = import_folder('images/enemies/desert/fire/')
         self.bird = {folder: import_folder(f'images/enemies/desert/fire_bird/{folder}') for folder in (list(os.walk('images/enemies/desert/fire_bird/')))[0][1]}
         self.goat =  {folder: import_folder(f'images/enemies/desert/goat/{folder}') for folder in (list(os.walk('images/enemies/desert/goat/')))[0][1]}
+        self.splutter = load('images/enemies/desert/splutter/1.png').convert_alpha()
         
         # garden enemies
         self.hedgehog = import_folder('images/enemies/garden/hedgehog/')
@@ -106,6 +107,7 @@ class Main:
         self.harp = import_folder('images/enemies/heaven/harp/')
         self.scrolls = import_folder('images/enemies/heaven/scrolls/')
         self.heav_spikes = load('images/enemies/heaven/spikes/1.png').convert_alpha()
+        self.arrow = load('images/enemies/heaven/arrow/1.png').convert_alpha()
 
         # poison
         self.disputes = import_folder('images/enemies/poison/disputes/')
@@ -156,6 +158,8 @@ class Main:
                  'disputes': self.disputes,
                  'slime': self.slime,
                  'player': self.player_graphics,
+                 'splutter': self.splutter,
+                 'arrow': self.arrow,
                  })
 
     def run(self):

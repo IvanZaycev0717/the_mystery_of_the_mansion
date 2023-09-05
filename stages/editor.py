@@ -181,14 +181,20 @@ class Editor:
                 self.selection_index += 1
             if event.key == pygame.K_LEFT:
                 self.selection_index -= 1
-        self.selection_index = max(2, min(self.selection_index, 107))
+        self.selection_index = max(2, min(self.selection_index, 108))
         if self.selection_index == 105:
             self.loading_data()
         if self.selection_index == 106:
             self.saving_data()
+        if self.selection_index == 107:
+            self.save_level()
+    
+    def save_level(self):
+        self.selection_index = 108
+        print('Saved')
     
     def loading_data(self):
-        self.selection_index = 107
+        self.selection_index = 108
         self.file_path = filedialog.askopenfilename(filetypes=(
                         ("Bin-файл", "*.bin"),
                         ("All files", "*.*"),
@@ -199,7 +205,7 @@ class Editor:
             self.canvas_data = load_data
     
     def saving_data(self):
-        self.selection_index = 107
+        self.selection_index = 108
         self.file_path = filedialog.asksaveasfilename(filetypes=(
                         ("Bin-файл", "*.bin"),
                         ("All files", "*.*"),

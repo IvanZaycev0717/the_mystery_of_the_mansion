@@ -1,12 +1,19 @@
 import pygame
 from pygame.math import Vector2 as vector
 from settings import *
+import timer
 
 class Generic(pygame.sprite.Sprite):
-	def __init__(self, pos, surf, group):
+	def __init__(self, pos, surf, group, z=LEVEL_LAYERS['main']):
 		super().__init__(group)
 		self.image = surf
 		self.rect = self.image.get_rect(topleft = pos)
+		self.z = z
+
+class Block(Generic):
+    def __init__(self, pos, size, group):
+        surf = pygame.Surface(size)
+        super().__init__(pos, surf, group)
 
 class Player(Generic):
 	def __init__(self, pos, assets, group, collision_sprites):
@@ -128,10 +135,10 @@ class Player(Generic):
 		self.animate(dt)
 
 class Animated(Generic):
-	def __init__(self, assets, pos, group):
+	def __init__(self, assets, pos, group, z=LEVEL_LAYERS['main']):
 		self.animation_frames = assets
 		self.frame_index = 0
-		super().__init__(pos, self.animation_frames[self.frame_index], group)
+		super().__init__(pos, self.animation_frames[self.frame_index], group, z)
     
 	def animate(self, dt):
 		self.frame_index += ANIMATION_SPEED * dt
@@ -185,8 +192,49 @@ class Slime(Animated):
 		self.rect = self.image.get_rect(center=pos)
 
 class Camel(Generic):
-	def __init__(self, pos, surf, group):
+	def __init__(self, pos, surf, group, splutter_surf, enemy_sprites):
 		super().__init__(pos, surf, group)
+
+		# f*cking camel spit on me
+		self.splutter_surf = splutter_surf
+		self.has_shot = False
+		self.attack_cooldown = timer.Timer(2000)
+		self.enemy_sprites = enemy_sprites
+	
+	def animate(self, dt):
+		if not self.has_shot:
+			splutter_direction = vector(-1, 0)
+			Splutter(self.rect.center + vector(-60, -30), splutter_direction, self.splutter_surf, [self.groups(), self.enemy_sprites])
+			self.has_shot = True
+	
+	def update(self, dt):
+		self.animate(dt)
+		self.attack_cooldown.update()
+
+
+class Splutter(Generic):
+	def __init__(self, pos, direction, surf, group):
+		super().__init__(pos, surf, group)
+	
+		#movement
+		self.pos = vector(self.rect.topleft)
+		self.direction = direction
+		self.speed = 150
+
+		# self destruct
+		self.timer = timer.Timer(6000)
+		self.timer.activate()
+	
+	def update(self, dt):
+		# movement
+		self.pos.x += self.direction.x * self.speed * dt
+		self.rect.x = round(self.pos.x)
+
+        # timer
+		self.timer.update()
+		if not self.timer.active:
+			self.kill()
+
 
 class Wasp(Generic):
 	def __init__(self, pos, surf, group):
@@ -222,10 +270,60 @@ class Goat(Generic):
 		surf = self.animation_frames[f'run_{self.orientation}'][self.frame_index]
 		super().__init__(pos, surf, group)
 
-class Harp(Animated):
-	def __init__(self, assets, pos, group):
-		super().__init__(assets, pos, group)
-		self.rect = self.image.get_rect(center=pos)
+class Harp(Generic):
+	def __init__(self, assets, pos, group, arrow_surf, enemies_sprites):
+		self.animation_frames = assets
+		
+		self.frame_index = 0
+		super().__init__(pos, assets[self.frame_index], group)
+
+
+
+		# arrow
+		self.arrow_surf = arrow_surf
+		self.has_shot = False
+		self.attack_cooldown = timer.Timer(2000)
+		self.enemies_sprites = enemies_sprites
+	
+	def animate(self, dt):
+		self.frame_index += ANIMATION_SPEED * dt
+		if self.frame_index >= len(self.animation_frames):
+			self.frame_index = 0
+			if self.has_shot:
+				self.attack_cooldown.activate()
+				self.has_shot = False
+		self.image = self.animation_frames[int(self.frame_index)]
+		if not self.has_shot:
+			arrow_direction = vector(-1, 0)
+			Arrow(self.rect.center + vector(0, -10), arrow_direction, self.arrow_surf, [self.groups(), self.enemies_sprites])
+			self.has_shot = True
+	
+	def update(self, dt):
+		self.animate(dt)
+		self.attack_cooldown.update()
+
+class Arrow(Generic):
+	def __init__(self, pos, direction, surf, group):
+		super().__init__(pos, surf, group)
+	
+		#movement
+		self.pos = vector(self.rect.topleft)
+		self.direction = direction
+		self.speed = 150
+
+		# self destruct
+		self.timer = timer.Timer(6000)
+		self.timer.activate()
+
+	def update(self, dt):
+        # movement
+		self.pos.x += self.direction.x * self.speed * dt
+		self.rect.x = round(self.pos.x)
+
+        # timer
+		self.timer.update()
+		if not self.timer.active:
+			self.kill()
 
 class Bird(Generic):
 	def __init__(self, assets, pos, group):

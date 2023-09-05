@@ -43,8 +43,9 @@ class Menu:
         self.gears_button_rect = generic_button_rect.move(270,0).inflate(-button_margin, -button_margin)
         self.statics_button_rect = generic_button_rect.move(360,0).inflate(-button_margin, -button_margin)
         self.activators_button_rect = generic_button_rect.move(450, 0).inflate(-button_margin, -button_margin)
-        self.load_button_rect = generic_button_rect.move(1080, 0).inflate(-button_margin, -button_margin)
-        self.save_button_rect = generic_button_rect.move(1170, 0).inflate(-button_margin, -button_margin)
+        self.load_button_rect = generic_button_rect.move(900, 0).inflate(-button_margin, -button_margin)
+        self.save_button_rect = generic_button_rect.move(990, 0).inflate(-button_margin, -button_margin)
+        self.level_save_button = generic_button_rect.move(1170, 0).inflate(-button_margin, -button_margin)
 
 
         # create buttons
@@ -57,6 +58,7 @@ class Menu:
         Button(self.activators_button_rect, self.buttons, self.menu_surfs['activator'])
         Button(self.load_button_rect, self.buttons, self.menu_surfs['loading'])
         Button(self.save_button_rect, self.buttons, self.menu_surfs['saving'])
+        Button(self.level_save_button, self.buttons, self.menu_surfs['level_save'])
         
     def click(self, mouse_pos, mouse_button):
 
@@ -93,6 +95,8 @@ class Menu:
                 pygame.draw.rect(self.display_surface, 'pink', self.load_button_rect.inflate(4,4), 5, 4)
             if EDITOR_DATA[index]['menu'] == 'saving':
                 pygame.draw.rect(self.display_surface, 'pink', self.save_button_rect.inflate(4,4), 5, 4)
+            if EDITOR_DATA[index]['menu'] == 'level_save':
+                pygame.draw.rect(self.display_surface, 'pink', self.level_save_button.inflate(4,4), 5, 4)
             
     def display(self,index):
         self.buttons.update()

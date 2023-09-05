@@ -12,12 +12,14 @@ class Level:
 		self.switch = switch
 
 		# groups 
-		self.all_sprites = pygame.sprite.Group()
+		self.all_sprites = CameraGroup()
 		self.keys_sprites = pygame.sprite.Group()
 		self.gear_sprites = pygame.sprite.Group()
 		self.enemies_sprites = pygame.sprite.Group()
 		self.activator_sprites = pygame.sprite.Group()
 		self.collision_sprites = pygame.sprite.Group()
+		self.camel_sprites = pygame.sprite.Group()
+		self.harp_sprites = pygame.sprite.Group()
 
 		self.build_level(grid, asset_dict)
 
@@ -34,13 +36,23 @@ class Level:
 					case 10: FlyingEnemy(asset_dict['bat'], pos, [self.all_sprites, self.enemies_sprites])
 					case 11: Bird(asset_dict['bird'], pos, [self.all_sprites, self.enemies_sprites])
 					case 12: FlyingEnemy(asset_dict['bug'], pos, [self.all_sprites, self.enemies_sprites])
-					case 13: Camel(pos, asset_dict['camel'], self.all_sprites )
+					case 13: Camel(
+						pos=pos,
+						surf=asset_dict['camel'],
+						splutter_surf=asset_dict['splutter'],
+						group=[self.all_sprites, self.camel_sprites],
+						enemy_sprites= self.enemies_sprites)
 					case 14: Spikes(asset_dict['cem_spikes'], pos, [self.all_sprites, self.enemies_sprites])
 					case 15: FlyingEnemy(asset_dict['disputes'], pos, [self.all_sprites, self.enemies_sprites])
 					case 16: Fire(asset_dict['fire'], pos, [self.all_sprites, self.enemies_sprites])
 					case 17: Spikes(asset_dict['gar_spikes'], pos, [self.all_sprites, self.enemies_sprites])
 					case 18: Goat(asset_dict['goat'], pos, [self.all_sprites, self.enemies_sprites])
-					case 19: Harp(asset_dict['harp'], pos, self.all_sprites)
+					case 19: Harp(
+						assets=asset_dict['harp'],
+						pos=pos,
+						group=[self.all_sprites, self.harp_sprites],
+						arrow_surf=asset_dict['arrow'],
+						enemies_sprites=self.enemies_sprites)
 					case 20: Spikes(asset_dict['heav_spikes'], pos, [self.all_sprites, self.enemies_sprites])
 					case 21: WalkingEnemies(asset_dict['hedgehog'], pos, self.all_sprites)
 					case 22: FlyingEnemy(asset_dict['scrolls'], pos, [self.all_sprites, self.enemies_sprites])
@@ -166,4 +178,22 @@ class Level:
 		self.get_keys()
 		self.get_gears()
 		self.display_surface.fill(SKY_COLOR)
-		self.all_sprites.draw(self.display_surface)
+		self.all_sprites.custom_draw(self.player)
+
+
+class CameraGroup(pygame.sprite.Group):
+    def __init__(self):
+        super().__init__()
+        self.dispay_surface = pygame.display.get_surface()
+        self.offset = vector()
+
+    def custom_draw(self, player):
+        self.offset.x = player.rect.centerx - WINDOW_WIDTH / 2
+        self.offset.y = player.rect.centery - WINDOW_HEIGHT / 2
+
+        for sprite in self:
+            for layer in LEVEL_LAYERS.values():
+                if sprite.z == layer:
+                    offset_rect = sprite.rect.copy()
+                    offset_rect.center -= self.offset
+                    self.dispay_surface.blit(sprite.image, offset_rect)
