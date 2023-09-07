@@ -1,3 +1,5 @@
+from math import degrees, sin
+from random import choice, randint
 import pygame
 from pygame.math import Vector2 as vector
 from settings import *
@@ -184,15 +186,16 @@ class Spikes(Generic):
 class Fire(Animated):
 	def __init__(self, assets, pos, group):
 		super().__init__(assets, pos, group)
-		self.rect = self.image.get_rect(center=pos)
 
 class Slime(Animated):
 	def __init__(self, assets, pos, group):
 		super().__init__(assets, pos, group)
-		self.rect = self.image.get_rect(center=pos)
 
 class Camel(Generic):
 	def __init__(self, pos, surf, group, splutter_surf, enemy_sprites):
+		pos = list(pos)
+		pos[1] -= 10
+		pos = tuple(pos)
 		super().__init__(pos, surf, group)
 
 		# f*cking camel spit on me
@@ -237,44 +240,199 @@ class Splutter(Generic):
 
 
 class Wasp(Generic):
-	def __init__(self, pos, surf, group):
+	def __init__(self, pos, surf, group, collision_sprites):
 		super().__init__(pos, surf, group)
+
+		self.pos = vector(self.rect.topleft)
+		self.speed = 120
+		self.collision_sprites = collision_sprites
+	
+	def move(self, dt):
+		self.pos.x -= self.speed * dt
+		self.pos.y += self.speed // 2 * dt
+		self.rect.x = round(self.pos.x)
+		self.rect.y = round(self.pos.y)
+
+		if [sprite for sprite in self.collision_sprites if sprite.rect.collidepoint(self.rect.midbottom + vector(0, 10))]:
+			self.kill()
+	
+	def update(self, dt):
+		self.move(dt)
 
 class FlyingEnemy(Generic):
-	def __init__(self, assets, pos, group):
+	def __init__(self, assets, pos, group, collision_sprites):
 		self.animation_frames = assets
 		self.frame_index = 0
 		surf = self.animation_frames[self.frame_index]
 		super().__init__(pos, surf, group)
+
+		# movement
+		self.pos = vector(self.rect.topleft)
+		self.speed = 120
+		self.collision_sprites = collision_sprites
+		self.timer = timer.Timer(10000)
+		self.timer.activate()
+	
+	def animate(self, dt):
+		self.frame_index += ANIMATION_SPEED * dt
+		self.frame_index = 0 if self.frame_index >= len(self.animation_frames) else self.frame_index
+		self.image = self.animation_frames[int(self.frame_index)]
+	
+	def move(self, dt):
+		self.pos.x -= self.speed * dt
+		pos_y = sin((self.pos.x / 10)) * 25
+		self.rect.x = round(self.pos.x)
+		self.rect.y = round(self.pos.y - pos_y)
+	
+	def update(self, dt):
+		self.animate(dt)
+		self.move(dt)
+
+		self.timer.update()
+		if not self.timer.active:
+			self.kill()
+
 
 class WalkingEnemies(Generic):
-	def __init__(self, assets, pos, group):
+	def __init__(self, assets, pos, group, collision_sprites):
 		self.animation_frames = assets
 		self.frame_index = 0
 		surf = self.animation_frames[self.frame_index]
 		super().__init__(pos, surf, group)
+		self.rect.bottom = self.rect.top + TILE_SIZE
+
+		# movement
+		self.pos = vector(self.rect.topleft)
+		self.speed = 120
+		self.collision_sprites = collision_sprites
+
+		
+		
+	def animate(self, dt):
+		self.frame_index += ANIMATION_SPEED * dt
+		self.frame_index = 0 if self.frame_index >= len(self.animation_frames) else self.frame_index
+		self.image = self.animation_frames[int(self.frame_index)]
+	
+	def move(self, dt):
+		if not [sprite for sprite in self.collision_sprites if sprite.rect.collidepoint(self.rect.midbottom + vector(0, 10))]:
+			self.kill()
+		self.pos.x -= self.speed * dt
+		self.rect.x = round(self.pos.x)
+
+	
+	def update(self, dt):
+		self.animate(dt)
+		self.move(dt)
 
 class Angel(Generic):
-	def __init__(self, assets, pos, group):
-		self.animation_frames = assets
-		self.frame_index = 0
-		self.orientation = 'left'
-		surf = self.animation_frames[f'run_{self.orientation}'][self.frame_index]
-		super().__init__(pos, surf, group)
-
-class Goat(Generic):
-	def __init__(self, assets, pos, group):
+	def __init__(self, assets, pos, group, collision_sprites):
+		#  general setup
 		self.animation_frames = assets
 		self.frame_index = 0
 		self.orientation = 'right'
 		surf = self.animation_frames[f'run_{self.orientation}'][self.frame_index]
 		super().__init__(pos, surf, group)
+		self.rect.bottom = self.rect.top + TILE_SIZE
+
+		# movement
+		self.direction = vector(choice((1, -1)), 0)
+		self.orientation = 'left' if self.direction.x < 0 else 'right'
+		self.pos = vector(self.rect.topleft)
+		self.speed = 120
+		self.collision_sprites = collision_sprites
+
+		if not [sprite for sprite in collision_sprites if sprite.rect.collidepoint(self.rect.midbottom + vector(0, 10))]:
+			self.kill()
+		
+	def animate(self, dt):
+		current_animation = self.animation_frames[f'run_{self.orientation}']
+		self.frame_index += ANIMATION_SPEED * dt
+		self.frame_index = 0 if self.frame_index >= len(current_animation) else self.frame_index
+		self.image = current_animation[int(self.frame_index)]
+	
+	def move(self, dt):
+		right_gap = self.rect.bottomright + vector(1, 1)
+		right_block = self.rect.midright + vector(1, 0)
+		left_gap = self.rect.bottomleft + vector(-1, 1)
+		left_block = self.rect.midleft + vector(-1, 0)
+		if self.direction.x > 0:
+			floor_sprites = [sprite for sprite in self.collision_sprites if sprite.rect.collidepoint(right_gap)]
+			wall_sprites = [sprite for sprite in self.collision_sprites if sprite.rect.collidepoint(right_block)]
+			if wall_sprites or not floor_sprites:
+				self.direction.x *= -1
+				self.orientation = 'left'
+		
+		if self.direction.x < 0:
+			floor_sprites = [sprite for sprite in self.collision_sprites if sprite.rect.collidepoint(left_gap)]
+			wall_sprites = [sprite for sprite in self.collision_sprites if sprite.rect.collidepoint(left_block)]
+			if not floor_sprites or wall_sprites:
+				self.direction.x *= -1
+				self.orientation = 'right'
+		
+		self.pos.x += self.direction.x * self.speed * dt
+		self.rect.x = round(self.pos.x)
+	
+	def update(self, dt):
+		self.animate(dt)
+		self.move(dt)
+
+class Goat(Generic):
+	def __init__(self, assets, pos, group, collision_sprites):
+		self.animation_frames = assets
+		self.frame_index = 0
+		self.orientation = 'right'
+		surf = self.animation_frames[f'run_{self.orientation}'][self.frame_index]
+		super().__init__(pos, surf, group)
+		self.rect.bottom = self.rect.top + TILE_SIZE
+
+		self.direction = vector(choice((1, -1)), 0)
+		self.orientation = 'left' if self.direction.x < 0 else 'right'
+		self.pos = vector(self.rect.topleft)
+		self.speed = 120
+		self.collision_sprites = collision_sprites
+
+		if not [sprite for sprite in collision_sprites if sprite.rect.collidepoint(self.rect.midbottom + vector(0, 10))]:
+			self.kill()
+	
+	def animate(self, dt):
+		current_animation = self.animation_frames[f'run_{self.orientation}']
+		self.frame_index += ANIMATION_SPEED * dt
+		self.frame_index = 0 if self.frame_index >= len(current_animation) else self.frame_index
+		self.image = current_animation[int(self.frame_index)]
+	
+	def move(self, dt):
+		right_gap = self.rect.bottomright + vector(1, 1)
+		right_block = self.rect.midright + vector(1, 0)
+		left_gap = self.rect.bottomleft + vector(-1, 1)
+		left_block = self.rect.midleft + vector(-1, 0)
+		if self.direction.x > 0:
+			floor_sprites = [sprite for sprite in self.collision_sprites if sprite.rect.collidepoint(right_gap)]
+			wall_sprites = [sprite for sprite in self.collision_sprites if sprite.rect.collidepoint(right_block)]
+			if wall_sprites or not floor_sprites:
+				self.direction.x *= -1
+				self.orientation = 'left'
+		
+		if self.direction.x < 0:
+			floor_sprites = [sprite for sprite in self.collision_sprites if sprite.rect.collidepoint(left_gap)]
+			wall_sprites = [sprite for sprite in self.collision_sprites if sprite.rect.collidepoint(left_block)]
+			if not floor_sprites or wall_sprites:
+				self.direction.x *= -1
+				self.orientation = 'right'
+		
+		self.pos.x += self.direction.x * self.speed * dt
+		self.rect.x = round(self.pos.x)
+	
+	def update(self, dt):
+		self.animate(dt)
+		self.move(dt)
 
 class Harp(Generic):
 	def __init__(self, assets, pos, group, arrow_surf, enemies_sprites):
 		self.animation_frames = assets
-		
 		self.frame_index = 0
+		pos = list(pos)
+		pos[1] -= 70
+		pos = tuple(pos)
 		super().__init__(pos, assets[self.frame_index], group)
 
 
@@ -326,12 +484,50 @@ class Arrow(Generic):
 			self.kill()
 
 class Bird(Generic):
-	def __init__(self, assets, pos, group):
+	def __init__(self, assets, pos, group, collision_sprites):
 		self.animation_frames = assets
 		self.frame_index = 0
-		self.orientation = 'left'
+		self.orientation = 'right'
 		surf = self.animation_frames[f'fly_{self.orientation}'][self.frame_index]
 		super().__init__(pos, surf, group)
+		self.rect.bottom = self.rect.top + TILE_SIZE
 
+		# movement
+		self.direction = vector(choice((1, -1)), 0)
+		self.orientation = 'left' if self.direction.x < 0 else 'right'
+		self.pos = vector(self.rect.topleft)
+		self.speed = 120
+		self.collision_sprites = collision_sprites
 
+	def animate(self, dt):
+		current_animation = self.animation_frames[f'fly_{self.orientation}']
+		self.frame_index += ANIMATION_SPEED * dt
+		self.frame_index = 0 if self.frame_index >= len(current_animation) else self.frame_index
+		self.image = current_animation[int(self.frame_index)]
+	
+	def move(self, dt):
+		right_gap = self.rect.bottomright + vector(1, 1)
+		right_block = self.rect.midright + vector(1, 0)
+		left_gap = self.rect.bottomleft + vector(-1, 1)
+		left_block = self.rect.midleft + vector(-1, 0)
+		if self.direction.x > 0:
+			floor_sprites = [sprite for sprite in self.collision_sprites if sprite.rect.collidepoint(right_gap)]
+			wall_sprites = [sprite for sprite in self.collision_sprites if sprite.rect.collidepoint(right_block)]
+			if wall_sprites or floor_sprites:
+				self.direction.x *= -1
+				self.orientation = 'left'
+		
+		if self.direction.x < 0:
+			floor_sprites = [sprite for sprite in self.collision_sprites if sprite.rect.collidepoint(left_gap)]
+			wall_sprites = [sprite for sprite in self.collision_sprites if sprite.rect.collidepoint(left_block)]
+			if floor_sprites or wall_sprites:
+				self.direction.x *= -1
+				self.orientation = 'right'
+	
+		self.pos.x += self.direction.x * self.speed * dt
+		self.rect.x = round(self.pos.x)
+	
+	def update(self, dt):
+		self.animate(dt)
+		self.move(dt)
 

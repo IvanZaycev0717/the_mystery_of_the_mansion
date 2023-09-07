@@ -32,10 +32,26 @@ class Level:
 					Generic(pos, asset_dict['land'][data[0]][data[1]], [self.all_sprites, self.collision_sprites])
 				match data:
 					case 0: self.player = Player(pos, asset_dict['player'], self.all_sprites, self.collision_sprites)
-					case 9: Angel(asset_dict['angel'], pos, [self.all_sprites, self.enemies_sprites])
-					case 10: FlyingEnemy(asset_dict['bat'], pos, [self.all_sprites, self.enemies_sprites])
-					case 11: Bird(asset_dict['bird'], pos, [self.all_sprites, self.enemies_sprites])
-					case 12: FlyingEnemy(asset_dict['bug'], pos, [self.all_sprites, self.enemies_sprites])
+					case 9: Angel(
+						assets=asset_dict['angel'],
+						pos=pos,
+						group=[self.all_sprites, self.enemies_sprites],
+						collision_sprites=self.collision_sprites)
+					case 10: FlyingEnemy(
+						assets=asset_dict['bat'],
+						pos=pos,
+						group=[self.all_sprites, self.enemies_sprites],
+						collision_sprites=self.collision_sprites)
+					case 11: Bird(
+						assets=asset_dict['bird'],
+						pos=pos,
+						group=[self.all_sprites, self.enemies_sprites],
+						collision_sprites=self.collision_sprites)
+					case 12: WalkingEnemies(
+						assets=asset_dict['bug'],
+						pos=pos,
+						group=[self.all_sprites, self.enemies_sprites],
+						collision_sprites=self.collision_sprites)
 					case 13: Camel(
 						pos=pos,
 						surf=asset_dict['camel'],
@@ -43,10 +59,18 @@ class Level:
 						group=[self.all_sprites, self.camel_sprites],
 						enemy_sprites= self.enemies_sprites)
 					case 14: Spikes(asset_dict['cem_spikes'], pos, [self.all_sprites, self.enemies_sprites])
-					case 15: FlyingEnemy(asset_dict['disputes'], pos, [self.all_sprites, self.enemies_sprites])
+					case 15: FlyingEnemy(
+						assets=asset_dict['disputes'],
+						pos=pos,
+						group=[self.all_sprites, self.enemies_sprites],
+						collision_sprites=self.collision_sprites)
 					case 16: Fire(asset_dict['fire'], pos, [self.all_sprites, self.enemies_sprites])
 					case 17: Spikes(asset_dict['gar_spikes'], pos, [self.all_sprites, self.enemies_sprites])
-					case 18: Goat(asset_dict['goat'], pos, [self.all_sprites, self.enemies_sprites])
+					case 18: Goat(
+						assets=asset_dict['goat'],
+						pos=pos,
+						group=[self.all_sprites, self.enemies_sprites],
+						collision_sprites=self.collision_sprites)
 					case 19: Harp(
 						assets=asset_dict['harp'],
 						pos=pos,
@@ -54,10 +78,22 @@ class Level:
 						arrow_surf=asset_dict['arrow'],
 						enemies_sprites=self.enemies_sprites)
 					case 20: Spikes(asset_dict['heav_spikes'], pos, [self.all_sprites, self.enemies_sprites])
-					case 21: WalkingEnemies(asset_dict['hedgehog'], pos, self.all_sprites)
-					case 22: FlyingEnemy(asset_dict['scrolls'], pos, [self.all_sprites, self.enemies_sprites])
+					case 21: WalkingEnemies(
+						assets=asset_dict['hedgehog'],
+						pos=pos,
+						group=[self.all_sprites, self.enemies_sprites],
+						collision_sprites=self.collision_sprites)
+					case 22: FlyingEnemy(
+						assets=asset_dict['scrolls'],
+						pos=pos,
+						group=[self.all_sprites, self.enemies_sprites],
+						collision_sprites=self.collision_sprites)
 					case 23: Slime(asset_dict['slime'], pos, [self.all_sprites, self.enemies_sprites])
-					case 24: Wasp(pos, asset_dict['wasp'], [self.all_sprites, self.enemies_sprites])
+					case 24: Wasp(
+						pos=pos,
+						surf=asset_dict['wasp'],
+						group=[self.all_sprites, self.enemies_sprites],
+						collision_sprites=self.collision_sprites)
 					case 25: Key('green', asset_dict['green_key'], pos, [self.all_sprites, self.keys_sprites])
 					case 26: Key('hammer', asset_dict['hammer'], pos, [self.all_sprites, self.keys_sprites])
 					case 27: Key('pink', asset_dict['pink_key'], pos, [self.all_sprites, self.keys_sprites])
@@ -102,7 +138,7 @@ class Level:
 					case 66: Generic(pos, asset_dict['cementry_stuff']['monument'][0], self.all_sprites)
 					case 67: Generic(pos, asset_dict['poison_stuff']['mush1'][0], self.all_sprites)
 					case 68: Generic(pos, asset_dict['poison_stuff']['mush2'][0], self.all_sprites)
-					case 69: Generic(pos, asset_dict['desert_stuff']['palm'][0], self.all_sprites)
+					case 69: Animated(asset_dict['desert_stuff']['palm'], pos, self.all_sprites)
 					case 70: Generic(pos, asset_dict['floor_stuff']['picture1'][0], self.all_sprites)
 					case 71: Generic(pos, asset_dict['floor_stuff']['picture2'][0], self.all_sprites)
 					case 72: Generic(pos, asset_dict['floor_stuff']['picture3'][0], self.all_sprites)
@@ -177,7 +213,7 @@ class Level:
 		self.all_sprites.update(dt)
 		self.get_keys()
 		self.get_gears()
-		self.display_surface.fill(SKY_COLOR)
+		self.display_surface.fill((218,165, 32))
 		self.all_sprites.custom_draw(self.player)
 
 
