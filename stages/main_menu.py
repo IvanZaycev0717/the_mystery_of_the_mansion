@@ -106,16 +106,22 @@ class MainMenu:
         self.change_rus_surf_rect = self.change_eng_surf.get_rect(x=230, y=500)
         self.change_rus_surf.fill(MM_BUT_COLOR)
 
-        self.frame_1 = pygame.draw.rect(self.settings_panel_surf, MM_BUT_COLOR, (10, 10, 375, 90), 3)
-        self.frame_2 = pygame.draw.rect(self.settings_panel_surf, MM_BUT_COLOR, (10, 120, 375, 90), 3)
-        self.frame_3 = pygame.draw.rect(self.settings_panel_surf, MM_BUT_COLOR, (400, 10, 310, 90), 3)
-        self.frame_4 = pygame.draw.rect(self.settings_panel_surf, MM_BUT_COLOR, (400, 120, 310, 90), 3)
+        # Go to Editor Mode
+        self.editor_md_surf = pygame.Surface((200, 40))
+        self.editor_md_surf_rect = self.editor_md_surf.get_rect(x=70, y=610)
+        self.editor_md_surf.fill(MM_BUT_COLOR)
+
+        
         self.lang_helper = self.font_small.render('Click your language / Кликните на ваш язык', False, 'yellow')
         self.eng_lang = self.font.render('English', False, 'yellow')
         self.rus_lang = self.font.render('Русский', False, 'yellow')
         self.lang_helper_rect = self.lang_helper.get_rect(x=30, y=20)
         self.eng_lang_rect = self.eng_lang.get_rect(x=30, y=50)
         self.rus_lang_rect = self.rus_lang.get_rect(x=190, y=50)
+
+    
+
+
 
 
     # Language choice section
@@ -191,9 +197,11 @@ class MainMenu:
         self.space_text_rect = self.space_text.get_rect(x=530, y=135)
 
     def create_lang(self):
+        # Go to Editor
         self.settings_panel_surf.blit(self.lang_helper, self.lang_helper_rect)
         self.settings_panel_surf.blit(self.eng_lang, self.eng_lang_rect)
         self.settings_panel_surf.blit(self.rus_lang, self.rus_lang_rect)
+        
 
     # Show section
     def show_buttons(self):
@@ -239,9 +247,21 @@ class MainMenu:
     def show_settings(self):
         if self.settings_panel_is_active:
             self.create_lang()
+            self.editor_mode = self.font_small.render(eng.ED_MD if self.current_lang == 'eng' else rus.ED_MD, False, 'yellow')
+            self.editor_mode_rect = self.editor_mode.get_rect(x=30, y=130)
+            self.go_editor = self.font_small.render(eng.GO_TO_ED if self.current_lang == 'eng' else rus.GO_TO_ED, False, 'yellow')
+            self.go_editor_rect = self.editor_mode.get_rect(x=30, y=170)
+            self.frame_1 = pygame.draw.rect(self.settings_panel_surf, MM_BUT_COLOR, (10, 10, 375, 90), 3)
+            self.frame_2 = pygame.draw.rect(self.settings_panel_surf, MM_BUT_COLOR, (10, 120, 375, 90), 3)
+            self.frame_3 = pygame.draw.rect(self.settings_panel_surf, MM_BUT_COLOR, (400, 10, 310, 90), 3)
+            self.frame_4 = pygame.draw.rect(self.settings_panel_surf, MM_BUT_COLOR, (400, 120, 310, 90), 3)
+            self.settings_panel_surf.blit(self.editor_mode, self.editor_mode_rect)
+            self.settings_panel_surf.blit(self.go_editor, self.go_editor_rect)
             self.display_surface.blit(self.settings_panel_surf, self.settings_panel_surf_rect)
+            self.settings_panel_surf.fill(BLACK_GRAY)
+            
+            
 
-    def show_current_lang(self):
         if self.settings_panel_is_active:
             match self.current_lang:
                 case 'eng':
@@ -252,6 +272,8 @@ class MainMenu:
                     self.change_rus_surf.set_alpha(50)
             self.display_surface.blit(self.change_eng_surf, self.change_eng_surf_rect)
             self.display_surface.blit(self.change_rus_surf, self.change_rus_surf_rect)
+            self.editor_md_surf.set_alpha(50)
+            self.display_surface.blit(self.editor_md_surf, self.editor_md_surf_rect)
 
 
     # Event section
@@ -270,7 +292,7 @@ class MainMenu:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN and self.new_game_surf_rect.collidepoint(event.pos):
-                self.next_stage = 4
+                self.next_stage = 3
             if event.type == pygame.MOUSEBUTTONDOWN and self.controls_surf_rect.collidepoint(event.pos) and not self.control_panel_is_active:
                 self.control_panel_is_active = True
                 self.settings_panel_is_active = False
@@ -285,6 +307,8 @@ class MainMenu:
                 self.toggle_lang('eng')
             if event.type == pygame.MOUSEBUTTONDOWN and self.change_rus_surf_rect.collidepoint(event.pos) and self.settings_panel_is_active:
                 self.toggle_lang('rus')
+            if event.type == pygame.MOUSEBUTTONDOWN and self.editor_md_surf_rect.collidepoint(event.pos) and self.settings_panel_is_active:
+                self.next_stage = 0
         
     # Main cycle
     def run(self, dt):
@@ -295,7 +319,6 @@ class MainMenu:
         self.show_buttons()
         self.show_controls()
         self.show_settings()
-        self.show_current_lang()
         
         self.event_loop()
-        return 3 if self.next_stage != 4 else 4
+        return 3 if self.next_stage != 0 else 0

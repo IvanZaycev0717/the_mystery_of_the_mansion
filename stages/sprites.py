@@ -17,8 +17,23 @@ class Block(Generic):
         surf = pygame.Surface(size)
         super().__init__(pos, surf, group)
 
+class Cloud(Generic):
+	def __init__(self, pos, surf, group, left_limit):
+		super().__init__(pos, surf, group, LEVEL_LAYERS['clouds'])
+		self.left_limit = left_limit
+	
+		self.pos = vector(self.rect.topleft)
+		self.speed = randint(20, 30)
+
+
+	def update(self, dt):
+		self.pos.x -= self.speed * dt
+		self.rect.x = round(self.pos.x)
+		if self.rect.x <= self.left_limit:
+			self.kill()
+
 class Player(Generic):
-	def __init__(self, pos, assets, group, collision_sprites):
+	def __init__(self, pos, assets, group, collision_sprites, jump_sound, lives_left):
 		self.animation_frames = assets
 		self.frame_index = 0
 		self.status = 'idle'
@@ -27,6 +42,7 @@ class Player(Generic):
 		self.is_dead = False
 		surf = self.animation_frames[f'{self.status}_{self.orientation}'][self.frame_index]
 		super().__init__(pos, surf, group)
+		self.mask = pygame.mask.from_surface(self.image)
 
 		self.inventory = {
 			'gears': 0,
@@ -35,7 +51,7 @@ class Player(Generic):
 			'green_key': False,
 			'hammer': False,
 			'hp': 100,
-			'lives': 1,
+			'lives': lives_left,
 			}
 
 		# movement
@@ -48,6 +64,18 @@ class Player(Generic):
 		# collision
 		self.collision_sprites = collision_sprites
 		self.hitbox = self.rect.inflate(-10, 0)
+
+		# timer
+		self.invul_timer = timer.Timer(200)
+
+		# sound
+		self.jump_sound = jump_sound
+		self.jump_sound.set_volume(0.1)
+	
+	def damage(self):
+		if not self.invul_timer.active and self.status != 'death':
+			self.invul_timer.activate()
+			self.direction.y -= 2
 	
 	def get_status(self):
 		if self.direction.y < 0:
@@ -79,6 +107,7 @@ class Player(Generic):
 		
 		if keys[pygame.K_SPACE] and self.on_floor and not self.is_dead:
 			self.direction.y = -2
+			self.jump_sound.play()
 		
 		if self.inventory['hp'] <= 0 and self.status != 'jump':
 			self.is_dead = True
@@ -133,6 +162,7 @@ class Player(Generic):
 		self.apply_gravity(dt)
 		self.move(dt)
 		self.check_on_floor()
+		self.invul_timer.update()
 		self.get_status()
 		self.animate(dt)
 
@@ -182,6 +212,7 @@ class Activator(Generic):
 class Spikes(Generic):
 	def __init__(self, surf, pos, group):
 		super().__init__(pos, surf, group)
+		self.mask = pygame.mask.from_surface(self.image)
 
 class Fire(Animated):
 	def __init__(self, assets, pos, group):
@@ -218,6 +249,7 @@ class Camel(Generic):
 class Splutter(Generic):
 	def __init__(self, pos, direction, surf, group):
 		super().__init__(pos, surf, group)
+		self.mask = pygame.mask.from_surface(self.image)
 	
 		#movement
 		self.pos = vector(self.rect.topleft)
@@ -300,6 +332,7 @@ class WalkingEnemies(Generic):
 		surf = self.animation_frames[self.frame_index]
 		super().__init__(pos, surf, group)
 		self.rect.bottom = self.rect.top + TILE_SIZE
+		self.mask = pygame.mask.from_surface(self.image)
 
 		# movement
 		self.pos = vector(self.rect.topleft)
@@ -453,7 +486,7 @@ class Harp(Generic):
 		self.image = self.animation_frames[int(self.frame_index)]
 		if not self.has_shot:
 			arrow_direction = vector(-1, 0)
-			Arrow(self.rect.center + vector(0, -10), arrow_direction, self.arrow_surf, [self.groups(), self.enemies_sprites])
+			Arrow(self.rect.center + vector(0, -30), arrow_direction, self.arrow_surf, [self.groups(), self.enemies_sprites])
 			self.has_shot = True
 	
 	def update(self, dt):
@@ -463,6 +496,7 @@ class Harp(Generic):
 class Arrow(Generic):
 	def __init__(self, pos, direction, surf, group):
 		super().__init__(pos, surf, group)
+		self.mask = pygame.mask.from_surface(self.image)
 	
 		#movement
 		self.pos = vector(self.rect.topleft)
@@ -477,6 +511,7 @@ class Arrow(Generic):
         # movement
 		self.pos.x += self.direction.x * self.speed * dt
 		self.rect.x = round(self.pos.x)
+
 
         # timer
 		self.timer.update()

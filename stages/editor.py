@@ -25,6 +25,7 @@ class Editor:
         self.dialog = tk.Tk()
         self.dialog.withdraw()
         self.game_directory = os.path.dirname(file_path)
+        self.next_stage = 0
 
         # imports
         self.land_tiles = land_tiles
@@ -469,7 +470,7 @@ class Editor:
         self.display_sky(dt)
         self.draw_level()
         self.draw_tile_lines()
-        pygame.draw.circle(self.display_surface, ORIGIN_COLOR, self.origin, 8)
+        # pygame.draw.circle(self.display_surface, ORIGIN_COLOR, self.origin, 8)
         self.menu.display(self.selection_index)
 
 class CanvasTile:

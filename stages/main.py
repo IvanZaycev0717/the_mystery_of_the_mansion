@@ -20,7 +20,7 @@ class Main:
         pygame.init()
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.title = pygame.display.set_caption(TITLE)
-        # self.icon = pygame.display.set_icon(pygame.image.load(ICON_PATH))
+        self.icon = pygame.display.set_icon(pygame.image.load(ICON_PATH))
         self.clock = pygame.time.Clock()
         self.imports()
 
@@ -38,10 +38,15 @@ class Main:
         self.transition = Transition(self.toggle)
         self.editor = Editor(self.land_tiles, self.switch, self.file_path)
 
-        # Выбор стадии игры
+        # Выбор стадии игр
         self.stage = 0
 
-        
+        # Звуки
+        self.level_sounds = {
+             'gear': pygame.mixer.Sound('audio/sounds/gear.wav'),
+             'hit': pygame.mixer.Sound('audio/sounds/hit.wav'),
+             'jump': pygame.mixer.Sound('audio/sounds/jump.wav'),
+        }
 
         # Замена курсора в игре
         surf = load('images/cursors/cursor.png').convert_alpha()
@@ -116,6 +121,7 @@ class Main:
         # player
         self.player_graphics = {folder: import_folder(f'images/player/{folder}') for folder in (list(os.walk('images/player/')))[0][1]}
 
+        self.clouds =import_folder('images/clouds/')
 
     def toggle(self):
         self.editor_active = not self.editor_active
@@ -160,54 +166,53 @@ class Main:
                  'player': self.player_graphics,
                  'splutter': self.splutter,
                  'arrow': self.arrow,
-                 })
+                 'clouds': self.clouds,
+                 }, self.level_sounds)
 
     def run(self):
         while True:
             dt = self.clock.tick() / 1000
-            # Switching stages
-            if self.editor_active:
-                self.editor.run(dt)
-            else:
-                 self.level.run(dt)
-            self.transition.display(dt)
-            # match self.stage:
-            #     case 0: self.editor.run(dt)
-            #     case 1: self.stage = self.author.run()
-            #     case 2:
-            #         if not os.path.isfile(self.file_path):
-            #             self.lang_choice.run(dt)
-            #         else:
-            #             self.stage = 3
-            #     case 3:
-            #         self.stage = self.main_menu.run(dt)
+            match self.stage:
+                case 0:
+                    if self.editor_active: 
+                        self.editor.run(dt)
+                    else:
+                        self.level.run(dt)
+                    self.transition.display(dt)
+                case 1: self.stage = self.author.run()
+                case 2:
+                    if not os.path.isfile(self.file_path):
+                        self.lang_choice.run(dt)
+                    else:
+                        self.stage = 3
+                case 3: self.stage = self.main_menu.run(dt)
             pygame.display.update()
 
 
 class Transition:
-	def __init__(self, toggle):
-		self.display_surface = pygame.display.get_surface()
-		self.toggle = toggle
-		self.active = False
+    def __init__(self, toggle):
+        self.display_surface = pygame.display.get_surface()
+        self.toggle = toggle
+        self.active = False
+        self.alpha = 0
+        self.alpha_increment = 51
+        self.alpha_threshold = 255
+        
 
-		self.border_width = 0
-		self.direction = 1
-		self.center = (WINDOW_WIDTH /2, WINDOW_HEIGHT / 2)
-		self.radius = vector(self.center).magnitude()
-		self.threshold = self.radius + 100
-
-	def display(self, dt):
-		if self.active:
-			self.border_width += 1000 * dt * self.direction
-			if self.border_width >= self.threshold:
-				self.direction = -1
-				self.toggle()
-			
-			if self.border_width < 0:
-				self.active = False
-				self.border_width = 0
-				self.direction = 1
-			pygame.draw.circle(self.display_surface, 'black',self.center, self.radius, int(self.border_width))
+    
+    def display(self, dt):
+        if self.active:
+            self.alpha += self.alpha_increment
+            if self.alpha >= self.alpha_threshold:
+                self.alpha_increment *= -1
+                self.toggle()
+            
+            if self.alpha <= 0:
+                self.active = False
+                self.alpha = 0
+                self.alpha_increment *= -1
+            pygame.draw.rect(self.display_surface, BLACK_GRAY, (0, 0, WINDOW_WIDTH, WINDOW_HEIGHT))
+            
 
 if __name__ == '__main__':
     main = Main()

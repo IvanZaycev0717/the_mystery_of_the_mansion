@@ -7,9 +7,10 @@ from img_imports import *
 from sprites import *
 
 class Level:
-	def __init__(self, grid, switch, asset_dict):
+	def __init__(self, grid, switch, asset_dict, audio):
 		self.display_surface = pygame.display.get_surface()
 		self.switch = switch
+		self.next_stage = 4
 
 		# groups 
 		self.all_sprites = CameraGroup()
@@ -20,18 +21,46 @@ class Level:
 		self.collision_sprites = pygame.sprite.Group()
 		self.camel_sprites = pygame.sprite.Group()
 		self.harp_sprites = pygame.sprite.Group()
+		self.player_asset = asset_dict['player']
+		self.jump_sound = audio['jump']
+		self.lives_left = 3
 
-		self.build_level(grid, asset_dict)
+		self.build_level(grid, asset_dict, self.jump_sound)
+
+		self.level_limits = {
+            'left' : -WINDOW_WIDTH,
+            'right': sorted(list(grid['common'].keys()), key= lambda pos: pos[0])[-1][0] + 500
+        }
 
 		self.taken_surf = asset_dict['taken']
+		self.cloud_surfs = asset_dict['clouds']
+		self.cloud_timer = pygame.USEREVENT + 2
+		pygame.time.set_timer(self.cloud_timer, 2000)
+		self.startup_clouds()
+		self.dead_time = 0
 
-	def build_level(self, grid, asset_dict):
+		# sound
+		# self.bg_music = audio['music']
+		# self.bg_music.set_volume(0.4)
+		# self.bg_music.play(loops=-1)
+
+		self.gear_sound = audio['gear']
+		self.gear_sound.set_volume(0.3)
+
+		self.hit_sound = audio['hit']
+		self.hit_sound.set_volume(0.1)
+
+
+	def build_level(self, grid, asset_dict, jump_sound):
 		for layer_name, layer in grid.items():
 			for pos, data in layer.items():
 				if layer_name == 'common':
 					Generic(pos, asset_dict['land'][data[0]][data[1]], [self.all_sprites, self.collision_sprites])
 				match data:
-					case 0: self.player = Player(pos, asset_dict['player'], self.all_sprites, self.collision_sprites)
+					case 0: self.player = Player(pos, asset_dict['player'], self.all_sprites, self.collision_sprites, jump_sound, self.lives_left)
+					case 1:
+						self.horizon_y = pos[1]
+						self.all_sprites.horizon_y = pos[1]
 					case 9: Angel(
 						assets=asset_dict['angel'],
 						pos=pos,
@@ -192,13 +221,33 @@ class Level:
 				case 'yellow':
 					self.player.inventory['yellow_key'] = True
 					sprite.kill()
-			
+
+	def get_damage(self):
+		collision_sprites = pygame.sprite.spritecollide(self.player, self.enemies_sprites, False, pygame.sprite.collide_mask)
+		if collision_sprites and self.player.status != 'death':
+			self.hit_sound.play()
+			self.player.inventory['hp'] -= 0.2
+			self.player.damage()
 
 	def get_gears(self):
 		collided_gears = pygame.sprite.spritecollide(self.player, self.gear_sprites, True)
 		for sprite in collided_gears:
+			self.gear_sound.play()
 			Taken(self.taken_surf, sprite.rect.center, self.all_sprites)
 			self.player.inventory['gears'] += 1
+
+	def check_death(self, pos, dt):
+		
+		if self.player.status == 'death':
+			self.dead_time += dt
+			if self.dead_time >= 5:
+				self.lives_left -= 1
+				self.player.kill()
+				pos = (pos[0] - 100, pos[1] - 100)
+				self.player = Player(pos, self.player_asset, self.all_sprites, self.collision_sprites, self.jump_sound, self.lives_left)
+				self.dead_time = 0
+		
+
 
 	def event_loop(self):
 		for event in pygame.event.get():
@@ -207,15 +256,32 @@ class Level:
 				sys.exit()
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
 				self.switch()
+				
+			
+			if event.type == self.cloud_timer:
+				surf = choice(self.cloud_surfs)
+				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
+				x = self.level_limits['right'] + randint(100, 300)
+				y = self.horizon_y - randint(-50, 600)
+				Cloud((x, y), surf, self.all_sprites, self.level_limits['left'])
+	
+	def startup_clouds(self):
+		for cloud in range(40):
+			surf = choice(self.cloud_surfs)
+			surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
+			x = randint(self.level_limits['left'], self.level_limits['right'])
+			y = self.horizon_y - randint(-50, 600)
+			Cloud((x, y), surf, self.all_sprites, self.level_limits['left'])
 
 	def run(self, dt):
 		self.event_loop()
 		self.all_sprites.update(dt)
 		self.get_keys()
 		self.get_gears()
+		self.get_damage()
+		self.check_death(self.player.pos, dt)
 		self.display_surface.fill((218,165, 32))
 		self.all_sprites.custom_draw(self.player)
-
 
 class CameraGroup(pygame.sprite.Group):
     def __init__(self):
@@ -223,13 +289,43 @@ class CameraGroup(pygame.sprite.Group):
         self.dispay_surface = pygame.display.get_surface()
         self.offset = vector()
 
+    def draw_horizon(self):
+        horizon_pos = self.horizon_y - self.offset.y
+        if horizon_pos < WINDOW_HEIGHT:
+            sea_rect = pygame.Rect(0, horizon_pos, WINDOW_WIDTH, WINDOW_HEIGHT - horizon_pos)
+            pygame.draw.rect(self.dispay_surface, SEA_COLOR, sea_rect)
+
+            # horizon line
+            horizon_rect1 = pygame.Rect(0,horizon_pos - 10,WINDOW_WIDTH,10)
+            horizon_rect2 = pygame.Rect(0,horizon_pos - 16,WINDOW_WIDTH,4)
+            horizon_rect3 = pygame.Rect(0,horizon_pos - 20,WINDOW_WIDTH,2)
+            pygame.draw.rect(self.dispay_surface, HORIZON_TOP_COLOR, horizon_rect1)
+            pygame.draw.rect(self.dispay_surface, HORIZON_TOP_COLOR, horizon_rect2)
+            pygame.draw.rect(self.dispay_surface, HORIZON_TOP_COLOR, horizon_rect3)
+            pygame.draw.line(self.dispay_surface, HORIZON_COLOR, (0,horizon_pos), (WINDOW_WIDTH, horizon_pos), 3)
+
+        if horizon_pos < 0:
+            self.dispay_surface.fill(SEA_COLOR)
+
     def custom_draw(self, player):
         self.offset.x = player.rect.centerx - WINDOW_WIDTH / 2
         self.offset.y = player.rect.centery - WINDOW_HEIGHT / 2
-
+        for sprite in self:
+            if sprite.z == LEVEL_LAYERS['clouds']:
+                offset_rect = sprite.rect.copy()
+                offset_rect.center -= self.offset
+                self.dispay_surface.blit(sprite.image, offset_rect)
+        
+        self.draw_horizon()
         for sprite in self:
             for layer in LEVEL_LAYERS.values():
-                if sprite.z == layer:
+                if sprite.z == layer and sprite.z != LEVEL_LAYERS['clouds']:
                     offset_rect = sprite.rect.copy()
                     offset_rect.center -= self.offset
                     self.dispay_surface.blit(sprite.image, offset_rect)
+		
+class Common(Level):
+	def __init__(self, grid, switch, asset_dict, audio):
+		super().__init__(grid, switch, asset_dict, audio)
+
+	
