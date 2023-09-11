@@ -208,25 +208,12 @@ class Level:
 	def get_keys(self):
 		collided_keys = pygame.sprite.spritecollide(self.player, self.keys_sprites, True)
 		for sprite in collided_keys:
-			match sprite.key_type:
-				case 'green':
-					self.player.inventory['green_key'] = True
-					sprite.kill()
-				case 'hammer':
-					self.player.inventory['hammer'] = True
-					sprite.kill()
-				case 'pink':
-					self.player.inventory['pink_key'] = True
-					sprite.kill()
-				case 'yellow':
-					self.player.inventory['yellow_key'] = True
-					sprite.kill()
+			sprite.kill()
 
 	def get_damage(self):
 		collision_sprites = pygame.sprite.spritecollide(self.player, self.enemies_sprites, False, pygame.sprite.collide_mask)
 		if collision_sprites and self.player.status != 'death':
 			self.hit_sound.play()
-			self.player.inventory['hp'] -= 0.2
 			self.player.damage()
 
 	def get_gears(self):
@@ -234,7 +221,6 @@ class Level:
 		for sprite in collided_gears:
 			self.gear_sound.play()
 			Taken(self.taken_surf, sprite.rect.center, self.all_sprites)
-			self.player.inventory['gears'] += 1
 
 	def check_death(self, pos, dt):
 		

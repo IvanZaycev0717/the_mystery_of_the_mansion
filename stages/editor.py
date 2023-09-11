@@ -1,3 +1,4 @@
+import json
 from random import choice, randint
 import tkinter as tk
 from tkinter import filedialog
@@ -177,11 +178,6 @@ class Editor:
 
     # selection hotkeys
     def selection_hotkeys(self, event):
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT:
-                self.selection_index += 1
-            if event.key == pygame.K_LEFT:
-                self.selection_index -= 1
         self.selection_index = max(2, min(self.selection_index, 108))
         if self.selection_index == 105:
             self.loading_data()
@@ -192,7 +188,13 @@ class Editor:
     
     def save_level(self):
         self.selection_index = 108
-        print('Saved')
+        self.file_path = filedialog.asksaveasfilename(filetypes=(
+                        ("MML-файл", "*.mml"),
+                        ("All files", "*.*"),
+                    ), initialfile='my_level.mml', initialdir=self.game_directory)
+        if self.file_path:
+            with open(self.file_path, 'wb') as file:
+                pickle.dump(self.create_grid(), file)
     
     def loading_data(self):
         self.selection_index = 108

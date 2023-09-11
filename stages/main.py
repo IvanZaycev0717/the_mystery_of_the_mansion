@@ -1,15 +1,18 @@
+import pickle
 import pygame, sys
 from pygame.image import load
 import os
 from pygame.math import Vector2 as vector
 
 
+
 from settings import *
 from author import Author
 from editor import Editor
-from level import Level
+from level import Level, Common
 from lang_choice import LangChoice
 from main_menu import MainMenu
+from ui import UI
 from img_imports import import_folder_dict, import_folder
 
 
@@ -30,6 +33,7 @@ class Main:
         self.file_path = os.path.join(self.path, self.lang_file)
 
 
+
         # Экземпляры классов соответсвующих уровней
         self.author = Author()
         self.lang_choice = LangChoice()
@@ -40,6 +44,17 @@ class Main:
 
         # Выбор стадии игр
         self.stage = 0
+
+        self.lives_amount = 5
+        self.max_hp = 100
+        self.current_hp = 20
+        self.gears = 0
+        self.has_green_key = False
+        self.has_pink_key = False
+        self.has_yellow_key = False
+        self.hammer = False
+        self.current_task = None
+        self.ui = UI(self.display_surface)
 
         # Звуки
         self.level_sounds = {
@@ -53,6 +68,52 @@ class Main:
         cursor = pygame.cursors.Cursor((0, 0), surf)
         pygame.mouse.set_cursor(cursor)
 
+        self.level_data = {
+                 'land': self.land_tiles,
+                 'green_key': self.green_key,
+                 'hammer': self.hammer,
+                 'pink_key': self.pink_key,
+                 'yellow_key': self.yellow_key,
+                 'gear': self.gear,
+                 'taken': self.taken,
+                 'cementry_stuff': self.cementry_stuff,
+                 'common_stuff': self.common_stuff,
+                 'cupboard_stuff': self.cupboard_stuff,
+                 'desert_stuff': self.desert_stuff,
+                 'first_floor_stuff': self.first_floor_stuff,
+                 'floor_stuff': self.floor_stuff,
+                 'garden_stuff': self.garden_stuff,
+                 'heaven_stuff': self.heaven_stuff,
+                 'poison_stuff': self.poison_stuff,
+                 'activators': self.activators,
+                 'bat': self.bat,
+                 'bug': self.bug,
+                 'cem_spikes': self.cem_spikes,
+                 'camel': self.camel,
+                 'fire': self.fire,
+                 'bird': self.bird,
+                 'goat': self.goat,
+                 'hedgehog': self.hedgehog,
+                 'gar_spikes': self.gar_spikes,
+                 'wasp': self.wasp,
+                 'angel': self.angel,
+                 'harp': self.harp,
+                 'scrolls': self.scrolls,
+                 'heav_spikes': self.heav_spikes,
+                 'disputes': self.disputes,
+                 'slime': self.slime,
+                 'player': self.player_graphics,
+                 'splutter': self.splutter,
+                 'arrow': self.arrow,
+                 'clouds': self.clouds,
+                }
+        self.common_level_data = self.loading_level('my_level.mml')
+        self.common_level = Common(self.common_level_data, self.switch, self.level_data, self.level_sounds)
+
+    def loading_level(self, file_name):
+        with open(f'stages/{file_name}', 'rb') as file:
+            load_data = pickle.load(file)
+        return load_data
 
     def imports(self):
 
@@ -129,45 +190,7 @@ class Main:
     def switch(self, grid = None): 
         self.transition.active = True
         if grid:
-            self.level = Level(grid, self.switch, {
-                 'land': self.land_tiles,
-                 'green_key': self.green_key,
-                 'hammer': self.hammer,
-                 'pink_key': self.pink_key,
-                 'yellow_key': self.yellow_key,
-                 'gear': self.gear,
-                 'taken': self.taken,
-                 'cementry_stuff': self.cementry_stuff,
-                 'common_stuff': self.common_stuff,
-                 'cupboard_stuff': self.cupboard_stuff,
-                 'desert_stuff': self.desert_stuff,
-                 'first_floor_stuff': self.first_floor_stuff,
-                 'floor_stuff': self.floor_stuff,
-                 'garden_stuff': self.garden_stuff,
-                 'heaven_stuff': self.heaven_stuff,
-                 'poison_stuff': self.poison_stuff,
-                 'activators': self.activators,
-                 'bat': self.bat,
-                 'bug': self.bug,
-                 'cem_spikes': self.cem_spikes,
-                 'camel': self.camel,
-                 'fire': self.fire,
-                 'bird': self.bird,
-                 'goat': self.goat,
-                 'hedgehog': self.hedgehog,
-                 'gar_spikes': self.gar_spikes,
-                 'wasp': self.wasp,
-                 'angel': self.angel,
-                 'harp': self.harp,
-                 'scrolls': self.scrolls,
-                 'heav_spikes': self.heav_spikes,
-                 'disputes': self.disputes,
-                 'slime': self.slime,
-                 'player': self.player_graphics,
-                 'splutter': self.splutter,
-                 'arrow': self.arrow,
-                 'clouds': self.clouds,
-                 }, self.level_sounds)
+            self.level = Level(grid, self.switch, self.level_data, self.level_sounds)
 
     def run(self):
         while True:
@@ -186,6 +209,10 @@ class Main:
                     else:
                         self.stage = 3
                 case 3: self.stage = self.main_menu.run(dt)
+                case 4:
+                    self.common_level.run(dt)
+                    self.ui.show_lives(self.lives_amount)
+                    self.ui.show_hp(self.current_hp, self.max_hp)
             pygame.display.update()
 
 

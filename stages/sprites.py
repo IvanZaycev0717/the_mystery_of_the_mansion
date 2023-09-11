@@ -44,16 +44,6 @@ class Player(Generic):
 		super().__init__(pos, surf, group)
 		self.mask = pygame.mask.from_surface(self.image)
 
-		self.inventory = {
-			'gears': 0,
-			'yellow_key': False,
-			'pink_key': False,
-			'green_key': False,
-			'hammer': False,
-			'hp': 100,
-			'lives': lives_left,
-			}
-
 		# movement
 		self.direction = vector()
 		self.pos = vector(self.rect.center)
@@ -108,9 +98,6 @@ class Player(Generic):
 		if keys[pygame.K_SPACE] and self.on_floor and not self.is_dead:
 			self.direction.y = -2
 			self.jump_sound.play()
-		
-		if self.inventory['hp'] <= 0 and self.status != 'jump':
-			self.is_dead = True
 	
 	def animate(self, dt):
 		current_animation = self.animation_frames[f'{self.status}_{self.orientation}']
@@ -274,12 +261,12 @@ class Splutter(Generic):
 class Wasp(Generic):
 	def __init__(self, pos, surf, group, collision_sprites):
 		super().__init__(pos, surf, group)
-
 		self.pos = vector(self.rect.topleft)
 		self.speed = 120
 		self.collision_sprites = collision_sprites
 	
 	def move(self, dt):
+
 		self.pos.x -= self.speed * dt
 		self.pos.y += self.speed // 2 * dt
 		self.rect.x = round(self.pos.x)
