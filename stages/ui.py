@@ -1,5 +1,7 @@
 import pygame
 from pygame.image import load
+import eng
+import rus
 
 class UI:
     def __init__(self, surface):
@@ -32,5 +34,16 @@ class UI:
         self.display_surface.blit(self.hp_bar, self.hp_bar_rect)
         current_hp_ratio = current / full
         current_bar_width = self.bar_max_width * current_hp_ratio
+        current_bar_width = 0 if current_bar_width < 0 else current_bar_width
         health_bar_rect = pygame.Rect(self.hp_bar_topleft, (current_bar_width, self.bar_height))
         pygame.draw.rect(self.display_surface, '#dc4949', health_bar_rect, border_bottom_right_radius=6, border_top_right_radius=6)
+
+class Inventory:
+    def __init__(self, surface):
+        # setup
+        self.display_surface = surface
+
+        # Font
+        self.font = pygame.font.SysFont('arial', 40, True)
+
+        # loading images

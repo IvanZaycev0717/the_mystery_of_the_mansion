@@ -33,13 +33,13 @@ class Cloud(Generic):
 			self.kill()
 
 class Player(Generic):
-	def __init__(self, pos, assets, group, collision_sprites, jump_sound, lives_left):
+	def __init__(self, pos, assets, group, collision_sprites, jump_sound):
 		self.animation_frames = assets
 		self.frame_index = 0
 		self.status = 'idle'
 		self.orientation = 'right'
 		self.is_sitting = False
-		self.is_dead = False
+		self.current_hp = 100
 		surf = self.animation_frames[f'{self.status}_{self.orientation}'][self.frame_index]
 		super().__init__(pos, surf, group)
 		self.mask = pygame.mask.from_surface(self.image)
@@ -74,7 +74,7 @@ class Player(Generic):
 			self.status = 'fall'
 		elif self.is_sitting:
 			self.status = 'sit'
-		elif self.is_dead:
+		elif self.current_hp <= 0 and self.status != 'jump':
 			self.status = 'death'
 		else:
 			self.status = 'walk' if self.direction.x != 0 and not self.is_sitting else 'idle'
@@ -82,27 +82,27 @@ class Player(Generic):
 
 	def input(self):
 		keys = pygame.key.get_pressed()
-		if keys[pygame.K_RIGHT] and not self.is_sitting and not self.is_dead:
+		if keys[pygame.K_RIGHT] and not self.is_sitting and self.status != 'death':
 			self.direction.x = 1
 			self.orientation = 'right'
-		elif keys[pygame.K_LEFT] and not self.is_sitting and not self.is_dead:
+		elif keys[pygame.K_LEFT] and not self.is_sitting and self.status != 'death':
 			self.direction.x = -1
 			self.orientation = 'left'
 		else:
 			self.is_sitting = False
 			self.direction.x = 0
 		
-		if keys[pygame.K_DOWN] and self.on_floor and not self.is_dead:
+		if keys[pygame.K_DOWN] and self.on_floor and self.status != 'death':
 			self.is_sitting = True
 		
-		if keys[pygame.K_SPACE] and self.on_floor and not self.is_dead:
+		if keys[pygame.K_SPACE] and self.on_floor and self.status != 'death':
 			self.direction.y = -2
 			self.jump_sound.play()
 	
 	def animate(self, dt):
 		current_animation = self.animation_frames[f'{self.status}_{self.orientation}']
 		self.frame_index += ANIMATION_SPEED * dt
-		if not self.is_dead:
+		if self.status != 'death':
 			self.frame_index = 0 if self.frame_index >= len(current_animation) else self.frame_index
 			self.image = current_animation[int(self.frame_index)]
 		else:

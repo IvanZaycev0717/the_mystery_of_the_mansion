@@ -31,6 +31,7 @@ class Main:
         self.path = os.path.dirname(os.path.abspath(__file__))
         self.lang_file = 'lang.txt'
         self.file_path = os.path.join(self.path, self.lang_file)
+        self.full_screen = False
 
 
 
@@ -41,20 +42,16 @@ class Main:
         self.editor_active = True
         self.transition = Transition(self.toggle)
         self.editor = Editor(self.land_tiles, self.switch, self.file_path)
+        self.ui = UI(self.display_surface)
+        self.dead_time = 0
 
         # Выбор стадии игр
-        self.stage = 0
+        self.stage = 4
 
-        self.lives_amount = 5
-        self.max_hp = 100
-        self.current_hp = 20
+        # Графический интерфейст характеристик игрока
         self.gears = 0
-        self.has_green_key = False
-        self.has_pink_key = False
-        self.has_yellow_key = False
-        self.hammer = False
+        self.player_stats = {'max_hp': 100, 'current_hp': 100, 'lives': 1, 'green_key': False, 'pink_key': False, 'hammer': False}
         self.current_task = None
-        self.ui = UI(self.display_surface)
 
         # Звуки
         self.level_sounds = {
@@ -108,7 +105,34 @@ class Main:
                  'clouds': self.clouds,
                 }
         self.common_level_data = self.loading_level('my_level.mml')
-        self.common_level = Common(self.common_level_data, self.switch, self.level_data, self.level_sounds)
+        self.common_level = Common(self.common_level_data, self.switch, self.level_data, self.level_sounds, self.change_gears, self.change_hp)
+
+    def change_gears(self, amount):
+        self.gears += amount
+
+    def change_hp(self, damage):
+        self.player_stats['current_hp'] -= damage
+    
+    def level_transmission(self, dt):
+        self.level.player.current_hp = self.player_stats['current_hp']
+        if self.level.player.status == 'death':
+            self.dead_time += dt
+            if self.dead_time >= 5:
+                self.player_stats['lives'] -= 1
+                self.player_stats['current_hp'] = 100
+                self.dead_time = 0
+    
+    def common_transmission(self, stage_name, dt):
+        stage_name.player.current_hp = self.player_stats['current_hp']
+        if self.player_stats['lives'] < 0:
+            self.stage = 3
+        if stage_name.player.status == 'death':
+            self.dead_time += dt
+            if self.dead_time >= 5:
+                self.player_stats['lives'] -= 1
+                self.player_stats['current_hp'] = 100
+                self.dead_time = 0
+        
 
     def loading_level(self, file_name):
         with open(f'stages/{file_name}', 'rb') as file:
@@ -190,7 +214,7 @@ class Main:
     def switch(self, grid = None): 
         self.transition.active = True
         if grid:
-            self.level = Level(grid, self.switch, self.level_data, self.level_sounds)
+            self.level = Level(grid, self.switch, self.level_data, self.level_sounds, self.change_gears, self.change_hp)
 
     def run(self):
         while True:
@@ -201,6 +225,7 @@ class Main:
                         self.editor.run(dt)
                     else:
                         self.level.run(dt)
+                        self.level_transmission(dt)
                     self.transition.display(dt)
                 case 1: self.stage = self.author.run()
                 case 2:
@@ -211,8 +236,9 @@ class Main:
                 case 3: self.stage = self.main_menu.run(dt)
                 case 4:
                     self.common_level.run(dt)
-                    self.ui.show_lives(self.lives_amount)
-                    self.ui.show_hp(self.current_hp, self.max_hp)
+                    self.ui.show_lives(self.player_stats['lives'])
+                    self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
+                    self.common_transmission(self.common_level, dt)
             pygame.display.update()
 
 

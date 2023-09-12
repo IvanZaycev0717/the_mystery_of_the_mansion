@@ -7,10 +7,14 @@ from img_imports import *
 from sprites import *
 
 class Level:
-	def __init__(self, grid, switch, asset_dict, audio):
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp):
 		self.display_surface = pygame.display.get_surface()
 		self.switch = switch
 		self.next_stage = 4
+		self.gear_change = gear_change
+		self.hp = hp
+		self.dead_time = 0
+		self.current_hp = None
 
 		# groups 
 		self.all_sprites = CameraGroup()
@@ -37,7 +41,6 @@ class Level:
 		self.cloud_timer = pygame.USEREVENT + 2
 		pygame.time.set_timer(self.cloud_timer, 2000)
 		self.startup_clouds()
-		self.dead_time = 0
 
 		# sound
 		# self.bg_music = audio['music']
@@ -57,7 +60,7 @@ class Level:
 				if layer_name == 'common':
 					Generic(pos, asset_dict['land'][data[0]][data[1]], [self.all_sprites, self.collision_sprites])
 				match data:
-					case 0: self.player = Player(pos, asset_dict['player'], self.all_sprites, self.collision_sprites, jump_sound, self.lives_left)
+					case 0: self.player = Player(pos, asset_dict['player'], self.all_sprites, self.collision_sprites, jump_sound)
 					case 1:
 						self.horizon_y = pos[1]
 						self.all_sprites.horizon_y = pos[1]
@@ -204,6 +207,14 @@ class Level:
 					case 103: Activator(pos, asset_dict['activators']['pink_door_out'][0], [self.all_sprites, self.activator_sprites], lambda x: x)
 					case 104: Activator(pos, asset_dict['activators']['sf_bed'][0], [self.all_sprites, self.activator_sprites], lambda x: x)
 
+	def check_death(self, pos, dt):
+		if self.player.status == 'death':
+			self.dead_time += dt
+			if self.dead_time >= 5:
+				self.player.kill()
+				pos = (pos[0] - 100, pos[1] - 100)
+				self.player = Player(pos, self.player_asset, self.all_sprites, self.collision_sprites, self.jump_sound)
+				self.dead_time = 0
 
 	def get_keys(self):
 		collided_keys = pygame.sprite.spritecollide(self.player, self.keys_sprites, True)
@@ -215,23 +226,14 @@ class Level:
 		if collision_sprites and self.player.status != 'death':
 			self.hit_sound.play()
 			self.player.damage()
+			self.hp(0.2)
 
 	def get_gears(self):
 		collided_gears = pygame.sprite.spritecollide(self.player, self.gear_sprites, True)
 		for sprite in collided_gears:
 			self.gear_sound.play()
 			Taken(self.taken_surf, sprite.rect.center, self.all_sprites)
-
-	def check_death(self, pos, dt):
-		
-		if self.player.status == 'death':
-			self.dead_time += dt
-			if self.dead_time >= 5:
-				self.lives_left -= 1
-				self.player.kill()
-				pos = (pos[0] - 100, pos[1] - 100)
-				self.player = Player(pos, self.player_asset, self.all_sprites, self.collision_sprites, self.jump_sound, self.lives_left)
-				self.dead_time = 0
+			self.gear_change(1)
 		
 
 
@@ -242,8 +244,6 @@ class Level:
 				sys.exit()
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
 				self.switch()
-				
-			
 			if event.type == self.cloud_timer:
 				surf = choice(self.cloud_surfs)
 				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
@@ -311,7 +311,7 @@ class CameraGroup(pygame.sprite.Group):
                     self.dispay_surface.blit(sprite.image, offset_rect)
 		
 class Common(Level):
-	def __init__(self, grid, switch, asset_dict, audio):
-		super().__init__(grid, switch, asset_dict, audio)
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp)
 
 	
