@@ -2,6 +2,7 @@ import pygame
 from pygame.image import load
 import eng
 import rus
+from settings import *
 
 class UI:
     def __init__(self, surface):
@@ -45,5 +46,58 @@ class Inventory:
 
         # Font
         self.font = pygame.font.SysFont('arial', 40, True)
+        self.lang = None
+
 
         # loading images
+        self.gear_img = load('images/ui/inventory/gear.png').convert_alpha()
+        self.gear_rect = self.gear_img.get_rect(x=1000, y=100)
+        self.green_key_img = load('images/ui/inventory/green_key.png').convert_alpha()
+        self.green_key_rect = self.green_key_img.get_rect(x=997, y=140)
+        self.hammer_img = load('images/ui/inventory/hammer.png').convert_alpha()
+        self.hammer_rect = self.hammer_img.get_rect(x=997, y=200)
+        self.pink_key_img =  load('images/ui/inventory/pink_key.png').convert_alpha()
+        self.pink_key_rect = self.pink_key_img.get_rect(x=1000, y=270)
+        self.yellow_key_img =  load('images/ui/inventory/yellow_key.png').convert_alpha()
+        self.yellow_key_rect = self.yellow_key_img.get_rect(x=1000, y=330)
+
+    def definite_lang(self):
+        with open('stages/lang.txt', 'r') as file:
+            self.lang = file.readline()
+
+    def show_inventory(self, gears_amount, player_stats):
+        self.definite_lang()
+        pygame.draw.rect(self.display_surface, BLACK_GRAY, (960, 15, 300, 400))
+
+        # inventory inscription
+        self.inventory_insc = self.font.render(eng.INV_INSC if self.lang == 'eng' else rus.INV_INSC, False, 'yellow')
+        self.inventory_insc_rect = self.inventory_insc.get_rect(x=1025, y=30)
+
+        # Images of items
+        self.display_surface.blit(self.inventory_insc, self.inventory_insc_rect)
+        self.display_surface.blit(self.gear_img, self.gear_rect)
+        self.display_surface.blit(self.green_key_img, self.green_key_rect)
+        self.display_surface.blit(self.hammer_img, self.hammer_rect)
+        self.display_surface.blit(self.pink_key_img, self.pink_key_rect)
+        self.display_surface.blit(self.yellow_key_img, self.yellow_key_rect)
+
+        # Status of items
+        self.gears_amount = self.font.render(f'x{gears_amount}', False, 'yellow')
+        self.gears_amount_rect = self.gears_amount.get_rect(x=1060, y=82)
+        self.display_surface.blit(self.gears_amount, self.gears_amount_rect)
+
+        self.green_status = self.font.render((eng.KEY_FOUND if player_stats['green_key'] else eng.KEY_NOT_FOUND) if self.lang == 'eng' else (rus.KEY_FOUND if player_stats['green_key'] else rus.KEY_NOT_FOUND), False, 'yellow')
+        self.green_status_rect = self.green_status.get_rect(x=1060, y=140)
+        self.display_surface.blit(self.green_status, self.green_status_rect)
+
+        self.hammer_status = self.font.render((eng.KEY_FOUND if player_stats['hammer_key'] else eng.KEY_NOT_FOUND) if self.lang == 'eng' else (rus.KEY_FOUND if player_stats['hammer_key'] else rus.KEY_NOT_FOUND), False, 'yellow')
+        self.hammer_status_rect = self.hammer_status.get_rect(x=1060, y=210)
+        self.display_surface.blit(self.hammer_status, self.hammer_status_rect)
+
+        self.pink_status = self.font.render((eng.KEY_FOUND if player_stats['pink_key'] else eng.KEY_NOT_FOUND) if self.lang == 'eng' else (rus.KEY_FOUND if player_stats['pink_key'] else rus.KEY_NOT_FOUND), False, 'yellow')
+        self.pink_status_rect = self.pink_status.get_rect(x=1060, y=270)
+        self.display_surface.blit(self.pink_status, self.pink_status_rect)
+
+        self.yellow_status = self.font.render((eng.KEY_FOUND if player_stats['yellow_key'] else eng.KEY_NOT_FOUND) if self.lang == 'eng' else (rus.KEY_FOUND if player_stats['yellow_key'] else rus.KEY_NOT_FOUND), False, 'yellow')
+        self.yellow_status_rect = self.yellow_status.get_rect(x=1060, y=335)
+        self.display_surface.blit(self.yellow_status, self.yellow_status_rect)

@@ -26,7 +26,7 @@ class Cloud(Generic):
 		self.speed = randint(20, 30)
 
 
-	def update(self, dt):
+	def update(self, dt, player_pos):
 		self.pos.x -= self.speed * dt
 		self.rect.x = round(self.pos.x)
 		if self.rect.x <= self.left_limit:
@@ -144,7 +144,7 @@ class Player(Generic):
 					self.direction.y = 0
 
 
-	def update(self, dt):
+	def update(self, dt, player_pos):
 		self.input()
 		self.apply_gravity(dt)
 		self.move(dt)
@@ -165,7 +165,7 @@ class Animated(Generic):
 		self.image = self.animation_frames[int(self.frame_index)]
 
 
-	def update(self, dt):
+	def update(self, dt, player_pos):
 		self.animate(dt)
 
 class Key(Animated):
@@ -219,16 +219,19 @@ class Camel(Generic):
 		# f*cking camel spit on me
 		self.splutter_surf = splutter_surf
 		self.has_shot = False
-		self.attack_cooldown = timer.Timer(2000)
+		self.attack_cooldown = timer.Timer(6000)
 		self.enemy_sprites = enemy_sprites
 	
 	def animate(self, dt):
 		if not self.has_shot:
+			self.attack_cooldown.activate()
 			splutter_direction = vector(-1, 0)
 			Splutter(self.rect.center + vector(-60, -30), splutter_direction, self.splutter_surf, [self.groups(), self.enemy_sprites])
 			self.has_shot = True
+		if self.attack_cooldown.start_time == 0:
+			self.has_shot = False
 	
-	def update(self, dt):
+	def update(self, dt, player_pos):
 		self.animate(dt)
 		self.attack_cooldown.update()
 
@@ -247,7 +250,7 @@ class Splutter(Generic):
 		self.timer = timer.Timer(6000)
 		self.timer.activate()
 	
-	def update(self, dt):
+	def update(self, dt, player_pos):
 		# movement
 		self.pos.x += self.direction.x * self.speed * dt
 		self.rect.x = round(self.pos.x)
@@ -275,8 +278,9 @@ class Wasp(Generic):
 		if [sprite for sprite in self.collision_sprites if sprite.rect.collidepoint(self.rect.midbottom + vector(0, 10))]:
 			self.kill()
 	
-	def update(self, dt):
-		self.move(dt)
+	def update(self, dt, player_pos):
+		if abs(player_pos[0] - self.pos[0]) <= 450:
+			self.move(dt)
 
 class FlyingEnemy(Generic):
 	def __init__(self, assets, pos, group, collision_sprites):
@@ -303,13 +307,14 @@ class FlyingEnemy(Generic):
 		self.rect.x = round(self.pos.x)
 		self.rect.y = round(self.pos.y - pos_y)
 	
-	def update(self, dt):
-		self.animate(dt)
-		self.move(dt)
+	def update(self, dt, player_pos):
+		if abs(self.pos[0] - player_pos[0]) <= 600:
+			self.animate(dt)
+			self.move(dt)
 
-		self.timer.update()
-		if not self.timer.active:
-			self.kill()
+			self.timer.update()
+			if not self.timer.active:
+				self.kill()
 
 
 class WalkingEnemies(Generic):
@@ -340,9 +345,10 @@ class WalkingEnemies(Generic):
 		self.rect.x = round(self.pos.x)
 
 	
-	def update(self, dt):
-		self.animate(dt)
-		self.move(dt)
+	def update(self, dt, player_pos):
+		if abs(self.pos[0] - player_pos[0]) <= 400:
+			self.animate(dt)
+			self.move(dt)
 
 class Angel(Generic):
 	def __init__(self, assets, pos, group, collision_sprites):
@@ -392,7 +398,7 @@ class Angel(Generic):
 		self.pos.x += self.direction.x * self.speed * dt
 		self.rect.x = round(self.pos.x)
 	
-	def update(self, dt):
+	def update(self, dt, player_pos):
 		self.animate(dt)
 		self.move(dt)
 
@@ -442,7 +448,7 @@ class Goat(Generic):
 		self.pos.x += self.direction.x * self.speed * dt
 		self.rect.x = round(self.pos.x)
 	
-	def update(self, dt):
+	def update(self, dt, player_pos):
 		self.animate(dt)
 		self.move(dt)
 
@@ -476,7 +482,7 @@ class Harp(Generic):
 			Arrow(self.rect.center + vector(0, -30), arrow_direction, self.arrow_surf, [self.groups(), self.enemies_sprites])
 			self.has_shot = True
 	
-	def update(self, dt):
+	def update(self, dt, player_pos):
 		self.animate(dt)
 		self.attack_cooldown.update()
 
@@ -494,7 +500,7 @@ class Arrow(Generic):
 		self.timer = timer.Timer(6000)
 		self.timer.activate()
 
-	def update(self, dt):
+	def update(self, dt, player_pos):
         # movement
 		self.pos.x += self.direction.x * self.speed * dt
 		self.rect.x = round(self.pos.x)
@@ -549,7 +555,7 @@ class Bird(Generic):
 		self.pos.x += self.direction.x * self.speed * dt
 		self.rect.x = round(self.pos.x)
 	
-	def update(self, dt):
+	def update(self, dt, player_pos):
 		self.animate(dt)
 		self.move(dt)
 

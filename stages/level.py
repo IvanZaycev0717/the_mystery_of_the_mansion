@@ -6,18 +6,27 @@ from img_imports import *
 
 from sprites import *
 
+from ui import Inventory
+
 class Level:
-	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp):
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds=True, has_horizon=True):
 		self.display_surface = pygame.display.get_surface()
 		self.switch = switch
 		self.next_stage = 4
 		self.gear_change = gear_change
+		self.change_keys = change_keys
 		self.hp = hp
 		self.dead_time = 0
 		self.current_hp = None
+		self.gears_amount = 0
+		self.player_stats = {}
+		self.sky_color = sky_color
+		self.ground_color = ground_color
+		self.has_clouds = has_clouds
+		self.has_horizon = has_horizon
 
 		# groups 
-		self.all_sprites = CameraGroup()
+		self.all_sprites = CameraGroup(self.ground_color, self.has_horizon)
 		self.keys_sprites = pygame.sprite.Group()
 		self.gear_sprites = pygame.sprite.Group()
 		self.enemies_sprites = pygame.sprite.Group()
@@ -25,9 +34,11 @@ class Level:
 		self.collision_sprites = pygame.sprite.Group()
 		self.camel_sprites = pygame.sprite.Group()
 		self.harp_sprites = pygame.sprite.Group()
+		self.inventory = Inventory(self.display_surface)
 		self.player_asset = asset_dict['player']
 		self.jump_sound = audio['jump']
 		self.lives_left = 3
+		self.tab_pressed = False
 
 		self.build_level(grid, asset_dict, self.jump_sound)
 
@@ -37,10 +48,11 @@ class Level:
         }
 
 		self.taken_surf = asset_dict['taken']
-		self.cloud_surfs = asset_dict['clouds']
-		self.cloud_timer = pygame.USEREVENT + 2
-		pygame.time.set_timer(self.cloud_timer, 2000)
-		self.startup_clouds()
+		if self.has_clouds:
+			self.cloud_surfs = asset_dict['clouds']
+			self.cloud_timer = pygame.USEREVENT + 2
+			pygame.time.set_timer(self.cloud_timer, 2000)
+			self.startup_clouds()
 
 		# sound
 		# self.bg_music = audio['music']
@@ -219,6 +231,7 @@ class Level:
 	def get_keys(self):
 		collided_keys = pygame.sprite.spritecollide(self.player, self.keys_sprites, True)
 		for sprite in collided_keys:
+			self.change_keys(f'{sprite.__dict__["key_type"]}_key')
 			sprite.kill()
 
 	def get_damage(self):
@@ -244,12 +257,16 @@ class Level:
 				sys.exit()
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
 				self.switch()
-			if event.type == self.cloud_timer:
+			if self.has_clouds and event.type == self.cloud_timer:
 				surf = choice(self.cloud_surfs)
 				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
 				x = self.level_limits['right'] + randint(100, 300)
 				y = self.horizon_y - randint(-50, 600)
 				Cloud((x, y), surf, self.all_sprites, self.level_limits['left'])
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
+				self.tab_pressed = True
+			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
+				self.tab_pressed = False
 	
 	def startup_clouds(self):
 		for cloud in range(40):
@@ -259,27 +276,34 @@ class Level:
 			y = self.horizon_y - randint(-50, 600)
 			Cloud((x, y), surf, self.all_sprites, self.level_limits['left'])
 
-	def run(self, dt):
+	def run(self, dt, gears_amount, player_stats):
+		self.gears_amount = gears_amount
+		self.player_stats = player_stats
+
 		self.event_loop()
-		self.all_sprites.update(dt)
+		self.all_sprites.update(dt, self.player.pos)
 		self.get_keys()
 		self.get_gears()
 		self.get_damage()
 		self.check_death(self.player.pos, dt)
-		self.display_surface.fill((218,165, 32))
+		self.display_surface.fill(self.sky_color)
 		self.all_sprites.custom_draw(self.player)
+		if self.tab_pressed:
+			self.inventory.show_inventory(self.gears_amount, self.player_stats)
 
 class CameraGroup(pygame.sprite.Group):
-    def __init__(self):
+    def __init__(self, custom_sea, has_horizon):
         super().__init__()
         self.dispay_surface = pygame.display.get_surface()
         self.offset = vector()
+        self.custom_sea = custom_sea
+        self.has_horizon = has_horizon
 
     def draw_horizon(self):
         horizon_pos = self.horizon_y - self.offset.y
         if horizon_pos < WINDOW_HEIGHT:
             sea_rect = pygame.Rect(0, horizon_pos, WINDOW_WIDTH, WINDOW_HEIGHT - horizon_pos)
-            pygame.draw.rect(self.dispay_surface, SEA_COLOR, sea_rect)
+            pygame.draw.rect(self.dispay_surface, self.custom_sea, sea_rect)
 
             # horizon line
             horizon_rect1 = pygame.Rect(0,horizon_pos - 10,WINDOW_WIDTH,10)
@@ -291,27 +315,25 @@ class CameraGroup(pygame.sprite.Group):
             pygame.draw.line(self.dispay_surface, HORIZON_COLOR, (0,horizon_pos), (WINDOW_WIDTH, horizon_pos), 3)
 
         if horizon_pos < 0:
-            self.dispay_surface.fill(SEA_COLOR)
+            self.dispay_surface.fill((100, 100, 100))
 
     def custom_draw(self, player):
         self.offset.x = player.rect.centerx - WINDOW_WIDTH / 2
-        self.offset.y = player.rect.centery - WINDOW_HEIGHT / 2
+        self.offset.y = player.rect.centery - WINDOW_HEIGHT / 1.4
         for sprite in self:
             if sprite.z == LEVEL_LAYERS['clouds']:
                 offset_rect = sprite.rect.copy()
                 offset_rect.center -= self.offset
                 self.dispay_surface.blit(sprite.image, offset_rect)
         
-        self.draw_horizon()
+        if self.has_horizon:
+            self.draw_horizon()
         for sprite in self:
             for layer in LEVEL_LAYERS.values():
                 if sprite.z == layer and sprite.z != LEVEL_LAYERS['clouds']:
                     offset_rect = sprite.rect.copy()
                     offset_rect.center -= self.offset
                     self.dispay_surface.blit(sprite.image, offset_rect)
-		
-class Common(Level):
-	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp):
-		super().__init__(grid, switch, asset_dict, audio, gear_change, hp)
+
 
 	

@@ -15,3 +15,7 @@ MM_DOWN = 'Down - Sit down'
 MM_SPACE = 'Space - Jump'
 ED_MD = 'Go to Editor mode'
 GO_TO_ED = 'EDITOR MODE'
+
+INV_INSC = 'Inventory'
+KEY_FOUND = 'Found'
+KEY_NOT_FOUND = 'Not found'

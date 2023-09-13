@@ -38,10 +38,22 @@ LINE_COLOR = '#f8ff2e'
 ORIGIN_COLOR = 'yellow'
 
 #ENVOIREMENT BACKGROUNG
-SKY_COLOR = '#abdbe3'
-HORIZON_TOP_COLOR = '#eeeee4'
-SEA_COLOR = '#76b5c5'
-HORIZON_COLOR = '#FFFAFA'
+SKY_COLOR = '#d3e4ef'
+HORIZON_TOP_COLOR = '#f2f5f7'
+SEA_COLOR = '#a8c9e0'
+HORIZON_COLOR = '#bfcdd6'
+
+# LEVELS BACKGROUND
+LV_BG = {
+    'common': {'SKY': '#acd3e9', 'GRD': '#345833'},
+    'cementry': {'SKY': '#b9b5b4', 'GRD': '#504744'},
+    'inside': {'SKY': '#e4afa0', 'GRD': '#e4afa0'},
+    'heaven': {'SKY': '#9bd5fe', 'GRD': '#0597fd'},
+    'desert': {'SKY': '#f2d80f', 'GRD': '#dd9b21'},
+    'garden': {'SKY': '#4f17b7', 'GRD': '#109730'},
+    'poison': {'SKY': '#e3fa7c', 'GRD': '#97fc38'},
+}
+
 
 LEVEL_LAYERS = {
 	'clouds': 1,

@@ -9,7 +9,7 @@ from pygame.math import Vector2 as vector
 from settings import *
 from author import Author
 from editor import Editor
-from level import Level, Common
+from level import Level
 from lang_choice import LangChoice
 from main_menu import MainMenu
 from ui import UI
@@ -50,7 +50,7 @@ class Main:
 
         # Графический интерфейст характеристик игрока
         self.gears = 0
-        self.player_stats = {'max_hp': 100, 'current_hp': 100, 'lives': 1, 'green_key': False, 'pink_key': False, 'hammer': False}
+        self.player_stats = {'max_hp': 100, 'current_hp': 100, 'lives': 1, 'green_key': False, 'pink_key': False, 'hammer_key': False, 'yellow_key': False}
         self.current_task = None
 
         # Звуки
@@ -104,14 +104,31 @@ class Main:
                  'arrow': self.arrow,
                  'clouds': self.clouds,
                 }
-        self.common_level_data = self.loading_level('my_level.mml')
-        self.common_level = Common(self.common_level_data, self.switch, self.level_data, self.level_sounds, self.change_gears, self.change_hp)
+        
+        # load levels data
+        self.common_level = Level(
+            grid=self.loading_level('my_level.mml'),
+            switch=self.switch,
+            asset_dict=self.level_data,
+            audio=self.level_sounds,
+            gear_change=self.change_gears,
+            hp=self.change_hp,
+            change_keys=self.change_keys,
+            sky_color=LV_BG['poison']['SKY'],
+            ground_color=LV_BG['poison']['GRD'],
+            has_clouds=False,
+            has_horizon=False,
+            )
+        
 
     def change_gears(self, amount):
         self.gears += amount
 
     def change_hp(self, damage):
         self.player_stats['current_hp'] -= damage
+    
+    def change_keys(self, key_type):
+        self.player_stats[key_type] = True
     
     def level_transmission(self, dt):
         self.level.player.current_hp = self.player_stats['current_hp']
@@ -214,7 +231,17 @@ class Main:
     def switch(self, grid = None): 
         self.transition.active = True
         if grid:
-            self.level = Level(grid, self.switch, self.level_data, self.level_sounds, self.change_gears, self.change_hp)
+            self.level = Level(
+                grid=grid,
+                switch=self.switch,
+                asset_dict=self.level_data,
+                audio=self.level_sounds,
+                gear_change=self.change_gears,
+                hp=self.change_hp,
+                change_keys=self.change_keys,
+                sky_color=SKY_COLOR,
+                ground_color=SEA_COLOR
+            )
 
     def run(self):
         while True:
@@ -224,7 +251,7 @@ class Main:
                     if self.editor_active: 
                         self.editor.run(dt)
                     else:
-                        self.level.run(dt)
+                        self.level.run(dt, self.gears, self.player_stats)
                         self.level_transmission(dt)
                     self.transition.display(dt)
                 case 1: self.stage = self.author.run()
@@ -235,7 +262,7 @@ class Main:
                         self.stage = 3
                 case 3: self.stage = self.main_menu.run(dt)
                 case 4:
-                    self.common_level.run(dt)
+                    self.common_level.run(dt, self.gears, self.player_stats)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.common_level, dt)
