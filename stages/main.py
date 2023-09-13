@@ -9,7 +9,7 @@ from pygame.math import Vector2 as vector
 from settings import *
 from author import Author
 from editor import Editor
-from level import Level
+from level import Level, Common, Cementry
 from lang_choice import LangChoice
 from main_menu import MainMenu
 from ui import UI
@@ -106,19 +106,33 @@ class Main:
                 }
         
         # load levels data
-        self.common_level = Level(
-            grid=self.loading_level('my_level.mml'),
+        self.common_level = Common(
+            grid=self.loading_level('common.mml'),
             switch=self.switch,
             asset_dict=self.level_data,
             audio=self.level_sounds,
             gear_change=self.change_gears,
             hp=self.change_hp,
             change_keys=self.change_keys,
-            sky_color=LV_BG['poison']['SKY'],
-            ground_color=LV_BG['poison']['GRD'],
+            sky_color=LV_BG['common']['SKY'],
+            ground_color=LV_BG['common']['GRD'],
             has_clouds=False,
             has_horizon=False,
             )
+        
+        self.cementry_level = Cementry(
+            grid=self.loading_level('cementry.mml'),
+            switch=self.switch,
+            asset_dict=self.level_data,
+            audio=self.level_sounds,
+            gear_change=self.change_gears,
+            hp=self.change_hp,
+            change_keys=self.change_keys,
+            sky_color=LV_BG['cementry']['SKY'],
+            ground_color=LV_BG['cementry']['GRD'],
+            has_clouds=False,
+            has_horizon=False,
+        )
         
 
     def change_gears(self, amount):
@@ -262,10 +276,15 @@ class Main:
                         self.stage = 3
                 case 3: self.stage = self.main_menu.run(dt)
                 case 4:
-                    self.common_level.run(dt, self.gears, self.player_stats)                                    
+                    self.stage = self.common_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.common_level, dt)
+                case 5:
+                    self.stage = self.cementry_level.run(dt, self.gears, self.player_stats, self.stage)                                    
+                    self.ui.show_lives(self.player_stats['lives'])
+                    self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
+                    self.common_transmission(self.cementry_level, dt)
             pygame.display.update()
 
 

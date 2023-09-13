@@ -12,7 +12,7 @@ class Level:
 	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds=True, has_horizon=True):
 		self.display_surface = pygame.display.get_surface()
 		self.switch = switch
-		self.next_stage = 4
+		self.current_stage = 4
 		self.gear_change = gear_change
 		self.change_keys = change_keys
 		self.hp = hp
@@ -24,6 +24,7 @@ class Level:
 		self.ground_color = ground_color
 		self.has_clouds = has_clouds
 		self.has_horizon = has_horizon
+		self.current_stage = 0
 
 		# groups 
 		self.all_sprites = CameraGroup(self.ground_color, self.has_horizon)
@@ -204,20 +205,20 @@ class Level:
 					case 88: Generic(pos, asset_dict['first_floor_stuff']['wall'][0], self.all_sprites)
 					case 89: Generic(pos, asset_dict['floor_stuff']['wardrobe'][0], self.all_sprites)
 					case 90: Generic(pos, asset_dict['first_floor_stuff']['window'][0], self.all_sprites)
-					case 91: Activator(pos, asset_dict['activators']['wall'][0], [self.all_sprites, self.activator_sprites], lambda x: x)
-					case 92: Activator(pos, asset_dict['activators']['blue_door_in'][0], [self.all_sprites, self.activator_sprites], lambda x: x)
-					case 93: Activator(pos, asset_dict['activators']['blue_door_out'][0], [self.all_sprites, self.activator_sprites], lambda x: x)
-					case 94: Activator(pos, asset_dict['activators']['cementry_gates'][0], [self.all_sprites, self.activator_sprites], lambda x: x)
-					case 95: Activator(pos, asset_dict['activators']['cupboard_bed'][0], [self.all_sprites, self.activator_sprites], lambda x: x)
-					case 96: Activator(pos, asset_dict['activators']['cupboard_door_in'][0], [self.all_sprites, self.activator_sprites], lambda x: x)
-					case 97: Activator(pos, asset_dict['activators']['cupboard_door_out'][0], [self.all_sprites, self.activator_sprites], lambda x: x)
-					case 98: Activator(pos, asset_dict['activators']['ff_bed_in'][0], [self.all_sprites, self.activator_sprites], lambda x: x)
-					case 99: Activator(pos, asset_dict['activators']['green_door_in'][0], [self.all_sprites, self.activator_sprites], lambda x: x)
-					case 100: Activator(pos, asset_dict['activators']['green_door_out'][0], [self.all_sprites, self.activator_sprites], lambda x: x)
-					case 101: Activator(pos, asset_dict['activators']['machine'][0], [self.all_sprites, self.activator_sprites], lambda x: x)
-					case 102: Activator(pos, asset_dict['activators']['pink_door_in'][0], [self.all_sprites, self.activator_sprites], lambda x: x)
-					case 103: Activator(pos, asset_dict['activators']['pink_door_out'][0], [self.all_sprites, self.activator_sprites], lambda x: x)
-					case 104: Activator(pos, asset_dict['activators']['sf_bed'][0], [self.all_sprites, self.activator_sprites], lambda x: x)
+					case 91: Activator(pos, asset_dict['activators']['wall'][0], [self.all_sprites, self.activator_sprites], 'act_wall')
+					case 92: Activator(pos, asset_dict['activators']['blue_door_in'][0], [self.all_sprites, self.activator_sprites], 'blue_door_in')
+					case 93: Activator(pos, asset_dict['activators']['blue_door_out'][0], [self.all_sprites, self.activator_sprites], 'blue_door_out')
+					case 94: Activator(pos, asset_dict['activators']['cementry_gates'][0], [self.all_sprites, self.activator_sprites], 'cem_gates')
+					case 95: Activator(pos, asset_dict['activators']['cupboard_bed'][0], [self.all_sprites, self.activator_sprites], 'cup_bed')
+					case 96: Activator(pos, asset_dict['activators']['cupboard_door_in'][0], [self.all_sprites, self.activator_sprites], 'cup_door_in')
+					case 97: Activator(pos, asset_dict['activators']['cupboard_door_out'][0], [self.all_sprites, self.activator_sprites], 'cup_door_out')
+					case 98: Activator(pos, asset_dict['activators']['ff_bed_in'][0], [self.all_sprites, self.activator_sprites], 'ff_bed_in')
+					case 99: Activator(pos, asset_dict['activators']['green_door_in'][0], [self.all_sprites, self.activator_sprites], 'green_door_in')
+					case 100: Activator(pos, asset_dict['activators']['green_door_out'][0], [self.all_sprites, self.activator_sprites], 'green_door_out')
+					case 101: Activator(pos, asset_dict['activators']['machine'][0], [self.all_sprites, self.activator_sprites], 'machine')
+					case 102: Activator(pos, asset_dict['activators']['pink_door_in'][0], [self.all_sprites, self.activator_sprites], 'pink_door_in')
+					case 103: Activator(pos, asset_dict['activators']['pink_door_out'][0], [self.all_sprites, self.activator_sprites], 'pink_door_out')
+					case 104: Activator(pos, asset_dict['activators']['sf_bed'][0], [self.all_sprites, self.activator_sprites], 'sf_bed')
 
 	def check_death(self, pos, dt):
 		if self.player.status == 'death':
@@ -240,6 +241,7 @@ class Level:
 			self.hit_sound.play()
 			self.player.damage()
 			self.hp(0.2)
+	
 
 	def get_gears(self):
 		collided_gears = pygame.sprite.spritecollide(self.player, self.gear_sprites, True)
@@ -276,7 +278,8 @@ class Level:
 			y = self.horizon_y - randint(-50, 600)
 			Cloud((x, y), surf, self.all_sprites, self.level_limits['left'])
 
-	def run(self, dt, gears_amount, player_stats):
+	def run(self, dt, gears_amount, player_stats, current_stage):
+		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
 
@@ -285,6 +288,7 @@ class Level:
 		self.get_keys()
 		self.get_gears()
 		self.get_damage()
+		self.get_activator()
 		self.check_death(self.player.pos, dt)
 		self.display_surface.fill(self.sky_color)
 		self.all_sprites.custom_draw(self.player)
@@ -335,5 +339,120 @@ class CameraGroup(pygame.sprite.Group):
                     offset_rect.center -= self.offset
                     self.dispay_surface.blit(sprite.image, offset_rect)
 
+class Common(Level):
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds=True, has_horizon=True)
+		self.current_stage = 4
+		self.door_in = False
+		self.gate_active = False
+
+	def get_activator(self):
+		collision_sprites = pygame.sprite.spritecollide(self.player, self.activator_sprites, False)
+		self.gate_active = False
+		self.door_in = False
+		if collision_sprites:
+			for sprite in collision_sprites:
+				if sprite.__dict__['id'] == 'blue_door_in' and self.player_stats['green_key']:
+					self.door_in = True
+				if sprite.__dict__['id'] == 'cem_gates':
+					self.gate_active = True
 
 	
+	def event_loop(self):
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				sys.exit()
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.switch()
+			if self.has_clouds and event.type == self.cloud_timer:
+				surf = choice(self.cloud_surfs)
+				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
+				x = self.level_limits['right'] + randint(100, 300)
+				y = self.horizon_y - randint(-50, 600)
+				Cloud((x, y), surf, self.all_sprites, self.level_limits['left'])
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
+				self.tab_pressed = True
+			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
+				self.tab_pressed = False
+			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.gate_active:
+				self.current_stage = 5
+				self.gate_active = False
+			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.door_in:
+				self.current_stage = 0
+				self.door_in = False
+
+	def run(self, dt, gears_amount, player_stats, current_stage):
+		self.current_stage = current_stage
+		self.gears_amount = gears_amount
+		self.player_stats = player_stats
+
+		self.event_loop()
+		self.all_sprites.update(dt, self.player.pos)
+		self.get_keys()
+		self.get_gears()
+		self.get_damage()
+		self.get_activator()
+		self.check_death(self.player.pos, dt)
+		self.display_surface.fill(self.sky_color)
+		self.all_sprites.custom_draw(self.player)
+		if self.tab_pressed:
+			self.inventory.show_inventory(self.gears_amount, self.player_stats)
+		return self.current_stage
+
+
+class Cementry(Level):
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds=True, has_horizon=True)
+		self.current_stage = 5
+		self.gate_active = False
+	
+	
+	def get_activator(self):
+		collision_sprites = pygame.sprite.spritecollide(self.player, self.activator_sprites, False)
+		self.gate_active = False
+		if collision_sprites:
+			for sprite in collision_sprites:
+				if sprite.__dict__['id'] == 'cem_gates':
+					self.gate_active = True
+				else:
+					self.gate_active = True
+	
+	def event_loop(self):
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				sys.exit()
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.switch()
+			if self.has_clouds and event.type == self.cloud_timer:
+				surf = choice(self.cloud_surfs)
+				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
+				x = self.level_limits['right'] + randint(100, 300)
+				y = self.horizon_y - randint(-50, 600)
+				Cloud((x, y), surf, self.all_sprites, self.level_limits['left'])
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
+				self.tab_pressed = True
+			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
+				self.tab_pressed = False
+			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.gate_active:
+				self.current_stage = 4
+				self.gate_active = False
+	
+	def run(self, dt, gears_amount, player_stats, current_stage):
+		self.current_stage = current_stage
+		self.gears_amount = gears_amount
+		self.player_stats = player_stats
+
+		self.event_loop()
+		self.all_sprites.update(dt, self.player.pos)
+		self.get_keys()
+		self.get_gears()
+		self.get_damage()
+		self.get_activator()
+		self.check_death(self.player.pos, dt)
+		self.display_surface.fill(self.sky_color)
+		self.all_sprites.custom_draw(self.player)
+		if self.tab_pressed:
+			self.inventory.show_inventory(self.gears_amount, self.player_stats)
+		return self.current_stage

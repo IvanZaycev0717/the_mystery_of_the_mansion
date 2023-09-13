@@ -192,9 +192,9 @@ class Taken(Animated):
 			self.kill()
 
 class Activator(Generic):
-	def __init__(self, pos, surf, group, func):
+	def __init__(self, pos, surf, group, id):
 		super().__init__(pos, surf, group)
-		self.func = func
+		self.id = id
 
 class Spikes(Generic):
 	def __init__(self, surf, pos, group):
