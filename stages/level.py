@@ -249,7 +249,7 @@ class Level:
 			self.gear_sound.play()
 			Taken(self.taken_surf, sprite.rect.center, self.all_sprites)
 			self.gear_change(1)
-		
+
 
 
 	def event_loop(self):
@@ -288,7 +288,6 @@ class Level:
 		self.get_keys()
 		self.get_gears()
 		self.get_damage()
-		self.get_activator()
 		self.check_death(self.player.pos, dt)
 		self.display_surface.fill(self.sky_color)
 		self.all_sprites.custom_draw(self.player)
@@ -352,7 +351,7 @@ class Common(Level):
 		self.door_in = False
 		if collision_sprites:
 			for sprite in collision_sprites:
-				if sprite.__dict__['id'] == 'blue_door_in' and self.player_stats['green_key']:
+				if sprite.__dict__['id'] == 'blue_door_in' and self.player_stats['yellow_key']:
 					self.door_in = True
 				if sprite.__dict__['id'] == 'cem_gates':
 					self.gate_active = True
@@ -379,7 +378,7 @@ class Common(Level):
 				self.current_stage = 5
 				self.gate_active = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.door_in:
-				self.current_stage = 0
+				self.current_stage = 6
 				self.door_in = False
 
 	def run(self, dt, gears_amount, player_stats, current_stage):
@@ -415,8 +414,6 @@ class Cementry(Level):
 			for sprite in collision_sprites:
 				if sprite.__dict__['id'] == 'cem_gates':
 					self.gate_active = True
-				else:
-					self.gate_active = True
 	
 	def event_loop(self):
 		for event in pygame.event.get():
@@ -438,6 +435,461 @@ class Cementry(Level):
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.gate_active:
 				self.current_stage = 4
 				self.gate_active = False
+	
+	def run(self, dt, gears_amount, player_stats, current_stage):
+		self.current_stage = current_stage
+		self.gears_amount = gears_amount
+		self.player_stats = player_stats
+
+		self.event_loop()
+		self.all_sprites.update(dt, self.player.pos)
+		self.get_keys()
+		self.get_gears()
+		self.get_damage()
+		self.get_activator()
+		self.check_death(self.player.pos, dt)
+		self.display_surface.fill(self.sky_color)
+		self.all_sprites.custom_draw(self.player)
+		if self.tab_pressed:
+			self.inventory.show_inventory(self.gears_amount, self.player_stats)
+		return self.current_stage
+
+
+class Hall(Level):
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds, has_horizon)
+		self.current_stage = 6
+		self.door_out = False
+		self.pink_door = False
+		self.green_door = False
+		self.cupboard_door = False
+	
+	def get_activator(self):
+		collision_sprites = pygame.sprite.spritecollide(self.player, self.activator_sprites, False)
+		self.door_out = False
+		self.pink_door = False
+		self.green_door = False
+		self.cupboard_door = False
+		if collision_sprites:
+			for sprite in collision_sprites:
+				if sprite.__dict__['id'] == 'blue_door_out' and self.player_stats['yellow_key']:
+					self.door_out = True
+				if sprite.__dict__['id'] == 'cup_door_in':
+					self.cupboard_door = True
+				if sprite.__dict__['id'] == 'green_door_out' and self.player_stats['green_key']:
+					self.green_door = True
+				if sprite.__dict__['id'] == 'pink_door_out' and self.player_stats['pink_key']:
+					self.pink_door = True
+	
+	def event_loop(self):
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				sys.exit()
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.switch()
+			if self.has_clouds and event.type == self.cloud_timer:
+				surf = choice(self.cloud_surfs)
+				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
+				x = self.level_limits['right'] + randint(100, 300)
+				y = self.horizon_y - randint(-50, 600)
+				Cloud((x, y), surf, self.all_sprites, self.level_limits['left'])
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
+				self.tab_pressed = True
+			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
+				self.tab_pressed = False
+			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.door_out:
+				self.current_stage = 4
+				self.door_out = False
+			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.cupboard_door:
+				self.current_stage = 7
+				self.cupboard_door = False
+			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.green_door:
+				self.current_stage = 9
+				self.green_door = False
+			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.pink_door:
+				self.current_stage = 11
+				self.pink_door = False
+	
+	def run(self, dt, gears_amount, player_stats, current_stage):
+		self.current_stage = current_stage
+		self.gears_amount = gears_amount
+		self.player_stats = player_stats
+
+		self.event_loop()
+		self.all_sprites.update(dt, self.player.pos)
+		self.get_keys()
+		self.get_gears()
+		self.get_damage()
+		self.get_activator()
+		self.check_death(self.player.pos, dt)
+		self.display_surface.fill(self.sky_color)
+		self.all_sprites.custom_draw(self.player)
+		if self.tab_pressed:
+			self.inventory.show_inventory(self.gears_amount, self.player_stats)
+		return self.current_stage
+
+class Cupboard(Level):
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds, has_horizon)
+		self.current_stage = 6
+		self.cupboard_door = False
+		self.cupboard_bed = False
+	
+	def get_activator(self):
+		collision_sprites = pygame.sprite.spritecollide(self.player, self.activator_sprites, False)
+		self.cupboard_door = False
+		self.cupboard_bed = False
+		if collision_sprites:
+			for sprite in collision_sprites:
+				if sprite.__dict__['id'] == 'cup_door_out':
+					self.cupboard_door = True
+				if sprite.__dict__['id'] == 'cup_bed' and not self.player_stats['green_key']:
+					self.cupboard_bed = True
+	
+	def event_loop(self):
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				sys.exit()
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.switch()
+			if self.has_clouds and event.type == self.cloud_timer:
+				surf = choice(self.cloud_surfs)
+				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
+				x = self.level_limits['right'] + randint(100, 300)
+				y = self.horizon_y - randint(-50, 600)
+				Cloud((x, y), surf, self.all_sprites, self.level_limits['left'])
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
+				self.tab_pressed = True
+			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
+				self.tab_pressed = False
+			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.cupboard_door:
+				self.current_stage = 6
+				self.cupboard_door = False
+			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.cupboard_bed:
+				self.current_stage = 8
+				self.cupboard_bed = False
+	
+	def run(self, dt, gears_amount, player_stats, current_stage):
+		self.current_stage = current_stage
+		self.gears_amount = gears_amount
+		self.player_stats = player_stats
+
+		self.event_loop()
+		self.all_sprites.update(dt, self.player.pos)
+		self.get_keys()
+		self.get_gears()
+		self.get_damage()
+		self.get_activator()
+		self.check_death(self.player.pos, dt)
+		self.display_surface.fill(self.sky_color)
+		self.all_sprites.custom_draw(self.player)
+		if self.tab_pressed:
+			self.inventory.show_inventory(self.gears_amount, self.player_stats)
+		return self.current_stage
+
+class Heaven(Level):
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds, has_horizon)
+		self.current_stage = 8
+	
+	def check_green_key(self):
+		if self.player_stats['green_key']:
+			self.current_stage = 7
+
+	def event_loop(self):
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				sys.exit()
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.switch()
+			if self.has_clouds and event.type == self.cloud_timer:
+				surf = choice(self.cloud_surfs)
+				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
+				x = self.level_limits['right'] + randint(100, 300)
+				y = self.horizon_y - randint(-50, 600)
+				Cloud((x, y), surf, self.all_sprites, self.level_limits['left'])
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
+				self.tab_pressed = True
+			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
+				self.tab_pressed = False
+	
+	def run(self, dt, gears_amount, player_stats, current_stage):
+		self.current_stage = current_stage
+		self.gears_amount = gears_amount
+		self.player_stats = player_stats
+
+		self.event_loop()
+		self.check_green_key()
+		self.all_sprites.update(dt, self.player.pos)
+		self.get_keys()
+		self.get_gears()
+		self.get_damage()
+		self.check_death(self.player.pos, dt)
+		self.display_surface.fill(self.sky_color)
+		self.all_sprites.custom_draw(self.player)
+		if self.tab_pressed:
+			self.inventory.show_inventory(self.gears_amount, self.player_stats)
+		return self.current_stage
+
+class FirstFloor(Level):
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds, has_horizon)
+		self.current_stage = 9
+		self.green_door = False
+		self.green_bed = False
+	
+	def get_activator(self):
+		collision_sprites = pygame.sprite.spritecollide(self.player, self.activator_sprites, False)
+		self.green_door = False
+		self.green_bed = False
+		if collision_sprites:
+			for sprite in collision_sprites:
+				if sprite.__dict__['id'] in ('green_door_in', 'green_door_out'):
+					self.green_door = True
+				if sprite.__dict__['id'] == 'ff_bed_in' and not self.player_stats['pink_key']:
+					self.green_bed = True
+	
+	def event_loop(self):
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				sys.exit()
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.switch()
+			if self.has_clouds and event.type == self.cloud_timer:
+				surf = choice(self.cloud_surfs)
+				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
+				x = self.level_limits['right'] + randint(100, 300)
+				y = self.horizon_y - randint(-50, 600)
+				Cloud((x, y), surf, self.all_sprites, self.level_limits['left'])
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
+				self.tab_pressed = True
+			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
+				self.tab_pressed = False
+			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.green_door:
+				self.current_stage = 6
+				self.green_door = False
+			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.green_bed:
+				self.current_stage = 10
+				self.green_bed = False
+	
+	def run(self, dt, gears_amount, player_stats, current_stage):
+		self.current_stage = current_stage
+		self.gears_amount = gears_amount
+		self.player_stats = player_stats
+
+		self.event_loop()
+		self.all_sprites.update(dt, self.player.pos)
+		self.get_keys()
+		self.get_gears()
+		self.get_damage()
+		self.get_activator()
+		self.check_death(self.player.pos, dt)
+		self.display_surface.fill(self.sky_color)
+		self.all_sprites.custom_draw(self.player)
+		if self.tab_pressed:
+			self.inventory.show_inventory(self.gears_amount, self.player_stats)
+		return self.current_stage
+
+class Desert(Level):
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds, has_horizon)
+		self.current_stage = 10
+	
+	def check_green_key(self):
+		if self.player_stats['pink_key']:
+			self.current_stage = 9
+
+	def event_loop(self):
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				sys.exit()
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.switch()
+			if self.has_clouds and event.type == self.cloud_timer:
+				surf = choice(self.cloud_surfs)
+				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
+				x = self.level_limits['right'] + randint(100, 300)
+				y = self.horizon_y - randint(-50, 600)
+				Cloud((x, y), surf, self.all_sprites, self.level_limits['left'])
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
+				self.tab_pressed = True
+			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
+				self.tab_pressed = False
+	
+	def run(self, dt, gears_amount, player_stats, current_stage):
+		self.current_stage = current_stage
+		self.gears_amount = gears_amount
+		self.player_stats = player_stats
+
+		self.event_loop()
+		self.check_green_key()
+		self.all_sprites.update(dt, self.player.pos)
+		self.get_keys()
+		self.get_gears()
+		self.get_damage()
+		self.check_death(self.player.pos, dt)
+		self.display_surface.fill(self.sky_color)
+		self.all_sprites.custom_draw(self.player)
+		if self.tab_pressed:
+			self.inventory.show_inventory(self.gears_amount, self.player_stats)
+		return self.current_stage
+
+class SecondFloor(Level):
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds, has_horizon)
+		self.current_stage = 11
+		self.pink_door = False
+		self.pink_bed = False
+		self.wall = False
+	
+	def get_activator(self):
+		collision_sprites = pygame.sprite.spritecollide(self.player, self.activator_sprites, False)
+		self.pink_door = False
+		self.pink_bed = False
+		self.wall = False
+		if collision_sprites:
+			for sprite in collision_sprites:
+				if sprite.__dict__['id'] == 'pink_door_in':
+					self.pink_door = True
+				if sprite.__dict__['id'] == 'sf_bed' and not self.player_stats['hammer_key']:
+					self.pink_bed = True
+				if sprite.__dict__['id'] == 'act_wall' and self.player_stats['hammer_key']:
+					self.wall = True
+	
+	def event_loop(self):
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				sys.exit()
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.switch()
+			if self.has_clouds and event.type == self.cloud_timer:
+				surf = choice(self.cloud_surfs)
+				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
+				x = self.level_limits['right'] + randint(100, 300)
+				y = self.horizon_y - randint(-50, 600)
+				Cloud((x, y), surf, self.all_sprites, self.level_limits['left'])
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
+				self.tab_pressed = True
+			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
+				self.tab_pressed = False
+			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.pink_door:
+				self.current_stage = 6
+				self.pink_door = False
+			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.pink_bed:
+				self.current_stage = 12
+				self.pink_bed = False
+			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.wall:
+				self.current_stage = 13
+				self.wall = False
+	
+	def run(self, dt, gears_amount, player_stats, current_stage):
+		self.current_stage = current_stage
+		self.gears_amount = gears_amount
+		self.player_stats = player_stats
+
+		self.event_loop()
+		self.all_sprites.update(dt, self.player.pos)
+		self.get_keys()
+		self.get_gears()
+		self.get_damage()
+		self.get_activator()
+		self.check_death(self.player.pos, dt)
+		self.display_surface.fill(self.sky_color)
+		self.all_sprites.custom_draw(self.player)
+		if self.tab_pressed:
+			self.inventory.show_inventory(self.gears_amount, self.player_stats)
+		return self.current_stage
+
+class Garden(Level):
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds, has_horizon)
+		self.current_stage = 12
+	
+	def check_green_key(self):
+		if self.player_stats['hammer_key']:
+			self.current_stage = 11
+
+	def event_loop(self):
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				sys.exit()
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.switch()
+			if self.has_clouds and event.type == self.cloud_timer:
+				surf = choice(self.cloud_surfs)
+				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
+				x = self.level_limits['right'] + randint(100, 300)
+				y = self.horizon_y - randint(-50, 600)
+				Cloud((x, y), surf, self.all_sprites, self.level_limits['left'])
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
+				self.tab_pressed = True
+			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
+				self.tab_pressed = False
+	
+	def run(self, dt, gears_amount, player_stats, current_stage):
+		self.current_stage = current_stage
+		self.gears_amount = gears_amount
+		self.player_stats = player_stats
+
+		self.event_loop()
+		self.check_green_key()
+		self.all_sprites.update(dt, self.player.pos)
+		self.get_keys()
+		self.get_gears()
+		self.get_damage()
+		self.check_death(self.player.pos, dt)
+		self.display_surface.fill(self.sky_color)
+		self.all_sprites.custom_draw(self.player)
+		if self.tab_pressed:
+			self.inventory.show_inventory(self.gears_amount, self.player_stats)
+		return self.current_stage
+
+class Poison(Level):
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, has_clouds, has_horizon)
+		self.current_stage = 13
+		self.machine = False
+	
+	def get_activator(self):
+		collision_sprites = pygame.sprite.spritecollide(self.player, self.activator_sprites, False)
+		self.machine = False
+		if collision_sprites:
+			for sprite in collision_sprites:
+				if sprite.__dict__['id'] == 'machine':
+					self.machine = True
+	
+	def event_loop(self):
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				sys.exit()
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.switch()
+			if self.has_clouds and event.type == self.cloud_timer:
+				surf = choice(self.cloud_surfs)
+				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
+				x = self.level_limits['right'] + randint(100, 300)
+				y = self.horizon_y - randint(-50, 600)
+				Cloud((x, y), surf, self.all_sprites, self.level_limits['left'])
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
+				self.tab_pressed = True
+			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
+				self.tab_pressed = False
+			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.machine:
+				if self.gears_amount < 10:
+					print('Sad Ending')
+				else:
+					print('Happy Ending')
+				self.machine = False
+				self.current_stage = 3
+
 	
 	def run(self, dt, gears_amount, player_stats, current_stage):
 		self.current_stage = current_stage

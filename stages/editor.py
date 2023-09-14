@@ -310,8 +310,7 @@ class Editor:
         for cell_pos, tile in self.canvas_data.items():
             pos = self.origin + vector(cell_pos) * TILE_SIZE
 
-            if tile.has_terrain:
-                # tile.has_terrain == 2, 3, 4, 5, 6, 7, 8
+            if tile.has_terrain and isinstance(tile.has_terrain, int):
                 self.current_land_tile = tile.has_terrain
                 surf = self.land_tiles[tile.has_terrain][tile.terrain_id]
                 rect = surf.get_rect(midbottom = (pos[0] + TILE_SIZE // 2, pos[1] + TILE_SIZE))

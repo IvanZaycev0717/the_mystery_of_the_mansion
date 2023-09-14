@@ -9,7 +9,7 @@ from pygame.math import Vector2 as vector
 from settings import *
 from author import Author
 from editor import Editor
-from level import Level, Common, Cementry
+from level import Level, Common, Cementry, Hall, Cupboard, Heaven, FirstFloor, Desert, SecondFloor, Garden, Poison
 from lang_choice import LangChoice
 from main_menu import MainMenu
 from ui import UI
@@ -65,6 +65,9 @@ class Main:
         cursor = pygame.cursors.Cursor((0, 0), surf)
         pygame.mouse.set_cursor(cursor)
 
+
+        # LEVELS INITIALIZATION
+
         self.level_data = {
                  'land': self.land_tiles,
                  'green_key': self.green_key,
@@ -116,8 +119,6 @@ class Main:
             change_keys=self.change_keys,
             sky_color=LV_BG['common']['SKY'],
             ground_color=LV_BG['common']['GRD'],
-            has_clouds=False,
-            has_horizon=False,
             )
         
         self.cementry_level = Cementry(
@@ -130,8 +131,115 @@ class Main:
             change_keys=self.change_keys,
             sky_color=LV_BG['cementry']['SKY'],
             ground_color=LV_BG['cementry']['GRD'],
+            
+        )
+
+        self.hall_level = Hall(
+            grid=self.loading_level('hall.mml'),
+            switch=self.switch,
+            asset_dict=self.level_data,
+            audio=self.level_sounds,
+            gear_change=self.change_gears,
+            hp=self.change_hp,
+            change_keys=self.change_keys,
+            sky_color=LV_BG['inside']['SKY'],
+            ground_color=LV_BG['inside']['GRD'],
             has_clouds=False,
             has_horizon=False,
+        )
+
+        self.cupboard_level = Cupboard(
+            grid=self.loading_level('cupboard.mml'),
+            switch=self.switch,
+            asset_dict=self.level_data,
+            audio=self.level_sounds,
+            gear_change=self.change_gears,
+            hp=self.change_hp,
+            change_keys=self.change_keys,
+            sky_color=LV_BG['inside']['SKY'],
+            ground_color=LV_BG['inside']['GRD'],
+            has_clouds=False,
+            has_horizon=False,
+        )
+
+        self.heaven_level = Heaven(
+            grid=self.loading_level('heaven.mml'),
+            switch=self.switch,
+            asset_dict=self.level_data,
+            audio=self.level_sounds,
+            gear_change=self.change_gears,
+            hp=self.change_hp,
+            change_keys=self.change_keys,
+            sky_color=LV_BG['heaven']['SKY'],
+            ground_color=LV_BG['heaven']['GRD'],
+        )
+
+        self.first_floor_level = FirstFloor(
+            grid=self.loading_level('first_floor.mml'),
+            switch=self.switch,
+            asset_dict=self.level_data,
+            audio=self.level_sounds,
+            gear_change=self.change_gears,
+            hp=self.change_hp,
+            change_keys=self.change_keys,
+            sky_color=LV_BG['inside']['SKY'],
+            ground_color=LV_BG['inside']['GRD'],
+            has_clouds=False,
+            has_horizon=False,
+        )
+
+        self.desert_level = Desert(
+            grid=self.loading_level('desert.mml'),
+            switch=self.switch,
+            asset_dict=self.level_data,
+            audio=self.level_sounds,
+            gear_change=self.change_gears,
+            hp=self.change_hp,
+            change_keys=self.change_keys,
+            sky_color=LV_BG['desert']['SKY'],
+            ground_color=LV_BG['desert']['GRD'],
+            has_clouds=False,
+            has_horizon=True,
+        )
+
+        self.second_floor_level = SecondFloor(
+            grid=self.loading_level('second_floor.mml'),
+            switch=self.switch,
+            asset_dict=self.level_data,
+            audio=self.level_sounds,
+            gear_change=self.change_gears,
+            hp=self.change_hp,
+            change_keys=self.change_keys,
+            sky_color=LV_BG['inside']['SKY'],
+            ground_color=LV_BG['inside']['GRD'],
+            has_clouds=False,
+            has_horizon=False,
+        )
+
+        self.garden_level = Garden(
+            grid=self.loading_level('garden.mml'),
+            switch=self.switch,
+            asset_dict=self.level_data,
+            audio=self.level_sounds,
+            gear_change=self.change_gears,
+            hp=self.change_hp,
+            change_keys=self.change_keys,
+            sky_color=LV_BG['garden']['SKY'],
+            ground_color=LV_BG['garden']['GRD'],
+            
+        )
+
+        self.poison_level = Poison(
+            grid=self.loading_level('poison.mml'),
+            switch=self.switch,
+            asset_dict=self.level_data,
+            audio=self.level_sounds,
+            gear_change=self.change_gears,
+            hp=self.change_hp,
+            change_keys=self.change_keys,
+            sky_color=LV_BG['poison']['SKY'],
+            ground_color=LV_BG['poison']['GRD'],
+            
         )
         
 
@@ -265,7 +373,7 @@ class Main:
                     if self.editor_active: 
                         self.editor.run(dt)
                     else:
-                        self.level.run(dt, self.gears, self.player_stats)
+                        self.level.run(dt, self.gears, self.player_stats, self.stage)
                         self.level_transmission(dt)
                     self.transition.display(dt)
                 case 1: self.stage = self.author.run()
@@ -285,6 +393,46 @@ class Main:
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.cementry_level, dt)
+                case 6:
+                    self.stage = self.hall_level.run(dt, self.gears, self.player_stats, self.stage)                                    
+                    self.ui.show_lives(self.player_stats['lives'])
+                    self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
+                    self.common_transmission(self.hall_level, dt)
+                case 7:
+                    self.stage = self.cupboard_level.run(dt, self.gears, self.player_stats, self.stage)                                    
+                    self.ui.show_lives(self.player_stats['lives'])
+                    self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
+                    self.common_transmission(self.cupboard_level, dt)
+                case 8:
+                    self.stage = self.heaven_level.run(dt, self.gears, self.player_stats, self.stage)                                    
+                    self.ui.show_lives(self.player_stats['lives'])
+                    self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
+                    self.common_transmission(self.heaven_level, dt)
+                case 9:
+                    self.stage = self.first_floor_level.run(dt, self.gears, self.player_stats, self.stage)                                    
+                    self.ui.show_lives(self.player_stats['lives'])
+                    self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
+                    self.common_transmission(self.first_floor_level, dt)
+                case 10:
+                    self.stage = self.desert_level.run(dt, self.gears, self.player_stats, self.stage)                                    
+                    self.ui.show_lives(self.player_stats['lives'])
+                    self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
+                    self.common_transmission(self.desert_level, dt)
+                case 11:
+                    self.stage = self.second_floor_level.run(dt, self.gears, self.player_stats, self.stage)                                    
+                    self.ui.show_lives(self.player_stats['lives'])
+                    self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
+                    self.common_transmission(self.second_floor_level, dt)
+                case 12:
+                    self.stage = self.garden_level.run(dt, self.gears, self.player_stats, self.stage)                                    
+                    self.ui.show_lives(self.player_stats['lives'])
+                    self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
+                    self.common_transmission(self.garden_level, dt)
+                case 13:
+                    self.stage = self.poison_level.run(dt, self.gears, self.player_stats, self.stage)                                    
+                    self.ui.show_lives(self.player_stats['lives'])
+                    self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
+                    self.common_transmission(self.poison_level, dt)
             pygame.display.update()
 
 
