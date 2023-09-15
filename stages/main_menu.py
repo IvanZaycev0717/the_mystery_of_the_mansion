@@ -16,10 +16,12 @@ file_path = os.path.join(path, lang_file)
 
 
 class MainMenu:
-    def __init__(self):
+    def __init__(self, set_prev_stage):
 
         # main setup
         self.display_surface = pygame.display.get_surface()
+        self.prev_stage = 3
+        self.set_prev_stage = set_prev_stage
 
         # Main menu image imports
         self.main_menu_dct = import_folder_dict('images/main_menu/')
@@ -31,12 +33,13 @@ class MainMenu:
         self.moon_rect = self.main_menu_dct['moon'].get_rect(y=300)
         self.moon_offset = -150
         self.angle = 0
+        
 
         # Lang
         self.current_lang = 'eng'
 
         # Next stage toggle
-        self.next_stage = None
+        self.current_stage = 3
         
 
         # Stars
@@ -292,7 +295,7 @@ class MainMenu:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN and self.new_game_surf_rect.collidepoint(event.pos):
-                self.next_stage = 3
+                self.current_stage = 4
             if event.type == pygame.MOUSEBUTTONDOWN and self.controls_surf_rect.collidepoint(event.pos) and not self.control_panel_is_active:
                 self.control_panel_is_active = True
                 self.settings_panel_is_active = False
@@ -308,10 +311,16 @@ class MainMenu:
             if event.type == pygame.MOUSEBUTTONDOWN and self.change_rus_surf_rect.collidepoint(event.pos) and self.settings_panel_is_active:
                 self.toggle_lang('rus')
             if event.type == pygame.MOUSEBUTTONDOWN and self.editor_md_surf_rect.collidepoint(event.pos) and self.settings_panel_is_active:
-                self.next_stage = 0
+                self.current_stage = 0
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self.set_prev_stage(self.current_stage, self.prev_stage)
+                self.current_stage = self.prev_stage
         
     # Main cycle
-    def run(self, dt):
+    def run(self, dt, current_stage, prev_stage):
+        self.current_stage = current_stage
+        self.prev_stage = prev_stage
+
         self.display_surface.fill(BLACK_GRAY)
         self.moving_stars(dt)
         self.moving_moon(dt)
@@ -321,4 +330,4 @@ class MainMenu:
         self.show_settings()
         
         self.event_loop()
-        return 3 if self.next_stage != 0 else 0
+        return self.current_stage

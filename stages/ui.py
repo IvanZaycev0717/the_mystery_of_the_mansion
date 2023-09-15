@@ -101,3 +101,29 @@ class Inventory:
         self.yellow_status = self.font.render((eng.KEY_FOUND if player_stats['yellow_key'] else eng.KEY_NOT_FOUND) if self.lang == 'eng' else (rus.KEY_FOUND if player_stats['yellow_key'] else rus.KEY_NOT_FOUND), False, 'yellow')
         self.yellow_status_rect = self.yellow_status.get_rect(x=1060, y=335)
         self.display_surface.blit(self.yellow_status, self.yellow_status_rect)
+
+class Helper:
+    def __init__(self, surface):
+        # setup
+        self.display_surface = surface
+        self.timer = 0
+
+        # Font
+        self.font = pygame.font.SysFont('arial', 26, True)
+        self.lang = None
+    
+    def definite_lang(self):
+        with open('stages/lang.txt', 'r') as file:
+            self.lang = file.readline()
+
+    def show_helper(self, message):
+        self.definite_lang()
+        pygame.draw.rect(self.display_surface, BLACK_GRAY, (365, 15, 550, 50))
+        self.message = self.font.render(eng.HLP[message] if self.lang == 'eng' else rus.HLP[message], False, 'yellow')
+        self.message_rect = self.message.get_rect(centerx=WINDOW_WIDTH / 2, centery=37)
+        self.display_surface.blit(self.message, self.message_rect)
+
+
+        
+
+

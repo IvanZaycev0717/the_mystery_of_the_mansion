@@ -19,3 +19,17 @@ GO_TO_ED = 'EDITOR MODE'
 INV_INSC = 'Inventory'
 KEY_FOUND = 'Found'
 KEY_NOT_FOUND = 'Not found'
+
+# HELPER SECTION
+HLP = {
+    'has_item': 'Press "Up" or "X" to enter',
+    'yellow_not': 'Find the yellow key to unlock',
+    'pink_not': 'Find the pink key to unlock',
+    'green_not': 'Find the green key to unlock',
+    'hammer_not': 'Find the hammer to break the wall',
+    'hammer_yes': 'Press "Up" or "X" break the wall',
+    'sleep_well': 'Press "Up" or "X" to fall asleep',
+    'machine': 'Press "Up" or "X" to repair the machine',
+    'game_saved': 'Quicksaving',
+    'game_loaded': 'Quickloading',
+}

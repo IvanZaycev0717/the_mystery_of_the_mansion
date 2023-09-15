@@ -23,7 +23,7 @@ class Main:
         pygame.init()
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.title = pygame.display.set_caption(TITLE)
-        self.icon = pygame.display.set_icon(pygame.image.load(ICON_PATH))
+        self.icon = pygame.display.set_icon(pygame.image.load(ICON_PATH).convert_alpha())
         self.clock = pygame.time.Clock()
         self.imports()
 
@@ -38,15 +38,16 @@ class Main:
         # Экземпляры классов соответсвующих уровней
         self.author = Author()
         self.lang_choice = LangChoice()
-        self.main_menu = MainMenu()
+        self.main_menu = MainMenu(self.set_prev_stage)
         self.editor_active = True
         self.transition = Transition(self.toggle)
         self.editor = Editor(self.land_tiles, self.switch, self.file_path)
         self.ui = UI(self.display_surface)
         self.dead_time = 0
+        self.prev_stage = 3
 
         # Выбор стадии игр
-        self.stage = 4
+        self.stage = 3
 
         # Графический интерфейст характеристик игрока
         self.gears = 0
@@ -58,6 +59,7 @@ class Main:
              'gear': pygame.mixer.Sound('audio/sounds/gear.wav'),
              'hit': pygame.mixer.Sound('audio/sounds/hit.wav'),
              'jump': pygame.mixer.Sound('audio/sounds/jump.wav'),
+             'key': pygame.mixer.Sound('audio/sounds/key.wav'),
         }
 
         # Замена курсора в игре
@@ -117,6 +119,7 @@ class Main:
             gear_change=self.change_gears,
             hp=self.change_hp,
             change_keys=self.change_keys,
+            set_prev_stage=self.set_prev_stage,
             sky_color=LV_BG['common']['SKY'],
             ground_color=LV_BG['common']['GRD'],
             )
@@ -129,6 +132,7 @@ class Main:
             gear_change=self.change_gears,
             hp=self.change_hp,
             change_keys=self.change_keys,
+            set_prev_stage=self.set_prev_stage,
             sky_color=LV_BG['cementry']['SKY'],
             ground_color=LV_BG['cementry']['GRD'],
             
@@ -142,6 +146,7 @@ class Main:
             gear_change=self.change_gears,
             hp=self.change_hp,
             change_keys=self.change_keys,
+            set_prev_stage=self.set_prev_stage,
             sky_color=LV_BG['inside']['SKY'],
             ground_color=LV_BG['inside']['GRD'],
             has_clouds=False,
@@ -156,6 +161,7 @@ class Main:
             gear_change=self.change_gears,
             hp=self.change_hp,
             change_keys=self.change_keys,
+            set_prev_stage=self.set_prev_stage,
             sky_color=LV_BG['inside']['SKY'],
             ground_color=LV_BG['inside']['GRD'],
             has_clouds=False,
@@ -170,6 +176,7 @@ class Main:
             gear_change=self.change_gears,
             hp=self.change_hp,
             change_keys=self.change_keys,
+            set_prev_stage=self.set_prev_stage,
             sky_color=LV_BG['heaven']['SKY'],
             ground_color=LV_BG['heaven']['GRD'],
         )
@@ -182,6 +189,7 @@ class Main:
             gear_change=self.change_gears,
             hp=self.change_hp,
             change_keys=self.change_keys,
+            set_prev_stage=self.set_prev_stage,
             sky_color=LV_BG['inside']['SKY'],
             ground_color=LV_BG['inside']['GRD'],
             has_clouds=False,
@@ -196,6 +204,7 @@ class Main:
             gear_change=self.change_gears,
             hp=self.change_hp,
             change_keys=self.change_keys,
+            set_prev_stage=self.set_prev_stage,
             sky_color=LV_BG['desert']['SKY'],
             ground_color=LV_BG['desert']['GRD'],
             has_clouds=False,
@@ -210,6 +219,7 @@ class Main:
             gear_change=self.change_gears,
             hp=self.change_hp,
             change_keys=self.change_keys,
+            set_prev_stage=self.set_prev_stage,
             sky_color=LV_BG['inside']['SKY'],
             ground_color=LV_BG['inside']['GRD'],
             has_clouds=False,
@@ -224,6 +234,7 @@ class Main:
             gear_change=self.change_gears,
             hp=self.change_hp,
             change_keys=self.change_keys,
+            set_prev_stage=self.set_prev_stage,
             sky_color=LV_BG['garden']['SKY'],
             ground_color=LV_BG['garden']['GRD'],
             
@@ -237,11 +248,15 @@ class Main:
             gear_change=self.change_gears,
             hp=self.change_hp,
             change_keys=self.change_keys,
+            set_prev_stage=self.set_prev_stage,
             sky_color=LV_BG['poison']['SKY'],
             ground_color=LV_BG['poison']['GRD'],
-            
+            has_clouds=False,
         )
         
+    def set_prev_stage(self, prev_stage, current_stage):
+        self.stage = current_stage
+        self.prev_stage = prev_stage
 
     def change_gears(self, amount):
         self.gears += amount
@@ -361,6 +376,7 @@ class Main:
                 gear_change=self.change_gears,
                 hp=self.change_hp,
                 change_keys=self.change_keys,
+                set_prev_stage=self.set_prev_stage,
                 sky_color=SKY_COLOR,
                 ground_color=SEA_COLOR
             )
@@ -382,9 +398,9 @@ class Main:
                         self.lang_choice.run(dt)
                     else:
                         self.stage = 3
-                case 3: self.stage = self.main_menu.run(dt)
+                case 3: self.stage = self.main_menu.run(dt, self.stage, self.prev_stage)
                 case 4:
-                    self.stage = self.common_level.run(dt, self.gears, self.player_stats, self.stage)                                    
+                    self.stage = self.common_level.run(dt, self.gears, self.player_stats, self.stage, self.prev_stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.common_level, dt)
