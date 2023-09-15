@@ -16,12 +16,13 @@ file_path = os.path.join(path, lang_file)
 
 
 class MainMenu:
-    def __init__(self, set_prev_stage):
+    def __init__(self, set_prev_stage, start_new_game):
 
         # main setup
         self.display_surface = pygame.display.get_surface()
         self.prev_stage = 3
         self.set_prev_stage = set_prev_stage
+        self.start_new_game = start_new_game
 
         # Main menu image imports
         self.main_menu_dct = import_folder_dict('images/main_menu/')
@@ -166,7 +167,7 @@ class MainMenu:
     # Creation section
     def button_creation(self):
         # Choices menu
-        self.continue_button = self.font.render(eng.CONTINUE_BUTTON if self.current_lang == 'eng' else rus.CONTINUE_BUTTON, True, 'gray')
+        self.continue_button = self.font.render(eng.CONTINUE_BUTTON if self.current_lang == 'eng' else rus.CONTINUE_BUTTON, True, 'yellow' if self.current_stage != self.prev_stage else 'gray')
         self.continue_button_rect = self.continue_button.get_rect(x=875, y=450)
         self.new_game_button = self.font.render(eng.NEW_GAME_BUTTON if self.current_lang == 'eng' else rus.NEW_GAME_BUTTON, True, 'yellow')
         self.new_game_button_rect = self.new_game_button.get_rect(x=875, y=500)
@@ -286,7 +287,7 @@ class MainMenu:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEMOTION:
-                self.continie_surf.fill(MM_BUT_COLOR) if self.continie_surf_rect.collidepoint(event.pos) else self.continie_surf.fill(BLACK_GRAY)
+                self.continie_surf.fill(MM_BUT_COLOR) if self.continie_surf_rect.collidepoint(event.pos) and self.continue_button.get_at((0,0)) == (255, 255, 0, 0) else self.continie_surf.fill(BLACK_GRAY)
                 self.new_game_surf.fill(MM_BUT_COLOR) if self.new_game_surf_rect.collidepoint(event.pos) else self.new_game_surf.fill(BLACK_GRAY)
                 self.controls_surf.fill(MM_BUT_COLOR) if self.controls_surf_rect.collidepoint(event.pos) else self.controls_surf.fill(BLACK_GRAY)
                 self.settings_surf.fill(MM_BUT_COLOR) if self.settings_surf_rect.collidepoint(event.pos) else self.settings_surf.fill(BLACK_GRAY)
@@ -294,7 +295,11 @@ class MainMenu:
             if event.type == pygame.MOUSEBUTTONDOWN and self.exit_surf_rect.collidepoint(event.pos):
                 pygame.quit()
                 sys.exit()
+            if self.prev_stage != self.current_stage and event.type == pygame.MOUSEBUTTONDOWN and self.continie_surf_rect.collidepoint(event.pos):
+                self.set_prev_stage(self.current_stage, self.prev_stage)
+                self.current_stage = self.prev_stage
             if event.type == pygame.MOUSEBUTTONDOWN and self.new_game_surf_rect.collidepoint(event.pos):
+                self.start_new_game()
                 self.current_stage = 4
             if event.type == pygame.MOUSEBUTTONDOWN and self.controls_surf_rect.collidepoint(event.pos) and not self.control_panel_is_active:
                 self.control_panel_is_active = True

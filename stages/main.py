@@ -32,27 +32,24 @@ class Main:
         self.lang_file = 'lang.txt'
         self.file_path = os.path.join(self.path, self.lang_file)
         self.full_screen = False
+        self.prev_stage = 3
 
 
 
         # Экземпляры классов соответсвующих уровней
         self.author = Author()
         self.lang_choice = LangChoice()
-        self.main_menu = MainMenu(self.set_prev_stage)
+        self.main_menu = MainMenu(self.set_prev_stage, self.start_new_game)
         self.editor_active = True
         self.transition = Transition(self.toggle)
         self.editor = Editor(self.land_tiles, self.switch, self.file_path)
         self.ui = UI(self.display_surface)
         self.dead_time = 0
-        self.prev_stage = 3
+        
 
         # Выбор стадии игр
         self.stage = 3
-
-        # Графический интерфейст характеристик игрока
-        self.gears = 0
-        self.player_stats = {'max_hp': 100, 'current_hp': 100, 'lives': 1, 'green_key': False, 'pink_key': False, 'hammer_key': False, 'yellow_key': False}
-        self.current_task = None
+        
 
         # Звуки
         self.level_sounds = {
@@ -110,7 +107,11 @@ class Main:
                  'clouds': self.clouds,
                 }
         
-        # load levels data
+    # load levels data
+    def start_new_game(self):
+        self.gears = 0
+        self.player_stats = {'max_hp': 100, 'current_hp': 100, 'lives': 1, 'green_key': False, 'pink_key': False, 'hammer_key': False, 'yellow_key': False}
+        self.current_task = None
         self.common_level = Common(
             grid=self.loading_level('common.mml'),
             switch=self.switch,
@@ -253,7 +254,9 @@ class Main:
             ground_color=LV_BG['poison']['GRD'],
             has_clouds=False,
         )
-        
+        self.prev_stage = 3
+
+
     def set_prev_stage(self, prev_stage, current_stage):
         self.stage = current_stage
         self.prev_stage = prev_stage
@@ -279,7 +282,9 @@ class Main:
     def common_transmission(self, stage_name, dt):
         stage_name.player.current_hp = self.player_stats['current_hp']
         if self.player_stats['lives'] < 0:
+            print('Game  Over')
             self.stage = 3
+            self.prev_stage = 3
         if stage_name.player.status == 'death':
             self.dead_time += dt
             if self.dead_time >= 5:

@@ -404,11 +404,6 @@ class Common(Level):
 				if sprite.__dict__['id'] == 'cem_gates':
 					self.helper.show_helper('has_item')
 					self.gate_active = True
-				
-	def main_menu_toogle(self):
-		if self.main_menu:
-			self.current_stage = self.prev_stage
-		self.main_menu = False
 	
 	def event_loop(self, dt):
 		for event in pygame.event.get():
@@ -465,7 +460,6 @@ class Common(Level):
 			self.inventory.show_inventory(self.gears_amount, self.player_stats)
 		self.get_activator()
 		self.show_save_message(dt)
-		self.main_menu_toogle()
 		return self.current_stage
 
 
@@ -483,6 +477,7 @@ class Cementry(Level):
 		if collision_sprites:
 			for sprite in collision_sprites:
 				if sprite.__dict__['id'] == 'cem_gates':
+					self.helper.show_helper('has_item')
 					self.gate_active = True
 	
 	def event_loop(self):
