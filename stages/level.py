@@ -41,11 +41,12 @@ class Level:
 		self.helper = Helper(self.display_surface)
 		self.player_asset = asset_dict['player']
 		self.jump_sound = audio['jump']
+		self.walk_sound = audio['walk']
 		self.lives_left = 3
 		self.tab_pressed = False
 		self.quicksave_time = timer.Timer(1500)
 
-		self.build_level(grid, asset_dict, self.jump_sound)
+		self.build_level(grid, asset_dict, self.jump_sound, self.walk_sound)
 
 		self.level_limits = {
             'left' : -WINDOW_WIDTH,
@@ -58,11 +59,6 @@ class Level:
 			self.cloud_timer = pygame.USEREVENT + 2
 			pygame.time.set_timer(self.cloud_timer, 2000)
 			self.startup_clouds()
-
-		# sound
-		# self.bg_music = audio['music']
-		# self.bg_music.set_volume(0.4)
-		# self.bg_music.play(loops=-1)
 
 		self.gear_sound = audio['gear']
 		self.gear_sound.set_volume(0.3)
@@ -90,13 +86,13 @@ class Level:
 			self.player.pos[1] = 250
 
 
-	def build_level(self, grid, asset_dict, jump_sound):
+	def build_level(self, grid, asset_dict, jump_sound, walk_sound):
 		for layer_name, layer in grid.items():
 			for pos, data in layer.items():
 				if layer_name == 'common':
 					Generic(pos, asset_dict['land'][data[0]][data[1]], [self.all_sprites, self.collision_sprites])
 				match data:
-					case 0: self.player = Player(pos, asset_dict['player'], self.all_sprites, self.collision_sprites, jump_sound)
+					case 0: self.player = Player(pos, asset_dict['player'], self.all_sprites, self.collision_sprites, jump_sound, walk_sound)
 					case 1:
 						self.horizon_y = pos[1]
 						self.all_sprites.horizon_y = pos[1]
@@ -268,12 +264,14 @@ class Level:
 			if self.dead_time >= 5:
 				self.player.kill()
 				pos = (pos[0] - 100, pos[1] - 100)
-				self.player = Player(pos, self.player_asset, self.all_sprites, self.collision_sprites, self.jump_sound)
+				self.player = Player(pos, self.player_asset, self.all_sprites, self.collision_sprites, self.jump_sound, self.walk_sound)
 				self.dead_time = 0
 
 	def get_keys(self):
 		collided_keys = pygame.sprite.spritecollide(self.player, self.keys_sprites, True)
 		for sprite in collided_keys:
+			self.walk_sound.stop()
+			self.jump_sound.stop()
 			self.key_sound.play()
 			self.change_keys(f'{sprite.__dict__["key_type"]}_key')
 			sprite.kill()
@@ -281,6 +279,8 @@ class Level:
 	def get_damage(self):
 		collision_sprites = pygame.sprite.spritecollide(self.player, self.enemies_sprites, False, pygame.sprite.collide_mask)
 		if collision_sprites and self.player.status != 'death':
+			self.walk_sound.stop()
+			self.jump_sound.stop()
 			self.hit_sound.play()
 			self.player.damage()
 			self.hp(0.2)
@@ -293,7 +293,7 @@ class Level:
 			Taken(self.taken_surf, sprite.rect.center, self.all_sprites)
 			self.gear_change(1)
 
-
+	
 
 	def event_loop(self):
 		for event in pygame.event.get():
@@ -390,6 +390,15 @@ class Common(Level):
 		self.prev_stage = 3
 		self.main_menu = False
 
+		self.bg_music = audio['common_theme']
+		self.bg_music.set_volume(0.2)
+		self.is_music_playing = False
+
+	def play_sound(self):
+		if not self.is_music_playing:
+			self.bg_music.play(loops=-1)
+			self.is_music_playing = True
+
 	def get_activator(self, dt=0):
 		collision_sprites = pygame.sprite.spritecollide(self.player, self.activator_sprites, False)
 		self.gate_active = False
@@ -411,10 +420,10 @@ class Common(Level):
 				pygame.quit()
 				sys.exit()
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.bg_music.stop()
 				self.set_prev_stage(self.current_stage, self.prev_stage)
 				self.current_stage = self.prev_stage
-			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-				self.switch()
+				self.is_music_playing = False
 			if self.has_clouds and event.type == self.cloud_timer:
 				surf = choice(self.cloud_surfs)
 				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
@@ -426,11 +435,15 @@ class Common(Level):
 			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
 				self.tab_pressed = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.gate_active:
+				self.bg_music.stop()
 				self.current_stage = 5
 				self.gate_active = False
+				self.is_music_playing = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.door_in:
+				self.bg_music.stop()
 				self.current_stage = 6
 				self.door_in = False
+				self.is_music_playing = False
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F5:
 				self.save_active = True
 				self.quicksave_time.activate()
@@ -444,7 +457,7 @@ class Common(Level):
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
 		self.prev_stage = prev_stage
-		
+		self.play_sound()
 		self.correct_falling()
 		self.event_loop(dt)
 		
@@ -469,8 +482,16 @@ class Cementry(Level):
 		self.current_stage = 5
 		self.gate_active = False
 		self.prev_stage = 3
+
+		self.bg_music = audio['cementry_theme']
+		self.bg_music.set_volume(0.2)
+		self.is_music_playing = False
 	
-	
+	def play_sound(self):
+		if not self.is_music_playing:
+			self.bg_music.play(loops=-1)
+			self.is_music_playing = True
+
 	def get_activator(self):
 		collision_sprites = pygame.sprite.spritecollide(self.player, self.activator_sprites, False)
 		self.gate_active = False
@@ -485,8 +506,6 @@ class Cementry(Level):
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				sys.exit()
-			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-				self.switch()
 			if self.has_clouds and event.type == self.cloud_timer:
 				surf = choice(self.cloud_surfs)
 				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
@@ -498,8 +517,10 @@ class Cementry(Level):
 			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
 				self.tab_pressed = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.gate_active:
+				self.bg_music.stop()
 				self.current_stage = 4
 				self.gate_active = False
+				self.is_music_playing = False
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F5:
 				self.save_active = True
 				self.quicksave_time.activate()
@@ -507,14 +528,17 @@ class Cementry(Level):
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F9:
 				self.load_the_game()
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.bg_music.stop()
 				self.set_prev_stage(self.current_stage, self.prev_stage)
 				self.current_stage = self.prev_stage
+				self.is_music_playing = False
 	
 	def run(self, dt, gears_amount, player_stats, current_stage):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
 		self.correct_falling()
+		self.play_sound()
 		self.event_loop()
 		self.all_sprites.update(dt, self.player.pos)
 		self.get_keys()
@@ -540,7 +564,17 @@ class Hall(Level):
 		self.pink_door = False
 		self.green_door = False
 		self.cupboard_door = False
-	
+
+		self.bg_music = audio['inside_theme']
+		self.bg_music.set_volume(0.2)
+		self.is_music_playing = False
+
+
+	def play_sound(self):
+		if not self.is_music_playing:
+			self.bg_music.play(loops=-1)
+			self.is_music_playing = True
+
 	def get_activator(self):
 		collision_sprites = pygame.sprite.spritecollide(self.player, self.activator_sprites, False)
 		self.door_out = False
@@ -571,8 +605,6 @@ class Hall(Level):
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				sys.exit()
-			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-				self.switch()
 			if self.has_clouds and event.type == self.cloud_timer:
 				surf = choice(self.cloud_surfs)
 				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
@@ -584,17 +616,26 @@ class Hall(Level):
 			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
 				self.tab_pressed = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.door_out:
+				self.bg_music.stop()
 				self.current_stage = 4
 				self.door_out = False
+				self.is_music_playing = False
+				self.is_music_playing = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.cupboard_door:
+				self.bg_music.stop()
 				self.current_stage = 7
 				self.cupboard_door = False
+				self.is_music_playing = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.green_door:
+				self.bg_music.stop()
 				self.current_stage = 9
 				self.green_door = False
+				self.is_music_playing = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.pink_door:
+				self.bg_music.stop()
 				self.current_stage = 11
 				self.pink_door = False
+				self.is_music_playing = False
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F5:
 				self.save_active = True
 				self.quicksave_time.activate()
@@ -602,13 +643,16 @@ class Hall(Level):
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F9:
 				self.load_the_game()
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.bg_music.stop()
 				self.set_prev_stage(self.current_stage, self.prev_stage)
 				self.current_stage = self.prev_stage
+				self.is_music_playing = False
 	
 	def run(self, dt, gears_amount, player_stats, current_stage):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
+		self.play_sound()
 		self.correct_falling()
 		self.event_loop()
 		self.all_sprites.update(dt, self.player.pos)
@@ -631,7 +675,16 @@ class Cupboard(Level):
 		self.prev_stage = 3
 		self.cupboard_door = False
 		self.cupboard_bed = False
-	
+
+		self.bg_music = audio['inside_theme']
+		self.bg_music.set_volume(0.2)
+		self.is_music_playing = False
+
+	def play_sound(self):
+		if not self.is_music_playing:
+			self.bg_music.play(loops=-1)
+			self.is_music_playing = True
+
 	def get_activator(self):
 		collision_sprites = pygame.sprite.spritecollide(self.player, self.activator_sprites, False)
 		self.cupboard_door = False
@@ -650,8 +703,6 @@ class Cupboard(Level):
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				sys.exit()
-			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-				self.switch()
 			if self.has_clouds and event.type == self.cloud_timer:
 				surf = choice(self.cloud_surfs)
 				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
@@ -663,11 +714,15 @@ class Cupboard(Level):
 			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
 				self.tab_pressed = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.cupboard_door:
+				self.bg_music.stop()
 				self.current_stage = 6
 				self.cupboard_door = False
+				self.is_music_playing = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.cupboard_bed:
+				self.bg_music.stop()
 				self.current_stage = 8
 				self.cupboard_bed = False
+				self.is_music_playing = False
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F5:
 				self.save_active = True
 				self.quicksave_time.activate()
@@ -675,13 +730,16 @@ class Cupboard(Level):
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F9:
 				self.load_the_game()
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.bg_music.stop()
 				self.set_prev_stage(self.current_stage, self.prev_stage)
 				self.current_stage = self.prev_stage
+				self.is_music_playing = False
 	
 	def run(self, dt, gears_amount, player_stats, current_stage):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
+		self.play_sound()
 		self.correct_falling()
 		self.event_loop()
 		self.all_sprites.update(dt, self.player.pos)
@@ -703,18 +761,26 @@ class Heaven(Level):
 		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds, has_horizon)
 		self.current_stage = 8
 		self.prev_stage = 3
+
+		self.bg_music = audio['heaven_theme']
+		self.bg_music.set_volume(0.2)
+		self.is_music_playing = False
 	
 	def check_green_key(self):
 		if self.player_stats['green_key']:
+			self.bg_music.stop()
 			self.current_stage = 7
+			self.is_music_playing = False
+	def play_sound(self):
+		if not self.is_music_playing:
+			self.bg_music.play(loops=-1)
+			self.is_music_playing = True
 
 	def event_loop(self):
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				sys.exit()
-			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-				self.switch()
 			if self.has_clouds and event.type == self.cloud_timer:
 				surf = choice(self.cloud_surfs)
 				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
@@ -732,13 +798,16 @@ class Heaven(Level):
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F9:
 				self.load_the_game()
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.bg_music.stop()
 				self.set_prev_stage(self.current_stage, self.prev_stage)
 				self.current_stage = self.prev_stage
+				self.is_music_playing = False
 	
 	def run(self, dt, gears_amount, player_stats, current_stage):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
+		self.play_sound()
 		self.correct_falling()
 		self.event_loop()
 		self.check_green_key()
@@ -761,6 +830,15 @@ class FirstFloor(Level):
 		self.prev_stage = 3
 		self.green_door = False
 		self.green_bed = False
+
+		self.bg_music = audio['inside_theme']
+		self.bg_music.set_volume(0.2)
+		self.is_music_playing = False
+	
+	def play_sound(self):
+		if not self.is_music_playing:
+			self.bg_music.play(loops=-1)
+			self.is_music_playing = True
 	
 	def get_activator(self):
 		collision_sprites = pygame.sprite.spritecollide(self.player, self.activator_sprites, False)
@@ -780,8 +858,6 @@ class FirstFloor(Level):
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				sys.exit()
-			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-				self.switch()
 			if self.has_clouds and event.type == self.cloud_timer:
 				surf = choice(self.cloud_surfs)
 				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
@@ -793,11 +869,15 @@ class FirstFloor(Level):
 			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
 				self.tab_pressed = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.green_door:
+				self.bg_music.stop()
 				self.current_stage = 6
 				self.green_door = False
+				self.is_music_playing = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.green_bed:
+				self.bg_music.stop()
 				self.current_stage = 10
 				self.green_bed = False
+				self.is_music_playing = False
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F5:
 				self.save_active = True
 				self.quicksave_time.activate()
@@ -805,13 +885,16 @@ class FirstFloor(Level):
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F9:
 				self.load_the_game()
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.bg_music.stop()
 				self.set_prev_stage(self.current_stage, self.prev_stage)
 				self.current_stage = self.prev_stage
+				self.is_music_playing = False
 	
 	def run(self, dt, gears_amount, player_stats, current_stage):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
+		self.play_sound()
 		self.correct_falling()
 		self.event_loop()
 		self.all_sprites.update(dt, self.player.pos)
@@ -833,18 +916,27 @@ class Desert(Level):
 		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds, has_horizon)
 		self.current_stage = 10
 		self.prev_stage = 3
+
+		self.bg_music = audio['desert_theme']
+		self.bg_music.set_volume(0.2)
+		self.is_music_playing = False
+
+	def play_sound(self):
+		if not self.is_music_playing:
+			self.bg_music.play(loops=-1)
+			self.is_music_playing = True
 	
 	def check_green_key(self):
 		if self.player_stats['pink_key']:
+			self.bg_music.stop()
 			self.current_stage = 9
+			self.is_music_playing = False
 
 	def event_loop(self):
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				sys.exit()
-			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-				self.switch()
 			if self.has_clouds and event.type == self.cloud_timer:
 				surf = choice(self.cloud_surfs)
 				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
@@ -862,13 +954,16 @@ class Desert(Level):
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F9:
 				self.load_the_game()
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.bg_music.stop()
 				self.set_prev_stage(self.current_stage, self.prev_stage)
 				self.current_stage = self.prev_stage
+				self.is_music_playing = False
 	
 	def run(self, dt, gears_amount, player_stats, current_stage):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
+		self.play_sound()
 		self.correct_falling()
 		self.event_loop()
 		self.check_green_key()
@@ -891,7 +986,16 @@ class SecondFloor(Level):
 		self.pink_door = False
 		self.pink_bed = False
 		self.wall = False
-	
+
+		self.bg_music = audio['inside_theme']
+		self.bg_music.set_volume(0.2)
+		self.is_music_playing = False
+
+	def play_sound(self):
+		if not self.is_music_playing:
+			self.bg_music.play(loops=-1)
+			self.is_music_playing = True
+
 	def get_activator(self):
 		collision_sprites = pygame.sprite.spritecollide(self.player, self.activator_sprites, False)
 		self.pink_door = False
@@ -916,8 +1020,6 @@ class SecondFloor(Level):
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				sys.exit()
-			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-				self.switch()
 			if self.has_clouds and event.type == self.cloud_timer:
 				surf = choice(self.cloud_surfs)
 				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
@@ -929,14 +1031,20 @@ class SecondFloor(Level):
 			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
 				self.tab_pressed = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.pink_door:
+				self.bg_music.stop()
 				self.current_stage = 6
 				self.pink_door = False
+				self.is_music_playing = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.pink_bed:
+				self.bg_music.stop()
 				self.current_stage = 12
 				self.pink_bed = False
+				self.is_music_playing = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.wall:
+				self.bg_music.stop()
 				self.current_stage = 13
 				self.wall = False
+				self.is_music_playing = False
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F5:
 				self.save_active = True
 				self.quicksave_time.activate()
@@ -944,13 +1052,16 @@ class SecondFloor(Level):
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F9:
 				self.load_the_game()
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.bg_music.stop()
 				self.set_prev_stage(self.current_stage, self.prev_stage)
 				self.current_stage = self.prev_stage
+				self.is_music_playing = False
 	
 	def run(self, dt, gears_amount, player_stats, current_stage):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
+		self.play_sound()
 		self.correct_falling()
 		self.event_loop()
 		self.all_sprites.update(dt, self.player.pos)
@@ -972,18 +1083,27 @@ class Garden(Level):
 		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds, has_horizon)
 		self.current_stage = 12
 		self.prev_stage = 3
+
+		self.bg_music = audio['garden_theme']
+		self.bg_music.set_volume(0.2)
+		self.is_music_playing = False
+	
+	def play_sound(self):
+		if not self.is_music_playing:
+			self.bg_music.play(loops=-1)
+			self.is_music_playing = True
 	
 	def check_green_key(self):
 		if self.player_stats['hammer_key']:
+			self.bg_music.stop()
 			self.current_stage = 11
+			self.is_music_playing = False
 
 	def event_loop(self):
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				sys.exit()
-			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-				self.switch()
 			if self.has_clouds and event.type == self.cloud_timer:
 				surf = choice(self.cloud_surfs)
 				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
@@ -1001,14 +1121,17 @@ class Garden(Level):
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F9:
 				self.load_the_game()
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.bg_music.stop()
 				self.set_prev_stage(self.current_stage, self.prev_stage)
 				self.current_stage = self.prev_stage
+				self.is_music_playing = False
 			
 	
 	def run(self, dt, gears_amount, player_stats, current_stage):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
+		self.play_sound()
 		self.correct_falling()
 		self.event_loop()
 		self.check_green_key()
@@ -1030,7 +1153,16 @@ class Poison(Level):
 		self.current_stage = 13
 		self.prev_stage = 3
 		self.machine = False
+
+		self.bg_music = audio['poison_theme']
+		self.bg_music.set_volume(0.2)
+		self.is_music_playing = False
 	
+	def play_sound(self):
+		if not self.is_music_playing:
+			self.bg_music.play(loops=-1)
+			self.is_music_playing = True
+
 	def get_activator(self):
 		collision_sprites = pygame.sprite.spritecollide(self.player, self.activator_sprites, False)
 		self.machine = False
@@ -1045,8 +1177,6 @@ class Poison(Level):
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				sys.exit()
-			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-				self.switch()
 			if self.has_clouds and event.type == self.cloud_timer:
 				surf = choice(self.cloud_surfs)
 				surf = pygame.transform.scale2x(surf) if randint(0, 5) > 3 else surf
@@ -1058,12 +1188,14 @@ class Poison(Level):
 			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
 				self.tab_pressed = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.machine:
+				self.bg_music.stop()
 				if self.gears_amount < 10:
 					print('Sad Ending')
 				else:
 					print('Happy Ending')
 				self.machine = False
 				self.current_stage = 3
+				self.is_music_playing = False
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F5:
 				self.save_active = True
 				self.quicksave_time.activate()
@@ -1071,14 +1203,17 @@ class Poison(Level):
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F9:
 				self.load_the_game()
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				self.bg_music.stop()
 				self.set_prev_stage(self.current_stage, self.prev_stage)
 				self.current_stage = self.prev_stage
+				self.is_music_playing = False
 
 	
 	def run(self, dt, gears_amount, player_stats, current_stage):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
+		self.play_sound()
 		self.correct_falling()
 		self.event_loop()
 		self.all_sprites.update(dt, self.player.pos)

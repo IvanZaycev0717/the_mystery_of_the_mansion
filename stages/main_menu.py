@@ -16,7 +16,7 @@ file_path = os.path.join(path, lang_file)
 
 
 class MainMenu:
-    def __init__(self, set_prev_stage, start_new_game):
+    def __init__(self, set_prev_stage, start_new_game, audio):
 
         # main setup
         self.display_surface = pygame.display.get_surface()
@@ -34,6 +34,12 @@ class MainMenu:
         self.moon_rect = self.main_menu_dct['moon'].get_rect(y=300)
         self.moon_offset = -150
         self.angle = 0
+
+        # sound
+        self.bg_music = audio['main_theme']
+        self.bg_music.set_volume(0.2)
+        self.is_music_playing = False
+        
         
 
         # Lang
@@ -279,6 +285,10 @@ class MainMenu:
             self.editor_md_surf.set_alpha(50)
             self.display_surface.blit(self.editor_md_surf, self.editor_md_surf_rect)
 
+    def play_sound(self):
+        if not self.is_music_playing:
+            self.bg_music.play(loops=-1)
+            self.is_music_playing = True
 
     # Event section
     def event_loop(self):
@@ -296,11 +306,15 @@ class MainMenu:
                 pygame.quit()
                 sys.exit()
             if self.prev_stage != self.current_stage and event.type == pygame.MOUSEBUTTONDOWN and self.continie_surf_rect.collidepoint(event.pos):
+                self.bg_music.stop()
                 self.set_prev_stage(self.current_stage, self.prev_stage)
                 self.current_stage = self.prev_stage
+                self.is_music_playing = False
             if event.type == pygame.MOUSEBUTTONDOWN and self.new_game_surf_rect.collidepoint(event.pos):
+                self.bg_music.stop()
                 self.start_new_game()
                 self.current_stage = 4
+                self.is_music_playing = False
             if event.type == pygame.MOUSEBUTTONDOWN and self.controls_surf_rect.collidepoint(event.pos) and not self.control_panel_is_active:
                 self.control_panel_is_active = True
                 self.settings_panel_is_active = False
@@ -318,8 +332,10 @@ class MainMenu:
             if event.type == pygame.MOUSEBUTTONDOWN and self.editor_md_surf_rect.collidepoint(event.pos) and self.settings_panel_is_active:
                 self.current_stage = 0
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self.bg_music.stop()
                 self.set_prev_stage(self.current_stage, self.prev_stage)
                 self.current_stage = self.prev_stage
+                self.is_music_playing = False
         
     # Main cycle
     def run(self, dt, current_stage, prev_stage):
@@ -327,6 +343,7 @@ class MainMenu:
         self.prev_stage = prev_stage
 
         self.display_surface.fill(BLACK_GRAY)
+        self.play_sound()
         self.moving_stars(dt)
         self.moving_moon(dt)
         self.lang_choise()

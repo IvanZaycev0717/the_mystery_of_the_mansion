@@ -34,18 +34,10 @@ class Main:
         self.full_screen = False
         self.prev_stage = 3
 
+        self.gears = 0
+        self.player_stats = {'max_hp': 100, 'current_hp': 100, 'lives': 1, 'green_key': False, 'pink_key': False, 'hammer_key': False, 'yellow_key': False}
 
 
-        # Экземпляры классов соответсвующих уровней
-        self.author = Author()
-        self.lang_choice = LangChoice()
-        self.main_menu = MainMenu(self.set_prev_stage, self.start_new_game)
-        self.editor_active = True
-        self.transition = Transition(self.toggle)
-        self.editor = Editor(self.land_tiles, self.switch, self.file_path)
-        self.ui = UI(self.display_surface)
-        self.dead_time = 0
-        
 
         # Выбор стадии игр
         self.stage = 3
@@ -57,12 +49,35 @@ class Main:
              'hit': pygame.mixer.Sound('audio/sounds/hit.wav'),
              'jump': pygame.mixer.Sound('audio/sounds/jump.wav'),
              'key': pygame.mixer.Sound('audio/sounds/key.wav'),
+             'walk': pygame.mixer.Sound('audio/sounds/walk.wav'),
+             'main_theme': pygame.mixer.Sound('audio/music/main_theme.ogg'),
+             'common_theme': pygame.mixer.Sound('audio/music/common.ogg'),
+             'cementry_theme': pygame.mixer.Sound('audio/music/cementry.ogg'),
+             'heaven_theme': pygame.mixer.Sound('audio/music/heaven.ogg'),
+             'inside_theme': pygame.mixer.Sound('audio/music/inside.ogg'),
+             'desert_theme': pygame.mixer.Sound('audio/music/heaven.ogg'),
+             'garden_theme': pygame.mixer.Sound('audio/music/garden.ogg'),
+             'poison_theme': pygame.mixer.Sound('audio/music/poison.ogg'),
+             'happy_end': pygame.mixer.Sound('audio/music/happy_end.ogg'),
+             'sad_end': pygame.mixer.Sound('audio/music/sad_end.ogg'),
+             'game_over': pygame.mixer.Sound('audio/music/game_over.ogg'),
+             'credits': pygame.mixer.Sound('audio/music/credits.ogg'),
         }
 
         # Замена курсора в игре
-        surf = load('images/cursors/cursor.png').convert_alpha()
+        surf = pygame.image.load('images/cursors/cursor.png').convert_alpha()
         cursor = pygame.cursors.Cursor((0, 0), surf)
         pygame.mouse.set_cursor(cursor)
+
+        # Экземпляры классов соответсвующих уровней
+        self.author = Author()
+        self.lang_choice = LangChoice()
+        self.main_menu = MainMenu(self.set_prev_stage, self.start_new_game, self.level_sounds)
+        self.editor_active = True
+        self.transition = Transition(self.toggle)
+        self.editor = Editor(self.land_tiles, self.switch, self.file_path)
+        self.ui = UI(self.display_surface)
+        self.dead_time = 0
 
 
         # LEVELS INITIALIZATION
@@ -258,6 +273,8 @@ class Main:
 
 
     def set_prev_stage(self, prev_stage, current_stage):
+        print('SAY DAD DADAD')
+        self.transition.active = True
         self.stage = current_stage
         self.prev_stage = prev_stage
 
@@ -306,7 +323,7 @@ class Main:
             if 2 <= key <= 8:
                 data = []
                 for image in value['menu_surf']:
-                    data.append(load(image))
+                    data.append(pygame.image.load(image))
                 self.land_tiles[key] = data
         
         # KEYS
@@ -396,64 +413,78 @@ class Main:
                     else:
                         self.level.run(dt, self.gears, self.player_stats, self.stage)
                         self.level_transmission(dt)
-                    self.transition.display(dt)
-                case 1: self.stage = self.author.run()
+                    self.transition.display()
+                case 1:
+                    self.stage = self.author.run()
                 case 2:
                     if not os.path.isfile(self.file_path):
                         self.lang_choice.run(dt)
                     else:
                         self.stage = 3
-                case 3: self.stage = self.main_menu.run(dt, self.stage, self.prev_stage)
+                case 3:
+                    self.stage = self.main_menu.run(dt, self.stage, self.prev_stage)
+                    self.transition.display()
                 case 4:
                     self.stage = self.common_level.run(dt, self.gears, self.player_stats, self.stage, self.prev_stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.common_level, dt)
+                    self.transition.display()
                 case 5:
                     self.stage = self.cementry_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.cementry_level, dt)
+                    self.transition.display()
                 case 6:
                     self.stage = self.hall_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.hall_level, dt)
+                    self.transition.display()
                 case 7:
                     self.stage = self.cupboard_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.cupboard_level, dt)
+                    self.transition.display()
                 case 8:
                     self.stage = self.heaven_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.heaven_level, dt)
+                    self.transition.display()
                 case 9:
                     self.stage = self.first_floor_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.first_floor_level, dt)
+                    self.transition.display()
                 case 10:
                     self.stage = self.desert_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.desert_level, dt)
+                    self.transition.display()
                 case 11:
                     self.stage = self.second_floor_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.second_floor_level, dt)
+                    self.transition.display()
                 case 12:
                     self.stage = self.garden_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.garden_level, dt)
+                    self.transition.display()
                 case 13:
                     self.stage = self.poison_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.poison_level, dt)
+                    self.transition.display()
+            print(self.transition.active)
             pygame.display.update()
 
 
@@ -464,11 +495,12 @@ class Transition:
         self.active = False
         self.alpha = 0
         self.alpha_increment = 51
-        self.alpha_threshold = 255
+        self.alpha_threshold = 10000
+        self.timer = 0
         
 
     
-    def display(self, dt):
+    def display(self):
         if self.active:
             self.alpha += self.alpha_increment
             if self.alpha >= self.alpha_threshold:
@@ -480,7 +512,8 @@ class Transition:
                 self.alpha = 0
                 self.alpha_increment *= -1
             pygame.draw.rect(self.display_surface, BLACK_GRAY, (0, 0, WINDOW_WIDTH, WINDOW_HEIGHT))
-            
+        else:
+            self.alpha = 0
 
 if __name__ == '__main__':
     main = Main()
