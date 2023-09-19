@@ -1,8 +1,10 @@
 import pickle
+from pprint import pprint
 import pygame, sys
 from pygame.image import load
 import os
 from pygame.math import Vector2 as vector
+import configparser
 
 
 
@@ -27,10 +29,23 @@ class Main:
         self.clock = pygame.time.Clock()
         self.imports()
 
+
         # folders
         self.path = os.path.dirname(os.path.abspath(__file__))
-        self.lang_file = 'lang.txt'
+        self.lang_file = 'config.ini'
         self.file_path = os.path.join(self.path, self.lang_file)
+
+        # Game Configuration
+        self.config = configparser.ConfigParser()
+        if not os.path.isfile(self.file_path):
+            self.config['LANG'] = {'Lang': 'None'}
+            self.config['SOUNDS'] = {'Sounds': '0.2', 'Music': '0.2'}
+            self.config['FULLSCREEN'] = {'Fullscreen': 'False'}
+            with open(self.file_path, 'w') as configfile:
+                self.config.write(configfile)
+        self.config.read(self.file_path)
+
+    
         self.full_screen = False
         self.prev_stage = 3
 
@@ -39,8 +54,8 @@ class Main:
 
 
 
-        # Выбор стадии игр
-        self.stage = 3
+        # Выбор стадии иг
+        self.stage = 1
         
 
         # Звуки
@@ -71,8 +86,8 @@ class Main:
 
         # Экземпляры классов соответсвующих уровней
         self.author = Author()
-        self.lang_choice = LangChoice()
-        self.main_menu = MainMenu(self.set_prev_stage, self.start_new_game, self.level_sounds)
+        self.lang_choice = LangChoice(self.file_path, self.config)
+        self.main_menu = MainMenu(self.set_prev_stage, self.start_new_game, self.level_sounds, self.config, self.file_path)
         self.editor_active = True
         self.transition = Transition(self.toggle)
         self.editor = Editor(self.land_tiles, self.switch, self.file_path)
@@ -136,6 +151,8 @@ class Main:
             hp=self.change_hp,
             change_keys=self.change_keys,
             set_prev_stage=self.set_prev_stage,
+            transition=self.show_transition,
+            config=self.config,
             sky_color=LV_BG['common']['SKY'],
             ground_color=LV_BG['common']['GRD'],
             )
@@ -149,6 +166,8 @@ class Main:
             hp=self.change_hp,
             change_keys=self.change_keys,
             set_prev_stage=self.set_prev_stage,
+            transition=self.show_transition,
+            config=self.config,
             sky_color=LV_BG['cementry']['SKY'],
             ground_color=LV_BG['cementry']['GRD'],
             
@@ -163,8 +182,10 @@ class Main:
             hp=self.change_hp,
             change_keys=self.change_keys,
             set_prev_stage=self.set_prev_stage,
+            transition=self.show_transition,
             sky_color=LV_BG['inside']['SKY'],
             ground_color=LV_BG['inside']['GRD'],
+            config=self.config,
             has_clouds=False,
             has_horizon=False,
         )
@@ -178,8 +199,10 @@ class Main:
             hp=self.change_hp,
             change_keys=self.change_keys,
             set_prev_stage=self.set_prev_stage,
+            transition=self.show_transition,
             sky_color=LV_BG['inside']['SKY'],
             ground_color=LV_BG['inside']['GRD'],
+            config=self.config,
             has_clouds=False,
             has_horizon=False,
         )
@@ -193,6 +216,8 @@ class Main:
             hp=self.change_hp,
             change_keys=self.change_keys,
             set_prev_stage=self.set_prev_stage,
+            transition=self.show_transition,
+            config=self.config,
             sky_color=LV_BG['heaven']['SKY'],
             ground_color=LV_BG['heaven']['GRD'],
         )
@@ -206,8 +231,10 @@ class Main:
             hp=self.change_hp,
             change_keys=self.change_keys,
             set_prev_stage=self.set_prev_stage,
+            transition=self.show_transition,
             sky_color=LV_BG['inside']['SKY'],
             ground_color=LV_BG['inside']['GRD'],
+            config=self.config,
             has_clouds=False,
             has_horizon=False,
         )
@@ -221,8 +248,10 @@ class Main:
             hp=self.change_hp,
             change_keys=self.change_keys,
             set_prev_stage=self.set_prev_stage,
+            transition=self.show_transition,
             sky_color=LV_BG['desert']['SKY'],
             ground_color=LV_BG['desert']['GRD'],
+            config=self.config,
             has_clouds=False,
             has_horizon=True,
         )
@@ -236,6 +265,8 @@ class Main:
             hp=self.change_hp,
             change_keys=self.change_keys,
             set_prev_stage=self.set_prev_stage,
+            transition=self.show_transition,
+            config=self.config,
             sky_color=LV_BG['inside']['SKY'],
             ground_color=LV_BG['inside']['GRD'],
             has_clouds=False,
@@ -251,6 +282,8 @@ class Main:
             hp=self.change_hp,
             change_keys=self.change_keys,
             set_prev_stage=self.set_prev_stage,
+            transition=self.show_transition,
+            config=self.config,
             sky_color=LV_BG['garden']['SKY'],
             ground_color=LV_BG['garden']['GRD'],
             
@@ -265,15 +298,18 @@ class Main:
             hp=self.change_hp,
             change_keys=self.change_keys,
             set_prev_stage=self.set_prev_stage,
+            transition=self.show_transition,
+            config=self.config,
             sky_color=LV_BG['poison']['SKY'],
             ground_color=LV_BG['poison']['GRD'],
             has_clouds=False,
         )
         self.prev_stage = 3
 
+    def show_transition(self):
+        self.transition.active = True
 
     def set_prev_stage(self, prev_stage, current_stage):
-        print('SAY DAD DADAD')
         self.transition.active = True
         self.stage = current_stage
         self.prev_stage = prev_stage
@@ -399,6 +435,7 @@ class Main:
                 hp=self.change_hp,
                 change_keys=self.change_keys,
                 set_prev_stage=self.set_prev_stage,
+                config=self.config,
                 sky_color=SKY_COLOR,
                 ground_color=SEA_COLOR
             )
@@ -413,78 +450,77 @@ class Main:
                     else:
                         self.level.run(dt, self.gears, self.player_stats, self.stage)
                         self.level_transmission(dt)
-                    self.transition.display()
+                    self.transition.display(dt)
                 case 1:
                     self.stage = self.author.run()
                 case 2:
-                    if not os.path.isfile(self.file_path):
+                    if self.config.get('LANG', 'Lang') not in ('eng', 'rus'):
                         self.lang_choice.run(dt)
                     else:
                         self.stage = 3
                 case 3:
                     self.stage = self.main_menu.run(dt, self.stage, self.prev_stage)
-                    self.transition.display()
+                    self.transition.display(dt)
                 case 4:
                     self.stage = self.common_level.run(dt, self.gears, self.player_stats, self.stage, self.prev_stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.common_level, dt)
-                    self.transition.display()
+                    self.transition.display(dt)
                 case 5:
                     self.stage = self.cementry_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.cementry_level, dt)
-                    self.transition.display()
+                    self.transition.display(dt)
                 case 6:
                     self.stage = self.hall_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.hall_level, dt)
-                    self.transition.display()
+                    self.transition.display(dt)
                 case 7:
                     self.stage = self.cupboard_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.cupboard_level, dt)
-                    self.transition.display()
+                    self.transition.display(dt)
                 case 8:
                     self.stage = self.heaven_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.heaven_level, dt)
-                    self.transition.display()
+                    self.transition.display(dt)
                 case 9:
                     self.stage = self.first_floor_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.first_floor_level, dt)
-                    self.transition.display()
+                    self.transition.display(dt)
                 case 10:
                     self.stage = self.desert_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.desert_level, dt)
-                    self.transition.display()
+                    self.transition.display(dt)
                 case 11:
                     self.stage = self.second_floor_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.second_floor_level, dt)
-                    self.transition.display()
+                    self.transition.display(dt)
                 case 12:
                     self.stage = self.garden_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.garden_level, dt)
-                    self.transition.display()
+                    self.transition.display(dt)
                 case 13:
                     self.stage = self.poison_level.run(dt, self.gears, self.player_stats, self.stage)                                    
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.poison_level, dt)
-                    self.transition.display()
-            print(self.transition.active)
+                    self.transition.display(dt)
             pygame.display.update()
 
 
@@ -493,27 +529,20 @@ class Transition:
         self.display_surface = pygame.display.get_surface()
         self.toggle = toggle
         self.active = False
-        self.alpha = 0
-        self.alpha_increment = 51
-        self.alpha_threshold = 10000
-        self.timer = 0
+        self.width = 720
         
 
     
-    def display(self):
+    def display(self, dt):
         if self.active:
-            self.alpha += self.alpha_increment
-            if self.alpha >= self.alpha_threshold:
-                self.alpha_increment *= -1
+            self.width -= int(1200 * dt)
+            if self.width > 0:
                 self.toggle()
             
-            if self.alpha <= 0:
+            if self.width <= 0:
                 self.active = False
-                self.alpha = 0
-                self.alpha_increment *= -1
-            pygame.draw.rect(self.display_surface, BLACK_GRAY, (0, 0, WINDOW_WIDTH, WINDOW_HEIGHT))
-        else:
-            self.alpha = 0
+                self.width = 720
+            pygame.draw.rect(self.display_surface, BLACK_GRAY, (0, 0, WINDOW_WIDTH, self.width), border_bottom_left_radius=30, border_bottom_right_radius=30)
 
 if __name__ == '__main__':
     main = Main()

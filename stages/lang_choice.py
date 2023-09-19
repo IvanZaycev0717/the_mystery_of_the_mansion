@@ -7,12 +7,14 @@ from settings import *
 
 
 class LangChoice:
-    def __init__(self):
+    def __init__(self, file_path, config):
 
         # main setup
         self.display_surface = pygame.display.get_surface()
         self.bg_surface = pygame.Surface((LANG_WIDTH, LANG_HEIGHT))
         self.bg_surface.fill(BG_COLOR)
+        self.file_path = file_path
+        self.config = config
 
         # Font
         self.font = pygame.font.SysFont('arial', 46)
@@ -70,14 +72,9 @@ class LangChoice:
         # Mouse
         self.mouse_pos = pygame.mouse.get_pos()
 
-        # folders
-        self.path = os.path.dirname(os.path.abspath(__file__))
-        self.lang_file = 'lang.txt'
-        self.file_path = os.path.join(self.path, self.lang_file)
-
-    def create_lang_file(self, lang):
-        with open(self.file_path, 'w') as file:
-            file.write(lang)
+    def write_new_lang(self):
+        with open(self.file_path, 'w') as configfile:
+            self.config.write(configfile)
 
     def event_loop(self):
         for event in pygame.event.get():
@@ -97,10 +94,12 @@ class LangChoice:
                 )
             if event.type == pygame.MOUSEBUTTONDOWN \
                     and self.eng_rect.collidepoint(event.pos):
-                self.create_lang_file('eng')
+                self.config['LANG']['Lang'] = 'eng'
+                self.write_new_lang()
             if event.type == pygame.MOUSEBUTTONDOWN \
                     and self.rus_rect.collidepoint(event.pos):
-                self.create_lang_file('rus')
+                self.config['LANG']['Lang'] = 'rus'
+                self.write_new_lang()
 
     def run(self, dt):
         self.display_surface.fill(BLACK_GRAY)

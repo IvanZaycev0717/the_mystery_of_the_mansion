@@ -10,7 +10,7 @@ from sprites import *
 from ui import Inventory, Helper
 
 class Level:
-	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds=True, has_horizon=True):
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, config, has_clouds=True, has_horizon=True):
 		self.display_surface = pygame.display.get_surface()
 		self.switch = switch
 		self.current_stage = 4
@@ -27,6 +27,7 @@ class Level:
 		self.has_horizon = has_horizon
 		self.save_active = False
 		self.set_prev_stage = set_prev_stage
+		self.config = config
 
 		# groups 
 		self.all_sprites = CameraGroup(self.ground_color, self.has_horizon)
@@ -37,8 +38,8 @@ class Level:
 		self.collision_sprites = pygame.sprite.Group()
 		self.camel_sprites = pygame.sprite.Group()
 		self.harp_sprites = pygame.sprite.Group()
-		self.inventory = Inventory(self.display_surface)
-		self.helper = Helper(self.display_surface)
+		self.inventory = Inventory(self.display_surface, self.config)
+		self.helper = Helper(self.display_surface, self.config)
 		self.player_asset = asset_dict['player']
 		self.jump_sound = audio['jump']
 		self.walk_sound = audio['walk']
@@ -289,6 +290,8 @@ class Level:
 	def get_gears(self):
 		collided_gears = pygame.sprite.spritecollide(self.player, self.gear_sprites, True)
 		for sprite in collided_gears:
+			self.walk_sound.stop()
+			self.jump_sound.stop()
 			self.gear_sound.play()
 			Taken(self.taken_surf, sprite.rect.center, self.all_sprites)
 			self.gear_change(1)
@@ -382,13 +385,14 @@ class CameraGroup(pygame.sprite.Group):
                     self.dispay_surface.blit(sprite.image, offset_rect)
 
 class Common(Level):
-	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds=True, has_horizon=True):
-		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds=True, has_horizon=True)
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, transition, config, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, config, has_clouds=True, has_horizon=True)
 		self.door_in = False
 		self.gate_active = False
 		self.current_stage = 4
 		self.prev_stage = 3
 		self.main_menu = False
+		self.transition = transition
 
 		self.bg_music = audio['common_theme']
 		self.bg_music.set_volume(0.2)
@@ -435,15 +439,19 @@ class Common(Level):
 			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
 				self.tab_pressed = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.gate_active:
+				self.transition()
 				self.bg_music.stop()
 				self.current_stage = 5
 				self.gate_active = False
 				self.is_music_playing = False
+				
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.door_in:
+				self.transition()
 				self.bg_music.stop()
 				self.current_stage = 6
 				self.door_in = False
 				self.is_music_playing = False
+				
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F5:
 				self.save_active = True
 				self.quicksave_time.activate()
@@ -477,11 +485,12 @@ class Common(Level):
 
 
 class Cementry(Level):
-	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds=True, has_horizon=True):
-		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds=True, has_horizon=True)
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, transition, config, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, config, has_clouds=True, has_horizon=True)
 		self.current_stage = 5
 		self.gate_active = False
 		self.prev_stage = 3
+		self.transition = transition
 
 		self.bg_music = audio['cementry_theme']
 		self.bg_music.set_volume(0.2)
@@ -517,10 +526,12 @@ class Cementry(Level):
 			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
 				self.tab_pressed = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.gate_active:
+				self.transition()
 				self.bg_music.stop()
 				self.current_stage = 4
 				self.gate_active = False
 				self.is_music_playing = False
+				
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F5:
 				self.save_active = True
 				self.quicksave_time.activate()
@@ -556,14 +567,15 @@ class Cementry(Level):
 
 
 class Hall(Level):
-	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds=True, has_horizon=True):
-		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds, has_horizon)
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, transition, config, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, config, has_clouds, has_horizon)
 		self.current_stage = 6
 		self.prev_stage = 3
 		self.door_out = False
 		self.pink_door = False
 		self.green_door = False
 		self.cupboard_door = False
+		self.transition = transition
 
 		self.bg_music = audio['inside_theme']
 		self.bg_music.set_volume(0.2)
@@ -616,26 +628,34 @@ class Hall(Level):
 			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
 				self.tab_pressed = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.door_out:
+				self.transition()
 				self.bg_music.stop()
 				self.current_stage = 4
 				self.door_out = False
 				self.is_music_playing = False
 				self.is_music_playing = False
+				
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.cupboard_door:
+				self.transition()
 				self.bg_music.stop()
 				self.current_stage = 7
 				self.cupboard_door = False
 				self.is_music_playing = False
+				
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.green_door:
+				self.transition()
 				self.bg_music.stop()
 				self.current_stage = 9
 				self.green_door = False
 				self.is_music_playing = False
+				
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.pink_door:
+				self.transition()
 				self.bg_music.stop()
 				self.current_stage = 11
 				self.pink_door = False
 				self.is_music_playing = False
+				
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F5:
 				self.save_active = True
 				self.quicksave_time.activate()
@@ -669,13 +689,13 @@ class Hall(Level):
 		return self.current_stage
 
 class Cupboard(Level):
-	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds=True, has_horizon=True):
-		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds, has_horizon)
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, transition, config, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, config, has_clouds, has_horizon)
 		self.current_stage = 6
 		self.prev_stage = 3
 		self.cupboard_door = False
 		self.cupboard_bed = False
-
+		self.transition = transition
 		self.bg_music = audio['inside_theme']
 		self.bg_music.set_volume(0.2)
 		self.is_music_playing = False
@@ -714,15 +734,19 @@ class Cupboard(Level):
 			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
 				self.tab_pressed = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.cupboard_door:
+				self.transition()
 				self.bg_music.stop()
 				self.current_stage = 6
 				self.cupboard_door = False
 				self.is_music_playing = False
+				
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.cupboard_bed:
+				self.transition()
 				self.bg_music.stop()
 				self.current_stage = 8
 				self.cupboard_bed = False
 				self.is_music_playing = False
+				
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F5:
 				self.save_active = True
 				self.quicksave_time.activate()
@@ -757,10 +781,11 @@ class Cupboard(Level):
 		return self.current_stage
 
 class Heaven(Level):
-	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds=True, has_horizon=True):
-		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds, has_horizon)
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, transition, config, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, config, has_clouds, has_horizon)
 		self.current_stage = 8
 		self.prev_stage = 3
+		self.transition = transition
 
 		self.bg_music = audio['heaven_theme']
 		self.bg_music.set_volume(0.2)
@@ -771,6 +796,7 @@ class Heaven(Level):
 			self.bg_music.stop()
 			self.current_stage = 7
 			self.is_music_playing = False
+
 	def play_sound(self):
 		if not self.is_music_playing:
 			self.bg_music.play(loops=-1)
@@ -824,12 +850,13 @@ class Heaven(Level):
 		return self.current_stage
 
 class FirstFloor(Level):
-	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds=True, has_horizon=True):
-		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds, has_horizon)
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, transition, config, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, config, has_clouds, has_horizon)
 		self.current_stage = 9
 		self.prev_stage = 3
 		self.green_door = False
 		self.green_bed = False
+		self.transition = transition
 
 		self.bg_music = audio['inside_theme']
 		self.bg_music.set_volume(0.2)
@@ -869,15 +896,19 @@ class FirstFloor(Level):
 			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
 				self.tab_pressed = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.green_door:
+				self.transition()
 				self.bg_music.stop()
 				self.current_stage = 6
 				self.green_door = False
 				self.is_music_playing = False
+				
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.green_bed:
+				self.transition()
 				self.bg_music.stop()
 				self.current_stage = 10
 				self.green_bed = False
 				self.is_music_playing = False
+				
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F5:
 				self.save_active = True
 				self.quicksave_time.activate()
@@ -912,10 +943,11 @@ class FirstFloor(Level):
 		return self.current_stage
 
 class Desert(Level):
-	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds=True, has_horizon=True):
-		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds, has_horizon)
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, transition, config, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, config, has_clouds, has_horizon)
 		self.current_stage = 10
 		self.prev_stage = 3
+		self.transition = transition
 
 		self.bg_music = audio['desert_theme']
 		self.bg_music.set_volume(0.2)
@@ -979,12 +1011,13 @@ class Desert(Level):
 		return self.current_stage
 
 class SecondFloor(Level):
-	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds=True, has_horizon=True):
-		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds, has_horizon)
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, transition, config, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, config, has_clouds, has_horizon)
 		self.current_stage = 11
 		self.prev_stage = 3
 		self.pink_door = False
 		self.pink_bed = False
+		self.transition = transition
 		self.wall = False
 
 		self.bg_music = audio['inside_theme']
@@ -1031,20 +1064,26 @@ class SecondFloor(Level):
 			if event.type == pygame.KEYUP and event.key == pygame.K_TAB:
 				self.tab_pressed = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.pink_door:
+				self.transition()
 				self.bg_music.stop()
 				self.current_stage = 6
 				self.pink_door = False
 				self.is_music_playing = False
+				
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.pink_bed:
+				self.transition()
 				self.bg_music.stop()
 				self.current_stage = 12
 				self.pink_bed = False
 				self.is_music_playing = False
+				
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.wall:
+				self.transition()
 				self.bg_music.stop()
 				self.current_stage = 13
 				self.wall = False
 				self.is_music_playing = False
+				
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F5:
 				self.save_active = True
 				self.quicksave_time.activate()
@@ -1079,10 +1118,11 @@ class SecondFloor(Level):
 		return self.current_stage
 
 class Garden(Level):
-	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds=True, has_horizon=True):
-		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds, has_horizon)
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, transition, config, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, config, has_clouds, has_horizon)
 		self.current_stage = 12
 		self.prev_stage = 3
+		self.transition = transition
 
 		self.bg_music = audio['garden_theme']
 		self.bg_music.set_volume(0.2)
@@ -1148,11 +1188,12 @@ class Garden(Level):
 		return self.current_stage
 
 class Poison(Level):
-	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds=True, has_horizon=True):
-		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, has_clouds, has_horizon)
+	def __init__(self, grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, transition, config, has_clouds=True, has_horizon=True):
+		super().__init__(grid, switch, asset_dict, audio, gear_change, hp, change_keys, sky_color, ground_color, set_prev_stage, config, has_clouds, has_horizon)
 		self.current_stage = 13
 		self.prev_stage = 3
 		self.machine = False
+		self.transition = transition
 
 		self.bg_music = audio['poison_theme']
 		self.bg_music.set_volume(0.2)
@@ -1196,6 +1237,7 @@ class Poison(Level):
 				self.machine = False
 				self.current_stage = 3
 				self.is_music_playing = False
+				self.transition()
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F5:
 				self.save_active = True
 				self.quicksave_time.activate()

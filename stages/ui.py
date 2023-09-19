@@ -40,9 +40,10 @@ class UI:
         pygame.draw.rect(self.display_surface, '#dc4949', health_bar_rect, border_bottom_right_radius=6, border_top_right_radius=6)
 
 class Inventory:
-    def __init__(self, surface):
+    def __init__(self, surface, config):
         # setup
         self.display_surface = surface
+        self.config = config
 
         # Font
         self.font = pygame.font.SysFont('arial', 40, True)
@@ -61,12 +62,9 @@ class Inventory:
         self.yellow_key_img =  load('images/ui/inventory/yellow_key.png').convert_alpha()
         self.yellow_key_rect = self.yellow_key_img.get_rect(x=1000, y=330)
 
-    def definite_lang(self):
-        with open('stages/lang.txt', 'r') as file:
-            self.lang = file.readline()
 
     def show_inventory(self, gears_amount, player_stats):
-        self.definite_lang()
+        self.lang = self.config.get('LANG', 'Lang')
         pygame.draw.rect(self.display_surface, BLACK_GRAY, (960, 15, 300, 400))
 
         # inventory inscription
@@ -103,21 +101,18 @@ class Inventory:
         self.display_surface.blit(self.yellow_status, self.yellow_status_rect)
 
 class Helper:
-    def __init__(self, surface):
+    def __init__(self, surface, config):
         # setup
         self.display_surface = surface
+        self.config = config
         self.timer = 0
 
         # Font
         self.font = pygame.font.SysFont('arial', 26, True)
         self.lang = None
-    
-    def definite_lang(self):
-        with open('stages/lang.txt', 'r') as file:
-            self.lang = file.readline()
 
     def show_helper(self, message):
-        self.definite_lang()
+        self.lang = self.config.get('LANG', 'Lang')
         pygame.draw.rect(self.display_surface, BLACK_GRAY, (365, 15, 550, 50))
         self.message = self.font.render(eng.HLP[message] if self.lang == 'eng' else rus.HLP[message], False, 'yellow')
         self.message_rect = self.message.get_rect(centerx=WINDOW_WIDTH / 2, centery=37)

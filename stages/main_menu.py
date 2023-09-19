@@ -16,13 +16,15 @@ file_path = os.path.join(path, lang_file)
 
 
 class MainMenu:
-    def __init__(self, set_prev_stage, start_new_game, audio):
+    def __init__(self, set_prev_stage, start_new_game, audio, config, file_path):
 
         # main setup
         self.display_surface = pygame.display.get_surface()
         self.prev_stage = 3
         self.set_prev_stage = set_prev_stage
         self.start_new_game = start_new_game
+        self.config = config
+        self.file_path = file_path
 
         # Main menu image imports
         self.main_menu_dct = import_folder_dict('images/main_menu/')
@@ -132,18 +134,13 @@ class MainMenu:
     
 
 
-
+    def write_new_lang(self):
+        with open(self.file_path, 'w') as configfile:
+            self.config.write(configfile)
 
     # Language choice section
     def lang_choise(self):
-        with open(file_path, 'r') as file:
-            self.current_lang = file.readline()
-            return self.current_lang
-
-    def toggle_lang(self, lang):
-        with open(file_path, 'w') as file:
-            file.write(lang)
-            self.current_lang = lang
+       self.current_lang = self.config.get('LANG', 'Lang')
 
     # Start screen section
     def moving_moon(self, dt):
@@ -326,11 +323,15 @@ class MainMenu:
             elif event.type == pygame.MOUSEBUTTONDOWN and self.settings_surf_rect.collidepoint(event.pos) and self.settings_panel_is_active:
                 self.settings_panel_is_active = False
             if event.type == pygame.MOUSEBUTTONDOWN and self.change_eng_surf_rect.collidepoint(event.pos) and self.settings_panel_is_active:
-                self.toggle_lang('eng')
+                self.config['LANG']['Lang'] = 'eng'
+                self.write_new_lang()
             if event.type == pygame.MOUSEBUTTONDOWN and self.change_rus_surf_rect.collidepoint(event.pos) and self.settings_panel_is_active:
-                self.toggle_lang('rus')
+                self.config['LANG']['Lang'] = 'rus'
+                self.write_new_lang()
             if event.type == pygame.MOUSEBUTTONDOWN and self.editor_md_surf_rect.collidepoint(event.pos) and self.settings_panel_is_active:
+                self.bg_music.stop()
                 self.current_stage = 0
+                self.is_music_playing = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.bg_music.stop()
                 self.set_prev_stage(self.current_stage, self.prev_stage)
