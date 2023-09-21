@@ -28,6 +28,7 @@ class Main:
         self.icon = pygame.display.set_icon(pygame.image.load(ICON_PATH).convert_alpha())
         self.clock = pygame.time.Clock()
         self.imports()
+        
 
 
         # folders
@@ -45,8 +46,11 @@ class Main:
                 self.config.write(configfile)
         self.config.read(self.file_path)
 
+
+        
+        self.toggle_to_fullscreen = True
+
     
-        self.full_screen = False
         self.prev_stage = 3
 
         self.gears = 0
@@ -55,7 +59,7 @@ class Main:
 
 
         # Выбор стадии иг
-        self.stage = 1
+        self.stage = 3
         
 
         # Звуки
@@ -87,7 +91,7 @@ class Main:
         # Экземпляры классов соответсвующих уровней
         self.author = Author()
         self.lang_choice = LangChoice(self.file_path, self.config)
-        self.main_menu = MainMenu(self.set_prev_stage, self.start_new_game, self.level_sounds, self.config, self.file_path)
+        self.main_menu = MainMenu(self.set_prev_stage, self.start_new_game, self.level_sounds, self.config, self.file_path, self.switch_full_screen)
         self.editor_active = True
         self.transition = Transition(self.toggle)
         self.editor = Editor(self.land_tiles, self.switch, self.file_path)
@@ -345,6 +349,8 @@ class Main:
                 self.player_stats['current_hp'] = 100
                 self.dead_time = 0
         
+    def switch_full_screen(self):
+        self.toggle_to_fullscreen = not self.toggle_to_fullscreen
 
     def loading_level(self, file_name):
         with open(f'stages/{file_name}', 'rb') as file:
@@ -443,6 +449,13 @@ class Main:
     def run(self):
         while True:
             dt = self.clock.tick() / 1000
+            self.fullscreen_mode = self.config.getboolean('FULLSCREEN', 'fullscreen')
+            if self.toggle_to_fullscreen:
+                if self.fullscreen_mode:
+                    self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.FULLSCREEN)
+                else:
+                    self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+                self.toggle_to_fullscreen = False
             match self.stage:
                 case 0:
                     if self.editor_active: 

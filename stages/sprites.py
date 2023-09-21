@@ -33,7 +33,7 @@ class Cloud(Generic):
 			self.kill()
 
 class Player(Generic):
-	def __init__(self, pos, assets, group, collision_sprites, jump_sound, walk_sound):
+	def __init__(self, pos, assets, group, collision_sprites, jump_sound, walk_sound, config):
 		self.animation_frames = assets
 		self.frame_index = 0
 		self.status = 'idle'
@@ -43,6 +43,7 @@ class Player(Generic):
 		surf = self.animation_frames[f'{self.status}_{self.orientation}'][self.frame_index]
 		super().__init__(pos, surf, group)
 		self.mask = pygame.mask.from_surface(self.image)
+		self.config = config
 
 		# movement
 		self.direction = vector()
@@ -60,9 +61,7 @@ class Player(Generic):
 
 		# sound
 		self.jump_sound = jump_sound
-		self.jump_sound.set_volume(0.1)
 		self.walk_sound = walk_sound
-		self.walk_sound.set_volume(0.04)
 	
 	def damage(self):
 		if not self.invul_timer.active and self.status != 'death':
@@ -88,11 +87,13 @@ class Player(Generic):
 			self.direction.x = 1
 			self.orientation = 'right'
 			if self.status != 'jump' and self.status != 'fall':
+				self.walk_sound.set_volume(float(self.config['SOUNDS']['sounds']))
 				self.walk_sound.play()
 		elif keys[pygame.K_LEFT] and not self.is_sitting and self.status != 'death':
 			self.direction.x = -1
 			self.orientation = 'left'
 			if self.status != 'jump' and self.status != 'fall':
+				self.walk_sound.set_volume(float(self.config['SOUNDS']['sounds']))
 				self.walk_sound.play()
 		else:
 			self.is_sitting = False
@@ -104,6 +105,7 @@ class Player(Generic):
 		if keys[pygame.K_SPACE] and self.on_floor and self.status != 'death':
 			self.walk_sound.stop()
 			self.direction.y = -2
+			self.jump_sound.set_volume(float(self.config['SOUNDS']['sounds']))
 			self.jump_sound.play()
 			
 	

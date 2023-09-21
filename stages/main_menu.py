@@ -16,7 +16,7 @@ file_path = os.path.join(path, lang_file)
 
 
 class MainMenu:
-    def __init__(self, set_prev_stage, start_new_game, audio, config, file_path):
+    def __init__(self, set_prev_stage, start_new_game, audio, config, file_path, toggle_to_full_screen):
 
         # main setup
         self.display_surface = pygame.display.get_surface()
@@ -25,6 +25,8 @@ class MainMenu:
         self.start_new_game = start_new_game
         self.config = config
         self.file_path = file_path
+        self.fullscreen_mode = False
+        self.toggle_to_full_screen = toggle_to_full_screen
 
         # Main menu image imports
         self.main_menu_dct = import_folder_dict('images/main_menu/')
@@ -39,7 +41,6 @@ class MainMenu:
 
         # sound
         self.bg_music = audio['main_theme']
-        self.bg_music.set_volume(0.2)
         self.is_music_playing = False
         
         
@@ -123,6 +124,31 @@ class MainMenu:
         self.editor_md_surf_rect = self.editor_md_surf.get_rect(x=70, y=610)
         self.editor_md_surf.fill(MM_BUT_COLOR)
 
+        # Work with Music Sound
+        self.music_minus_surf = pygame.Surface((30, 40))
+        self.music_minus_rect = self.music_minus_surf.get_rect(x=460, y=500)
+        self.music_minus_surf.fill(MM_BUT_COLOR)
+        self.sounds_minus_surf = pygame.Surface((30, 40))
+        self.sounds_minus_rect = self.sounds_minus_surf.get_rect(x=600, y=500)
+        self.sounds_minus_surf.fill(MM_BUT_COLOR)
+
+        # Work with Music Sound
+        self.music_plus_surf = pygame.Surface((30, 40))
+        self.music_plus_rect = self.music_plus_surf.get_rect(x=545, y=500)
+        self.music_plus_surf.fill(MM_BUT_COLOR)
+        self.sounds_plus_surf = pygame.Surface((30, 40))
+        self.sounds_plus_rect = self.sounds_plus_surf.get_rect(x=694, y=500)
+        self.sounds_plus_surf.fill(MM_BUT_COLOR)
+
+        # Fullscreen mode
+        self.fscr_surf = pygame.Surface((140, 40))
+        self.fscr_rect = self.fscr_surf.get_rect(x=450, y=610)
+        self.fscr_surf.fill(MM_BUT_COLOR)
+
+        self.fscr_surf_off = pygame.Surface((140, 40))
+        self.fscr_rect_off = self.fscr_surf.get_rect(x=595, y=610)
+        self.fscr_surf_off.fill(MM_BUT_COLOR)
+
         
         self.lang_helper = self.font_small.render('Click your language / Кликните на ваш язык', False, 'yellow')
         self.eng_lang = self.font.render('English', False, 'yellow')
@@ -167,9 +193,14 @@ class MainMenu:
         else:
             self.display_surface.blit(self.main_menu_dct['stars'], self.star_rect)
 
-    # Creation section
-    def button_creation(self):
-        # Choices menu
+
+    # Show section
+    def show_buttons(self):
+        self.display_surface.blit(self.continie_surf, self.continie_surf_rect)
+        self.display_surface.blit(self.new_game_surf, self.new_game_surf_rect)
+        self.display_surface.blit(self.controls_surf, self.controls_surf_rect)
+        self.display_surface.blit(self.settings_surf, self.settings_surf_rect)
+        self.display_surface.blit(self.exit_surf, self.exit_surf_rect)
         self.continue_button = self.font.render(eng.CONTINUE_BUTTON if self.current_lang == 'eng' else rus.CONTINUE_BUTTON, True, 'yellow' if self.current_stage != self.prev_stage else 'gray')
         self.continue_button_rect = self.continue_button.get_rect(x=875, y=450)
         self.new_game_button = self.font.render(eng.NEW_GAME_BUTTON if self.current_lang == 'eng' else rus.NEW_GAME_BUTTON, True, 'yellow')
@@ -180,44 +211,6 @@ class MainMenu:
         self.settings_rect = self.settings_button.get_rect(x=875, y=600)
         self.quit_button = self.font.render(eng.QUIT_BUTTON if self.current_lang == 'eng' else rus.QUIT_BUTTON, True, 'yellow')
         self.quit_rect = self.quit_button.get_rect(x=875, y=650)
-
-    def create_elemets_cp(self):
-        # Column 1
-        self.esc_text = self.font_small.render(eng.MM_ESC if self.current_lang == 'eng' else rus.MM_ESC, False, 'yellow')
-        self.esc_text_rect = self.esc_text.get_rect(x=60, y=15)
-        self.right_text = self.font_small.render(eng.MM_RIGHT if self.current_lang == 'eng' else rus.MM_RIGHT, False, 'yellow')
-        self.right_text_rect = self.right_text.get_rect(x=60, y=55)
-        self.left_text = self.font_small.render(eng.MM_LEFT if self.current_lang == 'eng' else rus.MM_LEFT, False, 'yellow')
-        self.left_text_rect = self.left_text.get_rect(x=60, y=95)
-        self.f5_text = self.font_small.render(eng.MM_F5 if self.current_lang == 'eng' else rus.MM_F5, False, 'yellow')
-        self.f5_text_rect = self.f5_text.get_rect(x=60, y=135)
-        self.f9_text = self.font_small.render(eng.MM_F9 if self.current_lang == 'eng' else rus.MM_F9, False, 'yellow')
-        self.f9_text_rect = self.f9_text.get_rect(x=60, y=175)
-        # Column 2
-        self.tab_text = self.font_small.render(eng.MM_TAB if self.current_lang == 'eng' else rus.MM_TAB, False, 'yellow')
-        self.tab_text_rect = self.tab_text.get_rect(x=360, y=15)
-        self.x_text = self.font_small.render(eng.MM_X if self.current_lang == 'eng' else rus.MM_X, False, 'yellow')
-        self.x_text_rect = self.x_text.get_rect(x=400, y=55)
-        self.down_text = self.font_small.render(eng.MM_DOWN if self.current_lang == 'eng' else rus.MM_DOWN, False, 'yellow')
-        self.down_text_rect = self.down_text.get_rect(x=360, y=95)
-        self.space_text = self.font_small.render(eng.MM_SPACE if self.current_lang == 'eng' else rus.MM_SPACE, False, 'yellow')
-        self.space_text_rect = self.space_text.get_rect(x=530, y=135)
-
-    def create_lang(self):
-        # Go to Editor
-        self.settings_panel_surf.blit(self.lang_helper, self.lang_helper_rect)
-        self.settings_panel_surf.blit(self.eng_lang, self.eng_lang_rect)
-        self.settings_panel_surf.blit(self.rus_lang, self.rus_lang_rect)
-        
-
-    # Show section
-    def show_buttons(self):
-        self.display_surface.blit(self.continie_surf, self.continie_surf_rect)
-        self.display_surface.blit(self.new_game_surf, self.new_game_surf_rect)
-        self.display_surface.blit(self.controls_surf, self.controls_surf_rect)
-        self.display_surface.blit(self.settings_surf, self.settings_surf_rect)
-        self.display_surface.blit(self.exit_surf, self.exit_surf_rect)
-        self.button_creation()
         self.display_surface.blit(self.main_menu_dct['sc'], self.title_rect)
         self.display_surface.blit(self.continue_button, self.continue_button_rect)
         self.display_surface.blit(self.new_game_button, self.new_game_button_rect)
@@ -228,7 +221,25 @@ class MainMenu:
     def show_controls(self):
         if self.control_panel_is_active:
             self.settings_panel_is_active = False
-            self.create_elemets_cp()
+            self.esc_text = self.font_small.render(eng.MM_ESC if self.current_lang == 'eng' else rus.MM_ESC, False, 'yellow')
+            self.esc_text_rect = self.esc_text.get_rect(x=60, y=15)
+            self.right_text = self.font_small.render(eng.MM_RIGHT if self.current_lang == 'eng' else rus.MM_RIGHT, False, 'yellow')
+            self.right_text_rect = self.right_text.get_rect(x=60, y=55)
+            self.left_text = self.font_small.render(eng.MM_LEFT if self.current_lang == 'eng' else rus.MM_LEFT, False, 'yellow')
+            self.left_text_rect = self.left_text.get_rect(x=60, y=95)
+            self.f5_text = self.font_small.render(eng.MM_F5 if self.current_lang == 'eng' else rus.MM_F5, False, 'yellow')
+            self.f5_text_rect = self.f5_text.get_rect(x=60, y=135)
+            self.f9_text = self.font_small.render(eng.MM_F9 if self.current_lang == 'eng' else rus.MM_F9, False, 'yellow')
+            self.f9_text_rect = self.f9_text.get_rect(x=60, y=175)
+            # Column 2
+            self.tab_text = self.font_small.render(eng.MM_TAB if self.current_lang == 'eng' else rus.MM_TAB, False, 'yellow')
+            self.tab_text_rect = self.tab_text.get_rect(x=360, y=15)
+            self.x_text = self.font_small.render(eng.MM_X if self.current_lang == 'eng' else rus.MM_X, False, 'yellow')
+            self.x_text_rect = self.x_text.get_rect(x=400, y=55)
+            self.down_text = self.font_small.render(eng.MM_DOWN if self.current_lang == 'eng' else rus.MM_DOWN, False, 'yellow')
+            self.down_text_rect = self.down_text.get_rect(x=360, y=95)
+            self.space_text = self.font_small.render(eng.MM_SPACE if self.current_lang == 'eng' else rus.MM_SPACE, False, 'yellow')
+            self.space_text_rect = self.space_text.get_rect(x=530, y=135)
             self.control_panel_surf.fill(BLACK_GRAY)
             self.control_panel_surf.blit(self.main_menu_dct['esc'], self.esc_img_rect)
             self.control_panel_surf.blit(self.main_menu_dct['right'], self.right_button_rect)
@@ -253,17 +264,54 @@ class MainMenu:
     
     def show_settings(self):
         if self.settings_panel_is_active:
-            self.create_lang()
+            self.settings_panel_surf.blit(self.lang_helper, self.lang_helper_rect)
+            self.settings_panel_surf.blit(self.eng_lang, self.eng_lang_rect)
+            self.settings_panel_surf.blit(self.rus_lang, self.rus_lang_rect)
             self.editor_mode = self.font_small.render(eng.ED_MD if self.current_lang == 'eng' else rus.ED_MD, False, 'yellow')
             self.editor_mode_rect = self.editor_mode.get_rect(x=30, y=130)
             self.go_editor = self.font_small.render(eng.GO_TO_ED if self.current_lang == 'eng' else rus.GO_TO_ED, False, 'yellow')
             self.go_editor_rect = self.editor_mode.get_rect(x=30, y=170)
+            self.volume_settings = self.font_small.render(eng.MM_VOLUME if self.current_lang == 'eng' else rus.MM_VOLUME, False, 'yellow')
+            self.volume_settings_rect = self.volume_settings.get_rect(x=410, y=20)
+            self.full_screen = self.font_small.render(eng.MM_FULLSCREEN if self.current_lang == 'eng' else rus.MM_FULLSCREEN, False, 'yellow')
+            self.full_screen_rect = self.full_screen.get_rect(x=410, y=130)
+
+            self.fscr_on = self.font.render(eng.MM_FLSC_ON if self.current_lang == 'eng' else rus.MM_FLSC_ON, True, 'yellow')
+            self.fscr_off = self.font.render(eng.MM_FLSC_OFF if self.current_lang == 'eng' else rus.MM_FLSC_OFF, True, 'yellow')
+            self.fscr_on_rect = self.fscr_on.get_rect(x=410, y=160)
+            self.fscr_off_rect = self.fscr_off.get_rect(x=550, y=160)
+
+            # Contol Volume's value
+            self.get_minus = self.font.render('-', True, 'yellow')
+            self.get_minus_rect = self.get_minus.get_rect(x=420, y=50)
+            self.get_minus_rect_1 = self.get_minus.get_rect(x=560, y=50)
+
+            self.get_plus = self.font.render('+', True, 'yellow')
+            self.get_plus_rect = self.get_plus.get_rect(x=500, y=50)
+            self.get_plus_rect_1 = self.get_plus.get_rect(x=650, y=50)
+
+            self.show_music_volume = self.font.render(self.config['SOUNDS']['music'], True, 'yellow')
+            self.show_sounds_volume = self.font.render(self.config['SOUNDS']['sounds'], True, 'yellow')
+            self.show_music_volume_rect = self.show_music_volume.get_rect(x=450, y=50)
+            self.show_sounds_volume_rect = self.show_sounds_volume.get_rect(x=590, y=50)
+
+
             self.frame_1 = pygame.draw.rect(self.settings_panel_surf, MM_BUT_COLOR, (10, 10, 375, 90), 3)
             self.frame_2 = pygame.draw.rect(self.settings_panel_surf, MM_BUT_COLOR, (10, 120, 375, 90), 3)
             self.frame_3 = pygame.draw.rect(self.settings_panel_surf, MM_BUT_COLOR, (400, 10, 310, 90), 3)
             self.frame_4 = pygame.draw.rect(self.settings_panel_surf, MM_BUT_COLOR, (400, 120, 310, 90), 3)
             self.settings_panel_surf.blit(self.editor_mode, self.editor_mode_rect)
             self.settings_panel_surf.blit(self.go_editor, self.go_editor_rect)
+            self.settings_panel_surf.blit(self.volume_settings, self.volume_settings_rect)
+            self.settings_panel_surf.blit(self.full_screen, self.full_screen_rect)
+            self.settings_panel_surf.blit(self.fscr_on, self.fscr_on_rect)
+            self.settings_panel_surf.blit(self.fscr_off, self.fscr_off_rect)
+            self.settings_panel_surf.blit(self.get_minus, self.get_minus_rect)
+            self.settings_panel_surf.blit(self.get_minus, self.get_minus_rect_1)
+            self.settings_panel_surf.blit(self.show_music_volume, self.show_music_volume_rect)
+            self.settings_panel_surf.blit(self.show_sounds_volume, self.show_sounds_volume_rect)
+            self.settings_panel_surf.blit(self.get_plus, self.get_plus_rect)
+            self.settings_panel_surf.blit(self.get_plus, self.get_plus_rect_1)
             self.display_surface.blit(self.settings_panel_surf, self.settings_panel_surf_rect)
             self.settings_panel_surf.fill(BLACK_GRAY)
             
@@ -277,15 +325,73 @@ class MainMenu:
                 case 'rus':
                     self.change_eng_surf.set_alpha(0)
                     self.change_rus_surf.set_alpha(50)
+            if self.config.getboolean('FULLSCREEN', 'fullscreen'):
+                self.fscr_surf.set_alpha(50)
+                self.fscr_surf_off.set_alpha(0)
+            else:
+                self.fscr_surf.set_alpha(0)
+                self.fscr_surf_off.set_alpha(50)
             self.display_surface.blit(self.change_eng_surf, self.change_eng_surf_rect)
             self.display_surface.blit(self.change_rus_surf, self.change_rus_surf_rect)
             self.editor_md_surf.set_alpha(50)
+            self.music_minus_surf.set_alpha(50)
+            self.sounds_minus_surf.set_alpha(50)
+            self.music_plus_surf.set_alpha(50)
+            self.sounds_plus_surf.set_alpha(50)
+            
+
+            # Show button '-'
+            self.display_surface.blit(self.music_minus_surf, self.music_minus_rect)
+            self.display_surface.blit(self.sounds_minus_surf, self.sounds_minus_rect)
+
+            # Show button '+'
+            self.display_surface.blit(self.music_plus_surf, self.music_plus_rect)
+            self.display_surface.blit(self.sounds_plus_surf, self.sounds_plus_rect)
+
+            # Show fullscreen surfaces
+            self.display_surface.blit(self.fscr_surf, self.fscr_rect)
+            self.display_surface.blit(self.fscr_surf_off, self.fscr_rect_off)
+            
             self.display_surface.blit(self.editor_md_surf, self.editor_md_surf_rect)
+            
+    def change_volume(self, volume_type, minus):
+        current_music_volume = float(self.config['SOUNDS']['music'])
+        current_sounds_volume = float(self.config['SOUNDS']['sounds'])
+        match volume_type:
+            case 'music':
+                if minus:
+                    current_music_volume -= 0.1 if 0.0 < current_music_volume <= 1.0 else 0
+                    self.config['SOUNDS']['music'] = str(round(current_music_volume, 1))
+                else:
+                    current_music_volume += 0.1 if 0.0 <= current_music_volume < 1.0 else 0
+                    self.config['SOUNDS']['music'] = str(round(current_music_volume, 1))
+            case 'sounds':
+                if minus:
+                    current_sounds_volume -= 0.1 if 0.0 < current_sounds_volume <= 1.0 else 0
+                    self.config['SOUNDS']['sounds'] = str(round(current_sounds_volume, 1))
+                else:
+                    current_sounds_volume += 0.1 if 0.0 <= current_sounds_volume < 1.0 else 0
+                    self.config['SOUNDS']['sounds'] = str(round(current_sounds_volume, 1))
+
+        with open(self.file_path, 'w') as configfile:
+            self.config.write(configfile)
+        
+        self.bg_music.stop()
+        self.is_music_playing = False
 
     def play_sound(self):
         if not self.is_music_playing:
+            self.bg_music.set_volume(float(self.config['SOUNDS']['music']))
             self.bg_music.play(loops=-1)
             self.is_music_playing = True
+
+    def rewrite_config_fullscreen(self):
+        if self.fullscreen_mode:
+            self.config['FULLSCREEN']['fullscreen'] = 'True'
+        else:
+            self.config['FULLSCREEN']['fullscreen'] = 'False'
+        with open(self.file_path, 'w') as configfile:
+            self.config.write(configfile)
 
     # Event section
     def event_loop(self):
@@ -332,7 +438,26 @@ class MainMenu:
                 self.bg_music.stop()
                 self.current_stage = 0
                 self.is_music_playing = False
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            if event.type == pygame.MOUSEBUTTONDOWN and self.music_minus_rect.collidepoint(event.pos) and self.settings_panel_is_active:
+                self.change_volume(volume_type='music', minus=True)
+                self.is_music_playing = False
+            if event.type == pygame.MOUSEBUTTONDOWN and self.music_plus_rect.collidepoint(event.pos) and self.settings_panel_is_active:
+                self.change_volume(volume_type='music', minus=False)
+                self.is_music_playing = False
+            if event.type == pygame.MOUSEBUTTONDOWN and self.sounds_minus_rect.collidepoint(event.pos) and self.settings_panel_is_active:
+                self.change_volume(volume_type='sounds', minus=True)
+                self.is_music_playing = False
+            if event.type == pygame.MOUSEBUTTONDOWN and self.sounds_plus_rect.collidepoint(event.pos) and self.settings_panel_is_active:
+                self.change_volume(volume_type='sounds', minus=False)
+            if event.type == pygame.MOUSEBUTTONDOWN and self.fscr_rect.collidepoint(event.pos) and self.settings_panel_is_active:
+                self.fullscreen_mode = True
+                self.rewrite_config_fullscreen()
+                self.toggle_to_full_screen()
+            if event.type == pygame.MOUSEBUTTONDOWN and self.fscr_rect_off.collidepoint(event.pos) and self.settings_panel_is_active:
+                self.fullscreen_mode = False
+                self.rewrite_config_fullscreen()
+                self.toggle_to_full_screen()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE and self.current_stage != self.prev_stage:
                 self.bg_music.stop()
                 self.set_prev_stage(self.current_stage, self.prev_stage)
                 self.current_stage = self.prev_stage

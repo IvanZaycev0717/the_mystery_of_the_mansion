@@ -62,13 +62,8 @@ class Level:
 			self.startup_clouds()
 
 		self.gear_sound = audio['gear']
-		self.gear_sound.set_volume(0.3)
-
 		self.hit_sound = audio['hit']
-		self.hit_sound.set_volume(0.1)
-
 		self.key_sound = audio['key']
-		self.key_sound.set_volume(0.3)
 
 	def show_save_message(self, dt):
 		if self.save_active:
@@ -93,7 +88,7 @@ class Level:
 				if layer_name == 'common':
 					Generic(pos, asset_dict['land'][data[0]][data[1]], [self.all_sprites, self.collision_sprites])
 				match data:
-					case 0: self.player = Player(pos, asset_dict['player'], self.all_sprites, self.collision_sprites, jump_sound, walk_sound)
+					case 0: self.player = Player(pos, asset_dict['player'], self.all_sprites, self.collision_sprites, jump_sound, walk_sound, self.config)
 					case 1:
 						self.horizon_y = pos[1]
 						self.all_sprites.horizon_y = pos[1]
@@ -265,7 +260,7 @@ class Level:
 			if self.dead_time >= 5:
 				self.player.kill()
 				pos = (pos[0] - 100, pos[1] - 100)
-				self.player = Player(pos, self.player_asset, self.all_sprites, self.collision_sprites, self.jump_sound, self.walk_sound)
+				self.player = Player(pos, self.player_asset, self.all_sprites, self.collision_sprites, self.jump_sound, self.walk_sound, self.config)
 				self.dead_time = 0
 
 	def get_keys(self):
@@ -274,6 +269,7 @@ class Level:
 			self.walk_sound.stop()
 			self.jump_sound.stop()
 			self.key_sound.play()
+			self.key_sound.set_volume(float(self.config['SOUNDS']['sounds']))
 			self.change_keys(f'{sprite.__dict__["key_type"]}_key')
 			sprite.kill()
 
@@ -282,6 +278,7 @@ class Level:
 		if collision_sprites and self.player.status != 'death':
 			self.walk_sound.stop()
 			self.jump_sound.stop()
+			self.hit_sound.set_volume(float(self.config['SOUNDS']['sounds']))
 			self.hit_sound.play()
 			self.player.damage()
 			self.hp(0.2)
@@ -292,6 +289,7 @@ class Level:
 		for sprite in collided_gears:
 			self.walk_sound.stop()
 			self.jump_sound.stop()
+			self.gear_sound.set_volume(float(self.config['SOUNDS']['sounds']))
 			self.gear_sound.play()
 			Taken(self.taken_surf, sprite.rect.center, self.all_sprites)
 			self.gear_change(1)
@@ -395,11 +393,11 @@ class Common(Level):
 		self.transition = transition
 
 		self.bg_music = audio['common_theme']
-		self.bg_music.set_volume(0.2)
 		self.is_music_playing = False
 
 	def play_sound(self):
 		if not self.is_music_playing:
+			self.bg_music.set_volume(float(self.config['SOUNDS']['music']))
 			self.bg_music.play(loops=-1)
 			self.is_music_playing = True
 
@@ -493,11 +491,11 @@ class Cementry(Level):
 		self.transition = transition
 
 		self.bg_music = audio['cementry_theme']
-		self.bg_music.set_volume(0.2)
 		self.is_music_playing = False
 	
 	def play_sound(self):
 		if not self.is_music_playing:
+			self.bg_music.set_volume(float(self.config['SOUNDS']['music']))
 			self.bg_music.play(loops=-1)
 			self.is_music_playing = True
 
@@ -578,12 +576,12 @@ class Hall(Level):
 		self.transition = transition
 
 		self.bg_music = audio['inside_theme']
-		self.bg_music.set_volume(0.2)
 		self.is_music_playing = False
 
 
 	def play_sound(self):
 		if not self.is_music_playing:
+			self.bg_music.set_volume(float(self.config['SOUNDS']['music']))
 			self.bg_music.play(loops=-1)
 			self.is_music_playing = True
 
@@ -697,11 +695,11 @@ class Cupboard(Level):
 		self.cupboard_bed = False
 		self.transition = transition
 		self.bg_music = audio['inside_theme']
-		self.bg_music.set_volume(0.2)
 		self.is_music_playing = False
 
 	def play_sound(self):
 		if not self.is_music_playing:
+			self.bg_music.set_volume(float(self.config['SOUNDS']['music']))
 			self.bg_music.play(loops=-1)
 			self.is_music_playing = True
 
@@ -788,7 +786,6 @@ class Heaven(Level):
 		self.transition = transition
 
 		self.bg_music = audio['heaven_theme']
-		self.bg_music.set_volume(0.2)
 		self.is_music_playing = False
 	
 	def check_green_key(self):
@@ -799,6 +796,7 @@ class Heaven(Level):
 
 	def play_sound(self):
 		if not self.is_music_playing:
+			self.bg_music.set_volume(float(self.config['SOUNDS']['music']))
 			self.bg_music.play(loops=-1)
 			self.is_music_playing = True
 
@@ -859,11 +857,11 @@ class FirstFloor(Level):
 		self.transition = transition
 
 		self.bg_music = audio['inside_theme']
-		self.bg_music.set_volume(0.2)
 		self.is_music_playing = False
 	
 	def play_sound(self):
 		if not self.is_music_playing:
+			self.bg_music.set_volume(float(self.config['SOUNDS']['music']))
 			self.bg_music.play(loops=-1)
 			self.is_music_playing = True
 	
@@ -950,11 +948,11 @@ class Desert(Level):
 		self.transition = transition
 
 		self.bg_music = audio['desert_theme']
-		self.bg_music.set_volume(0.2)
 		self.is_music_playing = False
 
 	def play_sound(self):
 		if not self.is_music_playing:
+			self.bg_music.set_volume(float(self.config['SOUNDS']['music']))
 			self.bg_music.play(loops=-1)
 			self.is_music_playing = True
 	
@@ -1021,11 +1019,11 @@ class SecondFloor(Level):
 		self.wall = False
 
 		self.bg_music = audio['inside_theme']
-		self.bg_music.set_volume(0.2)
 		self.is_music_playing = False
 
 	def play_sound(self):
 		if not self.is_music_playing:
+			self.bg_music.set_volume(float(self.config['SOUNDS']['music']))
 			self.bg_music.play(loops=-1)
 			self.is_music_playing = True
 
@@ -1125,11 +1123,11 @@ class Garden(Level):
 		self.transition = transition
 
 		self.bg_music = audio['garden_theme']
-		self.bg_music.set_volume(0.2)
 		self.is_music_playing = False
 	
 	def play_sound(self):
 		if not self.is_music_playing:
+			self.bg_music.set_volume(float(self.config['SOUNDS']['music']))
 			self.bg_music.play(loops=-1)
 			self.is_music_playing = True
 	
@@ -1196,11 +1194,11 @@ class Poison(Level):
 		self.transition = transition
 
 		self.bg_music = audio['poison_theme']
-		self.bg_music.set_volume(0.2)
 		self.is_music_playing = False
 	
 	def play_sound(self):
 		if not self.is_music_playing:
+			self.bg_music.set_volume(float(self.config['SOUNDS']['music']))
 			self.bg_music.play(loops=-1)
 			self.is_music_playing = True
 
