@@ -465,6 +465,7 @@ class MainMenu:
         
     # Main cycle
     def run(self, dt, current_stage, prev_stage):
+        pygame.mouse.set_visible(True)
         self.current_stage = current_stage
         self.prev_stage = prev_stage
 

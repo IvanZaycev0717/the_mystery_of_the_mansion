@@ -463,6 +463,7 @@ class Common(Level):
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
 		self.prev_stage = prev_stage
+		pygame.mouse.set_visible(False)
 		self.play_sound()
 		self.correct_falling()
 		self.event_loop(dt)
@@ -489,6 +490,7 @@ class Cementry(Level):
 		self.gate_active = False
 		self.prev_stage = 3
 		self.transition = transition
+		
 
 		self.bg_music = audio['cementry_theme']
 		self.is_music_playing = False
@@ -546,6 +548,7 @@ class Cementry(Level):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
+		pygame.mouse.set_visible(False)
 		self.correct_falling()
 		self.play_sound()
 		self.event_loop()
@@ -670,6 +673,7 @@ class Hall(Level):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
+		pygame.mouse.set_visible(False)
 		self.play_sound()
 		self.correct_falling()
 		self.event_loop()
@@ -761,6 +765,7 @@ class Cupboard(Level):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
+		pygame.mouse.set_visible(False)
 		self.play_sound()
 		self.correct_falling()
 		self.event_loop()
@@ -831,6 +836,7 @@ class Heaven(Level):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
+		pygame.mouse.set_visible(False)
 		self.play_sound()
 		self.correct_falling()
 		self.event_loop()
@@ -923,6 +929,7 @@ class FirstFloor(Level):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
+		pygame.mouse.set_visible(False)
 		self.play_sound()
 		self.correct_falling()
 		self.event_loop()
@@ -993,6 +1000,7 @@ class Desert(Level):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
+		pygame.mouse.set_visible(False)
 		self.play_sound()
 		self.correct_falling()
 		self.event_loop()
@@ -1098,6 +1106,7 @@ class SecondFloor(Level):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
+		pygame.mouse.set_visible(False)
 		self.play_sound()
 		self.correct_falling()
 		self.event_loop()
@@ -1169,6 +1178,7 @@ class Garden(Level):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
+		pygame.mouse.set_visible(False)
 		self.play_sound()
 		self.correct_falling()
 		self.event_loop()
@@ -1253,6 +1263,7 @@ class Poison(Level):
 		self.current_stage = current_stage
 		self.gears_amount = gears_amount
 		self.player_stats = player_stats
+		pygame.mouse.set_visible(False)
 		self.play_sound()
 		self.correct_falling()
 		self.event_loop()

@@ -43,6 +43,8 @@ HORIZON_TOP_COLOR = '#f2f5f7'
 SEA_COLOR = '#a8c9e0'
 HORIZON_COLOR = '#bfcdd6'
 
+CURTAIN_COLOR = '#640000'
+
 # LEVELS BACKGROUND
 LV_BG = {
     'common': {'SKY': '#acd3e9', 'GRD': '#345833'},

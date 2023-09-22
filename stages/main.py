@@ -28,6 +28,7 @@ class Main:
         self.icon = pygame.display.set_icon(pygame.image.load(ICON_PATH).convert_alpha())
         self.clock = pygame.time.Clock()
         self.imports()
+        self.level = None
         
 
 
@@ -60,6 +61,8 @@ class Main:
 
         # Выбор стадии иг
         self.stage = 3
+
+        
         
 
         # Звуки
@@ -94,7 +97,7 @@ class Main:
         self.main_menu = MainMenu(self.set_prev_stage, self.start_new_game, self.level_sounds, self.config, self.file_path, self.switch_full_screen)
         self.editor_active = True
         self.transition = Transition(self.toggle)
-        self.editor = Editor(self.land_tiles, self.switch, self.file_path)
+        self.editor = Editor(self.land_tiles, self.switch, self.file_path, self.set_prev_stage)
         self.ui = UI(self.display_surface)
         self.dead_time = 0
 
@@ -548,14 +551,14 @@ class Transition:
     
     def display(self, dt):
         if self.active:
+            
             self.width -= int(1200 * dt)
-            if self.width > 0:
-                self.toggle()
             
             if self.width <= 0:
                 self.active = False
                 self.width = 720
-            pygame.draw.rect(self.display_surface, BLACK_GRAY, (0, 0, WINDOW_WIDTH, self.width), border_bottom_left_radius=30, border_bottom_right_radius=30)
+                self.toggle()
+            pygame.draw.rect(self.display_surface, CURTAIN_COLOR, (0, 0, WINDOW_WIDTH, self.width), border_bottom_left_radius=30, border_bottom_right_radius=30)
 
 if __name__ == '__main__':
     main = Main()

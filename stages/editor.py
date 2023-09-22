@@ -17,10 +17,11 @@ import timer
 
 class Editor:
     """Игра в режиме редактора, для создания данных для уровней."""
-    def __init__(self, land_tiles, switch, file_path):
+    def __init__(self, land_tiles, switch, file_path, set_stage):
         self.display_surface = pygame.display.get_surface()
         self.canvas_data = {}
         self.switch = switch
+        self.set_stage= set_stage
 
         #tkinter window
         self.dialog = tk.Tk()
@@ -132,6 +133,8 @@ class Editor:
                 sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 self.switch(self.create_grid())
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self.set_stage(0, 3)
 
             self.pan_input(event)
             self.selection_hotkeys(event)
