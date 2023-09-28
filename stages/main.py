@@ -77,13 +77,9 @@ class Main:
              'cementry_theme': pygame.mixer.Sound('audio/music/cementry.ogg'),
              'heaven_theme': pygame.mixer.Sound('audio/music/heaven.ogg'),
              'inside_theme': pygame.mixer.Sound('audio/music/inside.ogg'),
-             'desert_theme': pygame.mixer.Sound('audio/music/heaven.ogg'),
+             'desert_theme': pygame.mixer.Sound('audio/music/desert.ogg'),
              'garden_theme': pygame.mixer.Sound('audio/music/garden.ogg'),
              'poison_theme': pygame.mixer.Sound('audio/music/poison.ogg'),
-             'happy_end': pygame.mixer.Sound('audio/music/happy_end.ogg'),
-             'sad_end': pygame.mixer.Sound('audio/music/sad_end.ogg'),
-             'game_over': pygame.mixer.Sound('audio/music/game_over.ogg'),
-             'credits': pygame.mixer.Sound('audio/music/credits.ogg'),
         }
 
         # Замена курсора в игре
