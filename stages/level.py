@@ -28,6 +28,7 @@ class Level:
 		self.save_active = False
 		self.set_prev_stage = set_prev_stage
 		self.config = config
+		self.bg_music = None
 
 		# groups 
 		self.all_sprites = CameraGroup(self.ground_color, self.has_horizon)
@@ -254,14 +255,17 @@ class Level:
 			self.player.pos.x = save_dct['pos_x']
 			self.player.pos.y = save_dct['pos_y']
 
-	def check_death(self, pos, dt):
-		if self.player.status == 'death':
+	def check_death(self, pos, dt, player_lives):
+		if self.player.status == 'death' and player_lives >= 0:
 			self.dead_time += dt
-			if self.dead_time >= 5:
+			if self.dead_time >= 5 and player_lives >= 0:
 				self.player.kill()
 				pos = (pos[0] - 100, pos[1] - 100)
 				self.player = Player(pos, self.player_asset, self.all_sprites, self.collision_sprites, self.jump_sound, self.walk_sound, self.config)
 				self.dead_time = 0
+		elif self.player.status == 'death' and player_lives < 0:
+			self.player.kill()
+			self.bg_music.stop()
 
 	def get_keys(self):
 		collided_keys = pygame.sprite.spritecollide(self.player, self.keys_sprites, True)
@@ -332,7 +336,6 @@ class Level:
 		self.get_keys()
 		self.get_gears()
 		self.get_damage()
-		self.check_death(self.player.pos, dt)
 		self.display_surface.fill(self.sky_color)
 		self.all_sprites.custom_draw(self.player)
 		if self.tab_pressed:
@@ -473,7 +476,7 @@ class Common(Level):
 		self.get_gears()
 		self.get_damage()
 	
-		self.check_death(self.player.pos, dt)
+		self.check_death(self.player.pos, dt, self.player_stats['lives'])
 		self.display_surface.fill(self.sky_color)
 		self.all_sprites.custom_draw(self.player)
 		if self.tab_pressed:
@@ -557,7 +560,7 @@ class Cementry(Level):
 		self.get_gears()
 		self.get_damage()
 		
-		self.check_death(self.player.pos, dt)
+		self.check_death(self.player.pos, dt, self.player_stats['lives'])
 		self.display_surface.fill(self.sky_color)
 		self.all_sprites.custom_draw(self.player)
 		if self.tab_pressed:
@@ -681,7 +684,7 @@ class Hall(Level):
 		self.get_keys()
 		self.get_gears()
 		self.get_damage()
-		self.check_death(self.player.pos, dt)
+		self.check_death(self.player.pos, dt, self.player_stats['lives'])
 		self.display_surface.fill(self.sky_color)
 		self.all_sprites.custom_draw(self.player)
 		if self.tab_pressed:
@@ -745,7 +748,7 @@ class Cupboard(Level):
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.cupboard_bed:
 				self.transition()
 				self.bg_music.stop()
-				self.current_stage = 8
+				self.current_stage = 'CS2'
 				self.cupboard_bed = False
 				self.is_music_playing = False
 				
@@ -774,7 +777,7 @@ class Cupboard(Level):
 		self.get_gears()
 		self.get_damage()
 		
-		self.check_death(self.player.pos, dt)
+		self.check_death(self.player.pos, dt, self.player_stats['lives'])
 		self.display_surface.fill(self.sky_color)
 		self.all_sprites.custom_draw(self.player)
 		if self.tab_pressed:
@@ -796,7 +799,8 @@ class Heaven(Level):
 	def check_green_key(self):
 		if self.player_stats['green_key']:
 			self.bg_music.stop()
-			self.current_stage = 7
+			self.transition()
+			self.current_stage = 'CS3'
 			self.is_music_playing = False
 
 	def play_sound(self):
@@ -845,7 +849,7 @@ class Heaven(Level):
 		self.get_keys()
 		self.get_gears()
 		self.get_damage()
-		self.check_death(self.player.pos, dt)
+		self.check_death(self.player.pos, dt, self.player_stats['lives'])
 		self.display_surface.fill(self.sky_color)
 		self.all_sprites.custom_draw(self.player)
 		if self.tab_pressed:
@@ -909,7 +913,7 @@ class FirstFloor(Level):
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.green_bed:
 				self.transition()
 				self.bg_music.stop()
-				self.current_stage = 10
+				self.current_stage = 'CS4'
 				self.green_bed = False
 				self.is_music_playing = False
 				
@@ -938,7 +942,7 @@ class FirstFloor(Level):
 		self.get_gears()
 		self.get_damage()
 		self.get_activator()
-		self.check_death(self.player.pos, dt)
+		self.check_death(self.player.pos, dt, self.player_stats['lives'])
 		self.display_surface.fill(self.sky_color)
 		self.all_sprites.custom_draw(self.player)
 		if self.tab_pressed:
@@ -966,7 +970,8 @@ class Desert(Level):
 	def check_green_key(self):
 		if self.player_stats['pink_key']:
 			self.bg_music.stop()
-			self.current_stage = 9
+			self.transition()
+			self.current_stage = 'CS5'
 			self.is_music_playing = False
 
 	def event_loop(self):
@@ -1009,7 +1014,7 @@ class Desert(Level):
 		self.get_keys()
 		self.get_gears()
 		self.get_damage()
-		self.check_death(self.player.pos, dt)
+		self.check_death(self.player.pos, dt, self.player_stats['lives'])
 		self.display_surface.fill(self.sky_color)
 		self.all_sprites.custom_draw(self.player)
 		if self.tab_pressed:
@@ -1079,7 +1084,7 @@ class SecondFloor(Level):
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.pink_bed:
 				self.transition()
 				self.bg_music.stop()
-				self.current_stage = 12
+				self.current_stage = 'CS6'
 				self.pink_bed = False
 				self.is_music_playing = False
 				
@@ -1115,7 +1120,7 @@ class SecondFloor(Level):
 		self.get_gears()
 		self.get_damage()
 		self.get_activator()
-		self.check_death(self.player.pos, dt)
+		self.check_death(self.player.pos, dt, self.player_stats['lives'])
 		self.display_surface.fill(self.sky_color)
 		self.all_sprites.custom_draw(self.player)
 		if self.tab_pressed:
@@ -1187,7 +1192,7 @@ class Garden(Level):
 		self.get_keys()
 		self.get_gears()
 		self.get_damage()
-		self.check_death(self.player.pos, dt)
+		self.check_death(self.player.pos, dt, self.player_stats['lives'])
 		self.display_surface.fill(self.sky_color)
 		self.all_sprites.custom_draw(self.player)
 		if self.tab_pressed:
@@ -1238,13 +1243,12 @@ class Poison(Level):
 				self.tab_pressed = False
 			if event.type == pygame.KEYDOWN and event.key in (pygame.K_x, pygame.K_UP) and self.machine:
 				self.bg_music.stop()
-				if self.gears_amount < 10:
-					print('Sad Ending')
-				else:
-					print('Happy Ending')
 				self.machine = False
-				self.current_stage = 3
 				self.is_music_playing = False
+				if self.gears_amount < 100:
+					self.current_stage = 'BE'
+				else:
+					self.current_stage = 'GE'
 				self.transition()
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_F5:
 				self.save_active = True
@@ -1272,7 +1276,7 @@ class Poison(Level):
 		self.get_gears()
 		self.get_damage()
 		self.get_activator()
-		self.check_death(self.player.pos, dt)
+		self.check_death(self.player.pos, dt, self.player_stats['lives'])
 		self.display_surface.fill(self.sky_color)
 		self.all_sprites.custom_draw(self.player)
 		if self.tab_pressed:

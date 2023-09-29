@@ -8,7 +8,9 @@ FPS = 120
 # Данные автора
 GIT_HUB = 'github.com/IvanZaycev0717'
 TELEGRAM = 'Telegram: @ivanzaycev0717'
+CHRISTIAN = "Based on Christian Koch's videos (https://www.youtube.com/@ClearCode)"
 AUTHOR_TIME = 10_000
+
 
 # Шрифты
 FONT_PATH_1 = 'font/font1.ttf'

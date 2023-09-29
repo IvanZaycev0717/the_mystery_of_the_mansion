@@ -16,7 +16,7 @@ file_path = os.path.join(path, lang_file)
 
 
 class MainMenu:
-    def __init__(self, set_prev_stage, start_new_game, audio, config, file_path, toggle_to_full_screen):
+    def __init__(self, set_prev_stage, start_new_game, audio, config, file_path, toggle_to_full_screen, update_cutscenes, transition):
 
         # main setup
         self.display_surface = pygame.display.get_surface()
@@ -27,6 +27,8 @@ class MainMenu:
         self.file_path = file_path
         self.fullscreen_mode = False
         self.toggle_to_full_screen = toggle_to_full_screen
+        self.update_curscenes = update_cutscenes
+        self.transition = transition
 
         # Main menu image imports
         self.main_menu_dct = import_folder_dict('images/main_menu/')
@@ -416,7 +418,8 @@ class MainMenu:
             if event.type == pygame.MOUSEBUTTONDOWN and self.new_game_surf_rect.collidepoint(event.pos):
                 self.bg_music.stop()
                 self.start_new_game()
-                self.current_stage = 4
+                self.transition()
+                self.current_stage = 'CS1'
                 self.is_music_playing = False
             if event.type == pygame.MOUSEBUTTONDOWN and self.controls_surf_rect.collidepoint(event.pos) and not self.control_panel_is_active:
                 self.control_panel_is_active = True
@@ -430,9 +433,11 @@ class MainMenu:
                 self.settings_panel_is_active = False
             if event.type == pygame.MOUSEBUTTONDOWN and self.change_eng_surf_rect.collidepoint(event.pos) and self.settings_panel_is_active:
                 self.config['LANG']['Lang'] = 'eng'
+                self.update_curscenes()
                 self.write_new_lang()
             if event.type == pygame.MOUSEBUTTONDOWN and self.change_rus_surf_rect.collidepoint(event.pos) and self.settings_panel_is_active:
                 self.config['LANG']['Lang'] = 'rus'
+                self.update_curscenes()
                 self.write_new_lang()
             if event.type == pygame.MOUSEBUTTONDOWN and self.editor_md_surf_rect.collidepoint(event.pos) and self.settings_panel_is_active:
                 self.bg_music.stop()

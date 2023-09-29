@@ -24,6 +24,22 @@ INV_INSC = 'Инвентарь'
 KEY_FOUND = 'Найден'
 KEY_NOT_FOUND = 'Не найден'
 
+GAME_OVER = 'Игра окончена'
+
+# End cutscene
+THE_END = 'Конец'
+PROGRAMMER = 'Программирование - Иван Зайцев'
+GRAPHICS = 'Графика - Иван Зайцев'
+MUSIC = 'Музыка - Иван Зайцев'
+SOUNDS = 'Звуковые эффекты - mixkit.co/free-sound-effects/'
+THANKS = 'Отедельные благодарности'
+CHRISTIAN_KOCH = 'Кристиан Кох (www.youtube.com/@ClearCode)'
+SERGEY_BALAKIREV = 'Сергей Балакирев (www.youtube.com/@selfedu_rus)'
+
+
+
+
+
 
 # HELPER SECTION
 HLP = {

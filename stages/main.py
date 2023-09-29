@@ -12,8 +12,10 @@ from settings import *
 from author import Author
 from editor import Editor
 from level import Level, Common, Cementry, Hall, Cupboard, Heaven, FirstFloor, Desert, SecondFloor, Garden, Poison
+
 from lang_choice import LangChoice
 from main_menu import MainMenu
+from cutscenes import Cutscene
 from ui import UI
 from img_imports import import_folder_dict, import_folder
 
@@ -55,12 +57,20 @@ class Main:
         self.prev_stage = 3
 
         self.gears = 0
-        self.player_stats = {'max_hp': 100, 'current_hp': 100, 'lives': 1, 'green_key': False, 'pink_key': False, 'hammer_key': False, 'yellow_key': False}
+        self.player_stats = {
+            'max_hp': 100,
+            'current_hp': 100,
+            'lives': 1,
+            'green_key': False,
+            'pink_key': False,
+            'hammer_key': False,
+            'yellow_key': False
+            }
 
 
 
         # Выбор стадии иг
-        self.stage = 3
+        self.stage = 1
 
         
         
@@ -82,6 +92,54 @@ class Main:
              'poison_theme': pygame.mixer.Sound('audio/music/poison.ogg'),
         }
 
+        self.cutscenes_sounds = {
+            'CS1': (
+                pygame.mixer.Sound('audio/cutscenes/CS1_ENG.ogg'),
+                pygame.mixer.Sound('audio/cutscenes/CS1_RUS.ogg')
+            ),
+            'CS2': (
+                pygame.mixer.Sound('audio/cutscenes/CS2_ENG.ogg'),
+                pygame.mixer.Sound('audio/cutscenes/CS2_RUS.ogg')
+            ),
+            'CS3': (
+                pygame.mixer.Sound('audio/cutscenes/CS3_ENG.ogg'),
+                pygame.mixer.Sound('audio/cutscenes/CS3_RUS.ogg')
+            ),
+            'CS4': (
+                pygame.mixer.Sound('audio/cutscenes/CS4_ENG.ogg'),
+                pygame.mixer.Sound('audio/cutscenes/CS4_RUS.ogg')
+            ),
+            'CS5': (
+                pygame.mixer.Sound('audio/cutscenes/CS5_ENG.ogg'),
+                pygame.mixer.Sound('audio/cutscenes/CS5_RUS.ogg')
+            ),
+            'CS6': (
+                pygame.mixer.Sound('audio/cutscenes/CS6_ENG.ogg'),
+                pygame.mixer.Sound('audio/cutscenes/CS6_RUS.ogg')
+            ),
+            'BE': (
+                pygame.mixer.Sound('audio/cutscenes/BE_ENG.ogg'),
+                pygame.mixer.Sound('audio/cutscenes/BE_RUS.ogg')
+                ),
+            'GE': (
+                pygame.mixer.Sound('audio/cutscenes/GE_ENG.ogg'),
+                pygame.mixer.Sound('audio/cutscenes/GE_RUS.ogg')
+                ),
+            'GAME_OVER': pygame.mixer.Sound('audio/cutscenes/Game_Over.ogg'),
+            'END': pygame.mixer.Sound('audio/cutscenes/The_End.ogg'),
+        }
+
+        self.cutscenes_images = {
+            'CS1': load('images/cutscenes/cs1.png').convert_alpha(),
+            'CS2': load('images/cutscenes/cs2.png').convert_alpha(),
+            'CS3': load('images/cutscenes/cs3.png').convert_alpha(),
+            'CS4': load('images/cutscenes/cs4.png').convert_alpha(),
+            'CS5': load('images/cutscenes/cs5.png').convert_alpha(),
+            'CS6': load('images/cutscenes/cs6.png').convert_alpha(),
+            'GE': load('images/cutscenes/ge.png').convert_alpha(),
+            'BE': load('images/cutscenes/be.png').convert_alpha(),
+        }
+
         # Замена курсора в игре
         surf = pygame.image.load('images/cursors/cursor.png').convert_alpha()
         cursor = pygame.cursors.Cursor((0, 0), surf)
@@ -90,11 +148,15 @@ class Main:
         # Экземпляры классов соответсвующих уровней
         self.author = Author()
         self.lang_choice = LangChoice(self.file_path, self.config)
-        self.main_menu = MainMenu(self.set_prev_stage, self.start_new_game, self.level_sounds, self.config, self.file_path, self.switch_full_screen)
+        self.main_menu = MainMenu(self.set_prev_stage, self.start_new_game, self.level_sounds, self.config, self.file_path, self.switch_full_screen, self.update_cutscenes, self.show_transition)
         self.editor_active = True
         self.transition = Transition(self.toggle)
         self.editor = Editor(self.land_tiles, self.switch, self.file_path, self.set_prev_stage)
         self.ui = UI(self.display_surface)
+        
+
+       
+
         self.dead_time = 0
 
 
@@ -139,11 +201,104 @@ class Main:
                  'arrow': self.arrow,
                  'clouds': self.clouds,
                 }
-        
+
+    def update_cutscenes(self):
+         # cutscenes
+        self.cs1 = Cutscene(
+            current_stage='CS1',
+            next_stage=4,
+            current_picture=self.cutscenes_images['CS1'],
+            audio=self.cutscenes_sounds['CS1'],
+            config=self.config,
+            transition=self.show_transition,
+        )
+        self.cs2 = Cutscene(
+            current_stage='CS2',
+            next_stage=8,
+            current_picture=self.cutscenes_images['CS2'],
+            audio=self.cutscenes_sounds['CS2'],
+            config=self.config,
+            transition=self.show_transition,
+        )
+        self.cs3 = Cutscene(
+            current_stage='CS3',
+            next_stage=7,
+            current_picture=self.cutscenes_images['CS3'],
+            audio=self.cutscenes_sounds['CS3'],
+            config=self.config,
+            transition=self.show_transition,
+        )
+        self.cs4 = Cutscene(
+            current_stage='CS4',
+            next_stage=10,
+            current_picture=self.cutscenes_images['CS4'],
+            audio=self.cutscenes_sounds['CS4'],
+            config=self.config,
+            transition=self.show_transition,
+        )
+        self.cs5 = Cutscene(
+            current_stage='CS5',
+            next_stage=9,
+            current_picture=self.cutscenes_images['CS5'],
+            audio=self.cutscenes_sounds['CS5'],
+            config=self.config,
+            transition=self.show_transition,
+        )
+        self.cs6 = Cutscene(
+            current_stage='CS6',
+            next_stage=12,
+            current_picture=self.cutscenes_images['CS6'],
+            audio=self.cutscenes_sounds['CS6'],
+            config=self.config,
+            transition=self.show_transition,
+        )
+        self.good_end = Cutscene(
+            current_stage='GE',
+            next_stage='END',
+            current_picture=self.cutscenes_images['GE'],
+            audio=self.cutscenes_sounds['GE'],
+            config=self.config,
+            transition=self.show_transition,
+        )
+        self.bad_end = Cutscene(
+            current_stage='BE',
+            next_stage='GAME_OVER',
+            current_picture=self.cutscenes_images['BE'],
+            audio=self.cutscenes_sounds['BE'],
+            config=self.config,
+            transition=self.show_transition
+        )
+        self.game_over = Cutscene(
+            current_stage='GAME_OVER',
+            next_stage=3,
+            current_picture=None,
+            audio=self.cutscenes_sounds['GAME_OVER'],
+            config=self.config,
+            transition=self.show_transition,
+        )
+
+        self.end = Cutscene(
+            current_stage='END',
+            next_stage=3,
+            current_picture=None,
+            audio=self.cutscenes_sounds['END'],
+            config=self.config,
+            transition=self.show_transition,
+        )
+
     # load levels data
     def start_new_game(self):
+        self.update_cutscenes()
         self.gears = 0
-        self.player_stats = {'max_hp': 100, 'current_hp': 100, 'lives': 1, 'green_key': False, 'pink_key': False, 'hammer_key': False, 'yellow_key': False}
+        self.player_stats = {
+            'max_hp': 100,
+            'current_hp': 5,
+            'lives': 0,
+            'green_key': False,
+            'pink_key': False,
+            'hammer_key': False,
+            'yellow_key': False
+            }
         self.current_task = None
         self.common_level = Common(
             grid=self.loading_level('common.mml'),
@@ -338,8 +493,7 @@ class Main:
     def common_transmission(self, stage_name, dt):
         stage_name.player.current_hp = self.player_stats['current_hp']
         if self.player_stats['lives'] < 0:
-            print('Game  Over')
-            self.stage = 3
+            self.stage = 'GAME_OVER'
             self.prev_stage = 3
         if stage_name.player.status == 'death':
             self.dead_time += dt
@@ -442,7 +596,9 @@ class Main:
                 set_prev_stage=self.set_prev_stage,
                 config=self.config,
                 sky_color=SKY_COLOR,
-                ground_color=SEA_COLOR
+                ground_color=SEA_COLOR,
+                has_clouds=False,
+                has_horizon=False,
             )
 
     def run(self):
@@ -532,6 +688,36 @@ class Main:
                     self.ui.show_lives(self.player_stats['lives'])
                     self.ui.show_hp(self.player_stats['current_hp'], self.player_stats['max_hp'])
                     self.common_transmission(self.poison_level, dt)
+                    self.transition.display(dt)
+                case 'GAME_OVER':
+                    self.stage = self.game_over.run(dt, self.config.get('LANG', 'Lang'))
+                    self.transition.display(dt)
+                case 'END':
+                    self.stage = self.end.run(dt, self.config.get('LANG', 'Lang'))
+                    self.transition.display(dt)
+                case 'CS1':
+                    self.stage = self.cs1.run(dt, self.config.get('LANG', 'Lang'))
+                    self.transition.display(dt)
+                case 'CS2':
+                    self.stage = self.cs2.run(dt, self.config.get('LANG', 'Lang'))
+                    self.transition.display(dt)
+                case 'CS3':
+                    self.stage = self.cs3.run(dt, self.config.get('LANG', 'Lang'))
+                    self.transition.display(dt)
+                case 'CS4':
+                    self.stage = self.cs4.run(dt, self.config.get('LANG', 'Lang'))
+                    self.transition.display(dt)
+                case 'CS5':
+                    self.stage = self.cs5.run(dt, self.config.get('LANG', 'Lang'))
+                    self.transition.display(dt)
+                case 'CS6':
+                    self.stage = self.cs6.run(dt, self.config.get('LANG', 'Lang'))
+                    self.transition.display(dt)
+                case 'BE':
+                    self.stage = self.bad_end.run(dt, self.config.get('LANG', 'Lang'))
+                    self.transition.display(dt)
+                case 'GE':
+                    self.stage = self.good_end.run(dt, self.config.get('LANG', 'Lang'))
                     self.transition.display(dt)
             pygame.display.update()
 

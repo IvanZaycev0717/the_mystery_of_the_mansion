@@ -23,6 +23,18 @@ MM_FLSC_OFF = 'Off'
 INV_INSC = 'Inventory'
 KEY_FOUND = 'Found'
 KEY_NOT_FOUND = 'Not found'
+GAME_OVER = 'Game Over'
+
+# End cutscene
+THE_END = 'The End'
+PROGRAMMER = 'Programming - Ivan Zaycev'
+GRAPHICS = 'Graphics - Ivan Zaycev'
+MUSIC = 'Music - Ivan Zaycev'
+SOUNDS = 'Sounds - mixkit.co/free-sound-effects/'
+THANKS = 'A Special Thanks'
+CHRISTIAN_KOCH = 'Christian Koch (www.youtube.com/@ClearCode)'
+SERGEY_BALAKIREV = 'Sergey Balakirev (www.youtube.com/@selfedu_rus)'
+
 
 # HELPER SECTION
 HLP = {
