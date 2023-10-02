@@ -43,7 +43,7 @@ class Main:
         self.config = configparser.ConfigParser()
         if not os.path.isfile(self.file_path):
             self.config['LANG'] = {'Lang': 'None'}
-            self.config['SOUNDS'] = {'Sounds': '0.2', 'Music': '0.2'}
+            self.config['SOUNDS'] = {'Sounds': '0.3', 'Music': '0.2'}
             self.config['FULLSCREEN'] = {'Fullscreen': 'False'}
             with open(self.file_path, 'w') as configfile:
                 self.config.write(configfile)
@@ -70,7 +70,7 @@ class Main:
 
 
         # Выбор стадии иг
-        self.stage = 1
+        self.stage = 3
 
         
         
@@ -292,8 +292,8 @@ class Main:
         self.gears = 0
         self.player_stats = {
             'max_hp': 100,
-            'current_hp': 5,
-            'lives': 0,
+            'current_hp': 100,
+            'lives': 3,
             'green_key': False,
             'pink_key': False,
             'hammer_key': False,

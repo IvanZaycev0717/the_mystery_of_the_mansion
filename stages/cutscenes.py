@@ -81,6 +81,7 @@ class Cutscene:
         else:
             pygame.mouse.set_visible(False)
             if not self.is_audio_playing:
+                    self.current_audio.set_volume(float(self.config['SOUNDS']['music']))
                     self.current_audio.play()
                     self.is_audio_playing = True
 

@@ -8,7 +8,7 @@ FPS = 120
 # Данные автора
 GIT_HUB = 'github.com/IvanZaycev0717'
 TELEGRAM = 'Telegram: @ivanzaycev0717'
-CHRISTIAN = "Based on Christian Koch's videos (https://www.youtube.com/@ClearCode)"
+CHRISTIAN = "Developed based on Christian Koch's videos (https://www.youtube.com/@ClearCode)"
 AUTHOR_TIME = 10_000
 
 
@@ -49,7 +49,7 @@ CURTAIN_COLOR = '#640000'
 
 # LEVELS BACKGROUND
 LV_BG = {
-    'common': {'SKY': '#acd3e9', 'GRD': '#345833'},
+    'common': {'SKY': '#acd3e9', 'GRD': '#ceb75b'},
     'cementry': {'SKY': '#b9b5b4', 'GRD': '#504744'},
     'inside': {'SKY': '#e4afa0', 'GRD': '#e4afa0'},
     'heaven': {'SKY': '#9bd5fe', 'GRD': '#0597fd'},

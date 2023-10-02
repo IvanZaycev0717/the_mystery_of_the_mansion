@@ -75,10 +75,10 @@ class Level:
 			self.quicksave_time.update()
 
 	def correct_falling(self):
-		if self.player.pos[1] > 1000 and self.player.orientation == 'right':
+		if self.player.pos[1] > 2000 and self.player.orientation == 'right':
 			self.player.pos[0] -= 200
 			self.player.pos[1] = 250
-		elif self.player.pos[1] > 1000 and self.player.orientation == 'left':
+		elif self.player.pos[1] > 2000 and self.player.orientation == 'left':
 			self.player.pos[0] += 200
 			self.player.pos[1] = 250
 
@@ -87,7 +87,8 @@ class Level:
 		for layer_name, layer in grid.items():
 			for pos, data in layer.items():
 				if layer_name == 'common':
-					Generic(pos, asset_dict['land'][data[0]][data[1]], [self.all_sprites, self.collision_sprites])
+					if isinstance(data, tuple) and isinstance(data[1], int):
+						Generic(pos, asset_dict['land'][data[0]][data[1]], [self.all_sprites, self.collision_sprites])
 				match data:
 					case 0: self.player = Player(pos, asset_dict['player'], self.all_sprites, self.collision_sprites, jump_sound, walk_sound, self.config)
 					case 1:
@@ -1245,7 +1246,7 @@ class Poison(Level):
 				self.bg_music.stop()
 				self.machine = False
 				self.is_music_playing = False
-				if self.gears_amount < 100:
+				if self.gears_amount < 1:
 					self.current_stage = 'BE'
 				else:
 					self.current_stage = 'GE'

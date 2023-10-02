@@ -303,8 +303,8 @@ class FlyingEnemy(Generic):
 		self.pos = vector(self.rect.topleft)
 		self.speed = 120
 		self.collision_sprites = collision_sprites
-		self.timer = timer.Timer(10000)
-		self.timer.activate()
+		self.timer = timer.Timer(20000)
+		
 	
 	def animate(self, dt):
 		self.frame_index += ANIMATION_SPEED * dt
@@ -319,6 +319,7 @@ class FlyingEnemy(Generic):
 	
 	def update(self, dt, player_pos):
 		if abs(self.pos[0] - player_pos[0]) <= 600:
+			self.timer.activate()
 			self.animate(dt)
 			self.move(dt)
 
