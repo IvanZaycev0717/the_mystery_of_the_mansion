@@ -8,7 +8,7 @@ from settings import *
 
 
 class Author:
-    """Стартовая заставка с названием и контактами автора."""
+    """Shows author title in the beginning of the game."""
     def __init__(self):
 
         # main setup

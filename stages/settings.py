@@ -1,45 +1,44 @@
-# Главное окно игры
+# main window of the game
 TITLE = 'The Mystery of the Mansion'
 ICON_PATH = 'images/icons/logo.png'
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
-FPS = 120
 
-# Данные автора
+# author data
 GIT_HUB = 'github.com/IvanZaycev0717'
 TELEGRAM = 'Telegram: @ivanzaycev0717'
 CHRISTIAN = "Developed based on Christian Koch's videos (https://www.youtube.com/@ClearCode)"
 AUTHOR_TIME = 10_000
 
 
-# Шрифты
+# fonts
 FONT_PATH_1 = 'font/font1.ttf'
 FONT_PATH_2 = 'font/font2.ttf'
 FONT_PATH_3 = 'font/font3.ttf'
 
-# Режим редактора(конструктора) уровней
+# editor's mode
 TILE_SIZE = 64
 ANIMATION_SPEED = 8
 
-# Меню выбора языка
+# menu of language choice
 LANG_WIDTH = 800
 LANG_HEIGHT = 600
 LANG_X = 240
 LANG_Y = 60
 BG_COLOR = '#966A4A'
 
-# Главное меню
+# main menu of the game
 MM_BUTTON_W = 200
 MM_BUTTON_H = 40
 MM_BUT_COLOR = (0, 104, 55)
 
 
-# Цвета
+# colors
 BLACK_GRAY = '#11151C'
 LINE_COLOR = '#f8ff2e'
 ORIGIN_COLOR = 'yellow'
 
-#ENVOIREMENT BACKGROUNG
+# ENVOIREMENT BACKGROUNG
 SKY_COLOR = '#d3e4ef'
 HORIZON_TOP_COLOR = '#f2f5f7'
 SEA_COLOR = '#a8c9e0'
@@ -60,10 +59,10 @@ LV_BG = {
 
 
 LEVEL_LAYERS = {
-	'clouds': 1,
-	'ocean': 2,
-	'bg': 3,
-	'main': 4
+    'clouds': 1,
+    'ocean': 2,
+    'bg': 3,
+    'main': 4
 }
 
 # Словарь ассетов к игре
@@ -108,7 +107,7 @@ EDITOR_DATA = {
             'images/tile/common/8.png',
             'images/tile/common/9.png',
             'images/tile/common/10.png',
-            ),
+        ),
         'preview': 'images/preview/com_tile.png',
         'graphics': None
     },
@@ -125,7 +124,7 @@ EDITOR_DATA = {
             'images/tile/cementry/5.png',
             'images/tile/cementry/6.png',
             'images/tile/cementry/7.png',
-            ),
+        ),
         'preview': 'images/preview/cem_tile.png',
         'graphics': None
     },
@@ -142,7 +141,7 @@ EDITOR_DATA = {
             'images/tile/heaven/5.png',
             'images/tile/heaven/6.png',
             'images/tile/heaven/7.png',
-            ),
+        ),
         'preview': 'images/preview/heav_tile.png',
         'graphics': None
     },
@@ -159,7 +158,7 @@ EDITOR_DATA = {
             'images/tile/desert/5.png',
             'images/tile/desert/6.png',
             'images/tile/desert/7.png',
-            ),
+        ),
         'preview': 'images/preview/des_tile.png',
         'graphics': None
     },
@@ -176,7 +175,7 @@ EDITOR_DATA = {
             'images/tile/garden/5.png',
             'images/tile/garden/6.png',
             'images/tile/garden/7.png',
-            ),
+        ),
         'preview': 'images/preview/gar_tile.png',
         'graphics': None
     },
@@ -193,7 +192,7 @@ EDITOR_DATA = {
             'images/tile/poison/5.png',
             'images/tile/poison/6.png',
             'images/tile/poison/7.png',
-            ),
+        ),
         'preview': 'images/preview/poison_tile.png',
         'graphics': None
     },
@@ -206,7 +205,7 @@ EDITOR_DATA = {
             'images/tile/floor/1.png',
             'images/tile/floor/2.png',
             'images/tile/floor/3.png',
-            ),
+        ),
         'preview': 'images/preview/floor_tile.png',
         'graphics': None
     },

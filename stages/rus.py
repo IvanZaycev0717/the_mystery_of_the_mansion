@@ -37,10 +37,6 @@ CHRISTIAN_KOCH = 'Christian Koch (www.youtube.com/@ClearCode)'
 SERGEY_BALAKIREV = 'Сергей Балакирев (www.youtube.com/@selfedu_rus)'
 
 
-
-
-
-
 # HELPER SECTION
 HLP = {
     'has_item': 'Нажмите "Вверх" или "Ч", чтобы войти',
