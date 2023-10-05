@@ -33,7 +33,7 @@ GRAPHICS = 'Графика - Иван Зайцев'
 MUSIC = 'Музыка - Иван Зайцев'
 SOUNDS = 'Звуковые эффекты - mixkit.co/free-sound-effects/'
 THANKS = 'Отедельные благодарности'
-CHRISTIAN_KOCH = 'Кристиан Кох (www.youtube.com/@ClearCode)'
+CHRISTIAN_KOCH = 'Christian Koch (www.youtube.com/@ClearCode)'
 SERGEY_BALAKIREV = 'Сергей Балакирев (www.youtube.com/@selfedu_rus)'
 
 

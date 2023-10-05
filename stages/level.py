@@ -1246,7 +1246,7 @@ class Poison(Level):
 				self.bg_music.stop()
 				self.machine = False
 				self.is_music_playing = False
-				if self.gears_amount < 1:
+				if self.gears_amount < 590:
 					self.current_stage = 'BE'
 				else:
 					self.current_stage = 'GE'

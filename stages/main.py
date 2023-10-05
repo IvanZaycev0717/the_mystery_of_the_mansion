@@ -293,11 +293,11 @@ class Main:
         self.player_stats = {
             'max_hp': 100,
             'current_hp': 100,
-            'lives': 3,
-            'green_key': True,
-            'pink_key': True,
-            'hammer_key': True,
-            'yellow_key': True
+            'lives': 1,
+            'green_key': False,
+            'pink_key': False,
+            'hammer_key': False,
+            'yellow_key': False
             }
         self.current_task = None
         self.common_level = Common(
