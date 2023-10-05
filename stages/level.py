@@ -258,6 +258,8 @@ class Level:
             'stage': self.current_stage,
             'pos_x': self.player.pos[0],
             'pos_y': self.player.pos[1],
+            'hp': self.player_stats['current_hp'],
+            'lives': self.player_stats['lives']
         }
         save_to_json = json.dumps(save_dct)
         with open('quicksave.json', 'w') as file:
@@ -271,6 +273,9 @@ class Level:
             self.current_stage = save_dct['stage']
             self.player.pos.x = save_dct['pos_x']
             self.player.pos.y = save_dct['pos_y']
+            self.player_stats['current_hp'] = save_dct['hp']
+            self.player_stats['lives'] = save_dct['lives']
+            
 
     def check_death(self, pos, dt, player_lives):
         if self.player.status == 'death' and player_lives >= 0:
