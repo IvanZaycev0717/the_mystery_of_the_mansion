@@ -13,9 +13,8 @@
 Игра "The Mystery of the Mansion" **доступна для всех пользователей** (англоязычных и русскоязычных) и доступна для скачивания и игры на следующих популярных ресурсах.
 | Сайт        | Ссылка           | Примечание  |
 | ------------- |:-------------:| -----:|
-| YouTube      | right-aligned | Прохождение на плохую концовку |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
+| ![AID](https://github.com/IvanZaycev0717/the_mystery_of_the_mansion/assets/111955306/138cf8d1-a6f8-4835-9e54-93a48df815d3) | [Link](https://www.youtube.com/watch?v=ePOazMyWNRE&ab_channel=IvanZaycev)| Прохождение на плохую концовку |
+| ![AID (1)](https://github.com/IvanZaycev0717/the_mystery_of_the_mansion/assets/111955306/1ae733be-726f-484e-b29f-61770e7cb912)| [Link](https://ivanzaycev0717.itch.io/the-mystery-of-the-mansion)      |      |
 
 При переходе по ссылкам вы можете ознакомиться с отзывами об игре.
 
