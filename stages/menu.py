@@ -95,8 +95,7 @@ class Menu:
                         sprite.main_active = not sprite.main_active
                 if mouse_button[2]:
                     sprite.switch()
-                if mouse_button[0] and self.terrain_button_rect.collidepoint(
-                        mouse_pos):
+                if mouse_button[0] and self.terrain_button_rect.collidepoint(mouse_pos):
                     if sprite.land_index < len(
                             sprite.items['main'][sprite.get_id() - 2][1]) - 1:
                         sprite.land_index += 1

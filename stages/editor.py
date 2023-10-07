@@ -165,13 +165,13 @@ class Editor:
             self.save_level()
 
     def menu_click(self, event):
-        if event.type == (pygame.MOUSEBUTTONDOWN and self.menu.rect.collidepoint(mouse_pos())):
+        if event.type == pygame.MOUSEBUTTONDOWN and self.menu.rect.collidepoint(mouse_pos()):
             new_index = self.menu.click(mouse_pos(), mouse_buttons())
             self.selection_index = (new_index if new_index
                                     else self.selection_index)
-        if event.type == (pygame.MOUSEBUTTONDOWN and self.menu.terrain_button_rect.collidepoint(mouse_pos()) and mouse_buttons()[2]):
+        if event.type == pygame.MOUSEBUTTONDOWN and self.menu.terrain_button_rect.collidepoint(mouse_pos()) and mouse_buttons()[2]:
             self.selection_terrain = 0
-        if event.type == (pygame.MOUSEBUTTONDOWN and self.menu.terrain_button_rect.collidepoint(mouse_pos()) and mouse_buttons()[0]):
+        if event.type == pygame.MOUSEBUTTONDOWN and self.menu.terrain_button_rect.collidepoint(mouse_pos()) and mouse_buttons()[0]:
             limits_dct = {2: 9, 3: 6, 4: 6, 5: 6, 6: 6, 7: 6, 8: 2}
             if self.selection_terrain < limits_dct[self.current_land_tile]:
                 self.selection_terrain += 1
