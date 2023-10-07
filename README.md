@@ -12,8 +12,11 @@
 | ![AID](https://github.com/IvanZaycev0717/the_mystery_of_the_mansion/assets/111955306/138cf8d1-a6f8-4835-9e54-93a48df815d3) | [Link](https://www.youtube.com/watch?v=ePOazMyWNRE&ab_channel=IvanZaycev)| Прохождение на плохую концовку |
 | ![AID (1)](https://github.com/IvanZaycev0717/the_mystery_of_the_mansion/assets/111955306/1ae733be-726f-484e-b29f-61770e7cb912)| [Link](https://ivanzaycev0717.itch.io/the-mystery-of-the-mansion)      |      |
 | ![gamejolt](https://user-images.githubusercontent.com/111955306/273394270-1cf24114-ed2d-4978-99ec-25f7735372d6.png) | [Link](https://gamejolt.com/games/the_mystery_of_the_mansion/845103)|     |
+| ![gamedev](https://github.com/IvanZaycev0717/the_mystery_of_the_mansion/assets/111955306/50dacecb-66a2-43e4-bc9d-675ef6aa84a4) | [Link](https://gamedev.ru/projects/forum/?id=279654)|     |
 
-При переходе по ссылкам вы можете ознакомиться с отзывами об игре.
+
+# Скачать EXE-версию
+Скачать можно по ссылке https://drive.google.com/file/d/1yEO1q-ryyqjCm1EIHJv3gYZZpNOgD9Yh/view?usp=drive_link
 
 # :bookmark_tabs: Скачать код игры на локальный компьютер
 Перед установкой у вас должен уже быть установлен Python версии 3.10+.
