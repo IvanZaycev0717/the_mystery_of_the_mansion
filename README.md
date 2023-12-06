@@ -1,4 +1,5 @@
 # :european_castle: The Mystery of the Mansion
+![Cover](https://github.com/IvanZaycev0717/the_mystery_of_the_mansion/assets/111955306/429d8201-0d0c-4a6e-a105-3f57cd5ae1e7)
 **The Mystery of the Mansion** - это 2D-платформер на Python (библиотека Pygame) на русском и английском языках с сюжетом, открытым миром, сохранениями и несколькими концовками.
 
 # :scroll: Технологии
