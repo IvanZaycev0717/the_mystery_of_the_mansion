@@ -19,9 +19,6 @@
 | ![gamedev](https://github.com/IvanZaycev0717/the_mystery_of_the_mansion/assets/111955306/50dacecb-66a2-43e4-bc9d-675ef6aa84a4) | [Link](https://gamedev.ru/projects/forum/?id=279654)|     |
 | ![habr](https://github.com/IvanZaycev0717/the_mystery_of_the_mansion/assets/111955306/772e1cac-b1e7-49c3-b87f-5f8fb2bdfbc8) | [Link](https://habr.com/ru/articles/766162/) | Статья о создании игры |
 
-# :floppy_disk: Скачать EXE-версию
-Скачать можно по ссылке https://drive.google.com/file/d/1yEO1q-ryyqjCm1EIHJv3gYZZpNOgD9Yh/view?usp=drive_link
-
 # :bookmark_tabs: Скачать код игры на локальный компьютер
 Перед установкой у вас должен уже быть установлен Python версии 3.10+.
 
